@@ -1,61 +1,62 @@
 \section{Methods \& Strategies}
 
-filler
-
 \subsection{Modeling Supply \& Demand}
-
-filler
 
 \subsubsection{Agent Communication}
 
-filler
+An agent communication interface is used to determine supply and demand. The
+communication execution is implemented in phases. First, a request for bids
+(RFB) phase is executed to determine demand. Next, and response to request for
+bids (RRFB) phase is executed to determine supply.
 
 % RFB, RRFB phases
 
 \subsubsection{Graph Representation}
 
-filler
+Supply and demand is then translated into an \textit{ExchangeGraph}, stripping
+away any derived \textit{Resource} object specialization. 
 
 % mention separability into req/sup cases
 
 \subsubsection{Mixed Integer-Linear Problem Representation}
 
-filler
-
-\subsubsection{Cyclus Implementation}
-
-filler
-
-% talk about translation from resources to exchange graph to osi
+In order to solve the MRP with mathematical programming solvers, a separate
+translation protocol was implemented to translate instances of an
+\textit{ExchangeGraph} into an instance of a mixed integer-linear (MILP) problem
+using the standardized Open Solver Interface (OSI). %cite osi
 
 \subsection{Solvers}
 
-filler
-
 \subsubsection{A Greedy Heuristic}
 
-filler
+A custom heuristic was implemented that utilizes domain-level knowledge of the
+resource exchange interface in Cyclus.
 
 \subsubsection{Linear Programming}
 
-filler
-
-%clp
+In the case in which partial orders are allowed (e.g., when not explicitly
+modeling fuel assemblies), the MILP formulation of the MRP simplifies into a
+linear program. Linear programs have very fast solution times. This work
+utilizes the COIN Linear Program (CLP) solver.
 
 \subsubsection{Mixed-Integer Programming}
 
-filler
-
-%cbc
+% discuss heuristics, cuts, etc.
+This work utilizes the COIN Branch and Cut (CBC) solver. 
 
 \subsection{Test Cases}
 
-filler
+Solver performance for MILPs is highly dependent on both problem structure and
+coefficient values of a given instance. In the absence of a large number of
+instances mined from user-run simulations, test cases must be generated. These
+cases are designed to explore the behavior of the model as simulation entity
+behavior becomes more precise (e.g., modeling individual assemblies) and the
+number of simulation entities grows.
 
 \subsubsection{Reactor Request Case}
 
-filler
+A description of the RR case.
 
 \subsubsection{Reactor Supply Case}
 
-filler
+A description of the RS case.
