@@ -1,25 +1,69 @@
 \section{Motivations \& Problem Statement}
 
+Fuel cycle simulation involves a number of components: modeling in-facility
+processes (e.g. fuel transmutation), determining facility deployment, and
+determining the flow of resources between facilities. Because Cyclus uses an
+agent-based modeling approach, each component can be addressed
+individually. Facility agents house in-facility process logic. Region or
+Institution agents are contain the facility deployment logic. The Cyclus kernel,
+informed by agents in a simulation, manages the determination of resource flow
+via a multi-commodity material routing model, informed by the rich literature of
+supply-chain modeling and optimization.
+
 \subsection{The Material Routing Problem}
+
+The multicommodity supply chain model is a well studied problem. Its goal is to
+determine the flow of commodities between suppliers, consumers, and, optionally,
+storage locations. A preliminary formulation has been previously explored
+\cite{gidden_agent-based_2013}. When applied to the nuclear fuel cycle, this
+work terms the resulting problem formulation the Material Routing Problem (MRP).
 
 \subsubsection{Fuel Cycle Models}
 
+Prior work in the fuel cycle simulation field has treated the problem lightly if
+at all. Many simulators have simple determination logic built in to their
+model. For example, system dynamics approaches generally assign each commodity a
+stock and flow, and flow determination logic, if any, is translated into
+cofficients of the system dynamics equations. Importantly, adding a new
+commodity involves changing the underlying model, which can be a time consuming
+task \cite{guerin_impact_2009}.
+
 \subsubsection{Supply-Demand Models}
+
+Modeling supply and demand in a supply-chain context is a field with a rich body
+of literature.
+
+Agent-based modeling approaches have also been implemented \cite{julka_agent-based_2002}.
 
 \subsection{Fuel Cycle Concerns}
 
+The nuclear fuel cycle has a number of concerns that must be met by a
+multicommodity supply-demand formulation.
+
 \subsubsection{Physics}
+
+A formulation must allow for constraints based on the physics of in-facility processes. 
 
 % eg custom constraints
 
 \subsubsection{Fuel Forms}
 
+A formulation must allow for the variety of forms material can take within the
+nuclear fuel cycle. Specifically, any formulation must allow for quantized
+material transfers, representing fuel assemblies.
+
 % eg assemblies
 
 \subsubsection{Institutions and Regions}
 
+A formulation must allow for institutional and regional effects to affect the flow of resources.
+
 % eg preferences
 
 \subsection{Cyclus Concerns}
+
+Cyclus must provide an abstraction that translates the supply and demand of
+resource objects, e.g. \textit{Material}, from an agent context to an instance
+of the MRP. 
 
 % general API and extendable formulation
