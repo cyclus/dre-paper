@@ -24,8 +24,93 @@
 \usepackage{booktabs} % nice rules for tables
 \usepackage{microtype} % if using PDF
 
+
+%%%%% Packages and related options
+%%
+%% Note, order matters!
+%%
+\usepackage{cite} % right order for multiple entries in cite
+\usepackage{moreverb} % for verbatim snippets of code
+\usepackage{fancyvrb}
+\usepackage{tabularx} % for tables with line breaks
+\usepackage{threeparttable} % for tables with notes
+\usepackage[capitalize, noabbrev]{cleveref} % for reference multiple figures
+\usepackage{calc} % allows for arithmetic on latex variables
+\usepackage{float} % allows for figures to be placed explicitly
+\usepackage{algorithm2e} % for algorithms
+\usepackage{subfig}
+\usepackage{multirow} % combining rows in tables
+\usepackage{footnote}
+\usepackage{titlesec} % for using \titleformat
+\usepackage{slashbox} % for tables with a divided cell, see http://tex.stackexchange.com/questions/7262/diagonally-divided-table-cell
+\usepackage{bashful}
+\usepackage{xspace}
+\usepackage{color}
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+\lstset{
+    %backgroundcolor=\color{lbcolor},
+    language={C++},
+    tabsize=4,
+    rulecolor=\color{black},
+    upquote=true,
+    aboveskip={1.5\baselineskip},
+    belowskip={1.5\baselineskip},
+    columns=fixed,
+    extendedchars=true,
+    breaklines=true,
+    prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+    frame=single,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    basicstyle=\scriptsize\ttfamily\color{black},
+    keywordstyle=\color[rgb]{0,0,1.0},
+    commentstyle=\color[rgb]{0.133,0.545,0.133},
+    stringstyle=\color[rgb]{0.627,0.126,0.941},
+    numberstyle=\color[rgb]{0,1,0},
+    identifierstyle=\color{black},
+    captionpos=t,
+}
+\lstdefinestyle{BashOutputStyle}{
+  basicstyle=\small\ttfamily,
+  numbers=none,
+  frame=tblr,
+  columns=fullflexible,
+  backgroundcolor=\color{blue!10},
+  linewidth=0.9\linewidth,
+  xleftmargin=0.1\linewidth
+}
+%%%%% 
+
+%%%%% Helpers
+
+\newcommand{\Cycamore}{\textsc{Cycamore} }
+\newcommand{\cyclus}{\textsc{Cyclus}\xspace}
+\newcommand{\Cyclus}{\textsc{Cyclus} }
+\newcommand{\nucl}[2]{\ensuremath{^{#1}}\mbox{#2}}
+\newcommand{\code}[1]{\lstinline[basicstyle=\ttfamily\color{black}]|#1|}
+\newcommand{\codeb}[1]{\texttt{#1}}
+\newcommand{\units}[1] {\:\text{#1}}%
+
+%%% detect beginning of sentences and capitalize appropriately
+\sfcode`\.=1001
+\sfcode`\?=1001
+\sfcode`\!=1001
+\sfcode`\:=1001
+\newcommand\secref[1]{\ifnum\spacefactor=1001 Section \ref{#1}\else section \ref{#1}\fi}
+% this seems like a limitation of sfcode (an error occurs if at the beginnig of
+% a paragraph) Accordingly, this can be used manually as
+% needed. http://comments.gmane.org/gmane.comp.tex.texhax/17631
+\newcommand\Secref[1]{ Section \ref{#1}}
+%%%
+
+%%%%%
+
 \date{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\graphicspath{{./figs/}}
+
 \begin{document}
 \input{intro}
 \input{litrev}
