@@ -1,17 +1,26 @@
 \section{Methods \& Strategies}
 
-\subsection{Dynamic Resource Exchange}\label{meth:dre}
+Dynamic Resource Exchange (DRE) is a novel methodology for determing
+transactions between suppliers and consumers. The core solution strategy is
+agnostic to resource types. Fuel cycle simulation, which is highly dependent on
+specific resource properties, i.e., material isotopic vectors, is enabled
+through it's agent communication framework. The methodology and framework can
+therefore be adapted to other complex supply chains.
 
-Dynamic Resource Exchange (DRE) is the functional bedrock on which Cyclus
-simulations are built. It defines the interaction mechanisms and methodologies
-for agents, specifically agents whose archetypes have implemented the
-\code{Trader} interface. This section begins by providing a motivating problem
-statement in \secref{abm:dre:prob}. It then details the methodology for querying
-supply and demand during the information gathering phase of the DRE in 
-\secref{abm:dre:info}. The solution phase, in which the defined DRE is translated
-into a form of the Multicommodity Transportation Problem (MCTP) and solved, is
-then described in \secref{abm:dre:fctp}. Finally, two proof of principle
-simulations with novel fuel cycle DREs are presented in \secref{abm:dre:proof}.
+This section begins by detailing the methodology for querying supply and demand
+during the information gathering phase of the DRE in \secref{abm:dre:info}. The
+solution phase, in which the defined DRE is translated into a form of the
+Multicommodity Transportation Problem (MCTP) and solved, is then described in
+\secref{abm:dre:fctp}. 
+
+The DRE has been implemented in and serves as the functional bedrock of the
+Cyclus fuel cycle simulator. It defines the interaction mechanisms and
+methodologies for agents. Accordingly, Cyclus simulations are described in
+\secref{results} that showcase novel enabling features. A short overview of
+archetypes used in these simulations is provided in
+\secref{meth:archs}. Finally, \secref{meth:tariff} describes a new
+\texttt{Region} archetype that enables the \textit{in situ} modeling of
+interstate trade instruments, such as tariffs.
 
 This section represents the culmination of significant previous effort
 \cite{gidden_agent-based_2013, gidden_agent-based_2014,
@@ -19,34 +28,17 @@ This section represents the culmination of significant previous effort
 previous descriptions of the DRE methodology with lessons learned from initial
 implementation and usage.
 
-\subsection{Problem Statement}\label{abm:dre:prob}
+\subsection{Dynamic Resource Exchange}\label{meth:dre}
 
-As a next-generation nuclear fuel cycle simulation framework, Cyclus maintains a
-primary goal of modeling flexibility. As facility, institutional, and regional
-archetypes are proposed, they should be relatively easily implemented and
-utilized in the Cyclus simulation framework. Furthermore, the level of modeling
-abstraction for different facilities in a fuel cycle will be different based on
-the needs of archetype developer. Any supply-demand resolution framework,
-therefore, must be able to support arbitrary facilities. 
-
-As stated previously in \secref{abm:abm:limits}, a number of considerations must
-be taken into account in such a framework. Supply and demand must be able to be
-solved globally at any given time step. Therefore, the framework must support an
-arbitrary number of facilities. Further, resources must be able to be treated in
-a fungible manner. The framework must be able to handle arbitrary resource
-definitions and incorporate arbitrary, agent-defined constraints.
-
-In order to address each of these concerns, the concept of a Dynamic Resource
-Exchange (DRE) was developed and implemented. That process was motivated by the
-following problem statement:
-
-\begin{quote}
-    If facilities are treated as individual black boxes and connections between
-    facilities are determined dynamically, how does one match suppliers with
-    consumers considering quantity and quality-based supply constraints,
-    quantity and quality-based demand constraints, supply response to
-    quality-based demands, and issues of fungibility?
-\end{quote}
+The DRE enables the constrained transaction of complex resources between
+entities in a simulation given a measure of cardinal preference for each
+potential transactions. Suppliers and consumers provide information about their
+supply and demand during an initial information gathering phase. Complex
+constraints can be supplied during this phase. Supply and demand is then
+translated into a resource-agnostic \textit{Exchange Graph}. The graph can be
+solved feasibly with a heuristic or optimally by translating it into a mixed
+integer-linear program. Given a solution, final trades are constructed and
+executed.
 
 \subsection{Information Gathering}\label{abm:dre:info}
 
