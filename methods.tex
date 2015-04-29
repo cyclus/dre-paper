@@ -1,34 +1,20 @@
+
+
+
+%%% Highlight dynamic sim
+%%%% - new facilities wont break sim (e.g., adding non-interacting facility, adding recycle-capable reactors in a non-recycle scenario, etc.)
+%%%% - flexibility
+%%%% - repo accepting multiple waste forms
+
 \section{Methods \& Strategies}
 
 Dynamic Resource Exchange (DRE) is a novel methodology for determing
 transactions between suppliers and consumers. The core solution strategy is
-agnostic to resource types. Fuel cycle simulation, which is highly dependent on
-specific resource properties, i.e., material isotopic vectors, is enabled
-through it's agent communication framework. Although it has been designed to
-support fuel cycle simulation, the methodology and framework can be adapted to
-other complex supply chains.
-
-This section begins by detailing the methodology for querying supply and demand
-during the information gathering phase of the DRE in \secref{abm:dre:info}. The
-solution phase, in which the defined DRE is translated into a form of the
-Multicommodity Transportation Problem (MCTP) and solved, is then described in
-\secref{abm:dre:fctp}. 
-
-The DRE has been implemented in the \Cyclus fuel cycle simulator, defining the
-key interaction mechanisms for agents. Accordingly, \Cyclus simulations are
-described in \secref{results} that showcase novel enabling features. A short
-overview of archetypes used in these simulations is provided in
-\secref{meth:archs}. Finally, \secref{meth:tariff} describes a new
-\texttt{Region} archetype that enables the \textit{in situ} modeling of
-interstate trade instruments, such as tariffs.
-
-This section represents the culmination of significant previous effort
-\cite{gidden_agent-based_2013, gidden_agent-based_2014,
-  gidden_agent-based_slc_2013}. What follows constitutes the refinement of
-previous descriptions of the DRE methodology with lessons learned from initial
-implementation and usage.
-
-\subsection{Dynamic Resource Exchange}\label{meth:dre}
+agnostic to resource types. The DRE supports fuel cycle simulation, which is
+highly dependent on specific resource properties (material isotopic vectors),
+through its agent communication framework. Because the communication framework
+can be specialized to any abstract resource type, the methodology and framework
+can be adapted to other complex supply chains.
 
 The DRE enables the constrained transaction of complex resources between
 entities in a simulation given a measure of cardinal preference for each
@@ -38,17 +24,35 @@ constraints can be supplied during this phase. Supply and demand is then
 translated into a resource-agnostic \textit{Exchange Graph}. The graph can be
 solved feasibly with a heuristic or optimally by translating it into a mixed
 integer-linear program. Given a solution, final trades are constructed and
-executed.
+executed. In order to provide a more concrete discussion, all descriptions of
+the DRE and its mechanisms assume an material-based exchange, as one would
+normally find in a fuel-cycle simulation context.
+
+This section begins by detailing the methodology for querying supply and demand
+during the information gathering phase of the DRE in \secref{abm:dre:info}. The
+solution phase, in which the defined DRE is translated into a variant of the
+Multicommodity Transportation Problem (MCTP) and solved, is then described in
+\secref{abm:dre:fctp}. A description of the DRE's implementation is provided in
+\secref{abm:dre:impl}. Finally, \secref{meth:tariff} describes a new
+\texttt{Region} archetype in the Cyclus ecosystem that utilizes the DRE to
+enable the \textit{in situ} modeling of inter-state trade instruments, such as
+tariffs.
+
+This section represents the culmination of significant previous effort
+\cite{gidden_agent-based_2013, gidden_agent-based_2014,
+  gidden_agent-based_slc_2013}. What follows constitutes the refinement of
+previous descriptions of the DRE methodology with lessons learned from initial
+implementation and usage.
 
 \subsection{Information Gathering}\label{abm:dre:info}
 
-The DRE begins at any given time step with three \textit{phases}, the
-terminology of which is influenced from previous supply chain agent-based
-modeling work \cite{julka_agent-based_2002}. Importantly, this
-information-gathering step is agnostic as to the supply-demand matching
-algorithm used, it is concerned only with querying the current status of supply
-and demand in the simulation. The collective information gathering procedure is
-shown in Figure \ref{fig:procedure}.
+The DRE begins with three \textit{phases}, the terminology of which is
+influenced from previous supply chain agent-based modeling work
+\cite{julka_agent-based_2002}. Importantly, this information-gathering step is
+agnostic as to the supply-demand matching algorithm used, it is concerned only
+with querying the current status of supply and demand in the simulation. The
+collective information gathering procedure is shown in Figure
+\ref{fig:procedure}.
 
 \begin{figure}
   \begin{center}
@@ -84,13 +88,13 @@ exclusive requests may also be grouped as mutual requests, in which case the set
 is termed \textit{mutually exclusive}.
 
 At the completion of the RFB phase, the market exchange will have a set of
-request portfolios. Each each portfolio consists of a set requests. Arbitrary
-constraints over the set of requests can be provided that are functions of
-quantity or quality.  Each request may have an associated preference. For
-requests that mutually satisfy a given demand, a preference distribution over
-those requests informs the solver as to which should be satisfied first, given
-constraints. Finally, each request portfolio has a specific quantity associated
-with it.
+request \textit{portfolios}. Each each portfolio consists of a set
+requests. Arbitrary constraints over the set of requests can be provided that
+are functions of quantity or quality.  Each request may have an associated
+preference. For requests that mutually satisfy a given demand, a preference
+distribution over those requests informs the solver as to which should be
+satisfied first, given constraints. Finally, each request portfolio has a
+specific quantity associated with it.
 
 The second phase allows suppliers to \textit{respond} to the set of request
 portfolios, and is termed the \textit{Response to Request for Bids} (RRFB) phase
@@ -1133,9 +1137,11 @@ $\tilde{x_j}$ in the NFCTP formulation. The variable-flow value assignment is
 then back-translated into an equivalent \code{ExchangeArc}-flow value assignment
 by the \code{ProgTranslator}.
 
-%%% Highlight dynamic sim
-%%%% - new facilities wont break sim (e.g., adding non-interacting facility, adding recycle-capable reactors in a non-recycle scenario, etc.)
-%%%% - flexibility
-%%%% - repo accepting multiple waste forms
+\subsection{Inter-region Policy Instruments}\label{meth:tariff}
 
-%% - Cyclus Archetypes
+The modeling of inter-regional material flows are not well supported in many NFC
+simulators to date; DESAE is the only simulator to advertise such a feature
+\cite{andrianova_desae_2008}. \Cyclus natively supports inter-regional flows via
+its Region-Institution-Facility hierarchy \cite{huff_cyclus_2015}. Combined with
+potential flows commodity-named 
+
