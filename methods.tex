@@ -1139,9 +1139,53 @@ by the \code{ProgTranslator}.
 
 \subsection{Inter-region Policy Instruments}\label{meth:tariff}
 
-The modeling of inter-regional material flows are not well supported in many NFC
-simulators to date; DESAE is the only simulator to advertise such a feature
-\cite{andrianova_desae_2008}. \Cyclus natively supports inter-regional flows via
-its Region-Institution-Facility hierarchy \cite{huff_cyclus_2015}. Combined with
-potential flows commodity-named 
+Modeling international fuel cycles requires a simulator to support a notion of
+regional boundaries. To date, DESAE is the only simulator to advertise such a
+feature, providing static models of regional relationships as input
+\cite{andrianova_desae_2008}. Accordingly, no NFC simulator provides any
+representation dynamic models of inter-region policy instruments, such as
+tariffs.
+
+\Cyclus natively supports inter-regional flows via its
+Region-Institution-Facility hierarchy \cite{huff_cyclus_2015}. While the DRE is
+capable of \textit{supporting} dynamic relationship models through its
+preference adjustment phase, no such models have heretofore been
+implemented. The only flow-based relationship models currently offered occur at
+the facility level. That is, certain facilities may set commodity-based
+preferences for potential material flows. For example, a \texttt{Reactor}
+prototype may set its preference for MOX-based fuels higher than UOX-based
+fuels, and the DRE will provide it with MOX-based fuels if it is able.
+
+A new \texttt{Region} archetype has been developed to explicitly support both
+static and dynamic inter-region policy instrument models
+\cite{tariff_region_doi}. Named the \texttt{TariffRegion}, it applies instrument
+models, such as tariffs, during the preference-adjustment phase of the DRE
+according to a given \textit{rule}. Rules may be applied, updated, and removed
+as a function of time, thereby supporting dynamic instrument models. Static
+models are trivially supported by applying a rule at the initial time step and
+not removing it.
+
+Rules are comprised of \textit{conditions} and \textit{tariffs}. Given a
+condition and tariff, preferences are adjusted as shown in Algorithm
+\ref{alg::tariff}.
+
+\begin{algorithm}[!h]
+ \SetAlgoLined
+ \KwData{A potential trade, a condition, and a tariff value, $t$.}
+ \KwResult{An updated preference value, $p$.}
+ \eIf{trade meets condition}{return $p * t$}{return $p$}
+ \caption{\texttt{TariffRegion} Preference Adjustment}\label{alg::tariff}
+\end{algorithm}
+
+A rule's condition may depend on any factor that is queryable during the
+preference adjustment phase of the DRE. During PA, each potential resource
+transfer is known. Therefore, rules may depend on information regarding the
+supplier or consumer (e.g., in which region each resides), the commodity
+associated with the transfer, and both the resource quantity and quality (e.g.,
+the fissile plutonium content for material resources). 
+
+At present, the \texttt{TariffRegion} supports region-based rules. Each rule
+applies to another region. The rule's condition is met if the opposing facility
+involved in the trade is in the associated region. If so, a tariff, value is
+applied, per Algorithm \ref{alg::tariff}.
 
