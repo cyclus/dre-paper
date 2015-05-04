@@ -1,1 +1,226 @@
-placeholder
+<simulation>
+  <schematype>flat</schematype>
+  <control>
+    <duration>1464</duration>
+    <startmonth>1</startmonth>
+    <startyear>2015</startyear>
+    <decay>never</decay>
+  </control>
+
+  <archetypes>
+    <spec> <lib>cycamore</lib> <name>Source</name></spec>
+    <spec> <lib>cycamore</lib> <name>DeployInst</name></spec>
+    <spec> <lib>cycamore</lib> <name>Sink</name></spec>
+    <spec> <lib>cycamore</lib> <name>Enrichment</name> </spec>
+    <spec> <lib>cycamore</lib> <name>Reactor</name> </spec>
+    <spec> <lib>cycamore</lib> <name>Storage</name> </spec>
+    <spec> <lib>cycamore</lib> <name>FuelFab</name> </spec>
+    <spec> <lib>cycamore</lib> <name>Separations</name> </spec>
+  </archetypes>
+
+  <!-- TODO: does OECD have a spent fuel cooling time? -->
+
+  <prototype>
+    <name>enrichment</name>
+    <config>
+      <Enrichment>
+        <feed_commod>natl_u</feed_commod>
+        <feed_recipe>natl_u</feed_recipe>
+        <product_commod>uox</product_commod>
+        <tails_commod>depleted_u</tails_commod>
+        <tails_assay>0.0025</tails_assay>
+        <swu_capacity>1e100</swu_capacity>
+        <initial_feed>1e100</initial_feed>
+      </Enrichment>
+    </config>
+  </prototype>
+
+  <prototype>
+    <name>separations</name>
+    <config>
+      <Separations>
+          <leftover_commod>waste</leftover_commod>
+          <throughput>70833.333</throughput>
+          <feedbuf_size>1e100</feedbuf_size>
+          <feed_commods> <val>lwr_spent</val> </feed_commods>
+
+          <streams>
+              <commod>sep_pu</commod>
+              <info>
+                  <buf_size>1e100</buf_size>
+                  <efficiencies>
+                      <comp>Pu</comp> <eff>.999</eff>
+                  </efficiencies>
+              </info>
+              <commod>sep_u</commod>
+              <info>
+                  <buf_size>1e100</buf_size>
+                  <efficiencies>
+                      <comp>U</comp> <eff>.999</eff>
+                  </efficiencies>
+              </info>
+          </streams>
+      </Separations>
+    </config>
+  </prototype>
+
+  <prototype>
+    <name>moxfab</name>
+    <config>
+      <FuelFab>
+        <fill_commod>depleted_u</fill_commod>
+        <fill_recipe>depleted_u</fill_recipe>
+        <fill_size>1e100</fill_size>
+
+        <fiss_commods><val>sep_pu</val></fiss_commods>
+        <fiss_size>1e100</fiss_size>
+
+        <throughput>1e100</throughput>
+        <spectrum>thermal</spectrum>
+        <outcommod>mox</outcommod>
+      </FuelFab>
+    </config>
+  </prototype>
+
+  <prototype>
+    <name>lwr</name>
+    <config>
+      <Reactor>
+        <fuel_inrecipes>  <val>uox</val>        <val>mox</val>       </fuel_inrecipes>
+        <fuel_outrecipes> <val>uox_spent</val>  <val>mox_spent</val> </fuel_outrecipes>
+        <fuel_incommods>  <val>uox</val>        <val>mox</val>       </fuel_incommods>
+        <fuel_outcommods> <val>lwr_spent</val>  <val>lwr_spent</val> </fuel_outcommods>
+        <fuel_prefs>      <val>1.0</val>        <val>2.0</val>       </fuel_prefs>
+
+        <cycle_time>18</cycle_time>
+        <refuel_time>0</refuel_time>
+        <assem_size>29565</assem_size>
+        <n_assem_core>3</n_assem_core>
+        <n_assem_batch>1</n_assem_batch>
+        <power_cap>1000</power_cap>
+      </Reactor>
+    </config>
+  </prototype>
+
+  <prototype>
+    <name>repo</name>
+    <config>
+      <Sink>
+        <in_commods><val>waste</val></in_commods>
+        <capacity>1e100</capacity>
+      </Sink>
+    </config>
+  </prototype>
+
+  <prototype>
+    <name>rep_u_store</name>
+    <config>
+      <Sink>
+        <in_commods><val>sep_u</val></in_commods>
+        <capacity>1e100</capacity>
+      </Sink>
+    </config>
+  </prototype>
+
+  <prototype>
+    <name>deployer</name>
+    <config>
+      <DeployInst>
+          <prototypes>
+              <val>repo</val>
+              <val>rep_u_store</val>
+              <val>separations</val>
+              <val>moxfab</val>
+              <val>enrichment</val>
+              <val>lwr</val>
+          </prototypes>
+
+          <build_times>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+          </build_times>
+
+          <n_build>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+              <val>1</val>
+              <val>60</val>
+          </n_build>
+      </DeployInst>
+    </config>
+  </prototype>
+
+  <agent> <name>deployer1</name> <prototype>deployer</prototype> </agent>
+
+  <recipe>
+    <name>depleted_u</name>
+    <basis>mass</basis>
+    <nuclide> <id>U235</id><comp>0.0025</comp></nuclide>
+    <nuclide><id>U238</id><comp>0.9975</comp></nuclide>
+  </recipe>
+
+  <recipe>
+    <name>natl_u</name>
+    <basis>mass</basis>
+    <nuclide> <id>U235</id> <comp>0.711</comp> </nuclide>
+    <nuclide> <id>U238</id> <comp>99.289</comp> </nuclide>
+  </recipe>
+
+  <recipe>
+    <name>uox</name>
+    <basis>mass</basis>
+    <nuclide> <id>U234</id><comp>0.000445</comp></nuclide>
+    <nuclide> <id>U235</id><comp>.0495</comp></nuclide>
+    <nuclide><id>U238</id><comp>0.950055</comp></nuclide>
+  </recipe>
+
+  <!-- TODO: find/use a real/better spent uox recipe -->
+  <recipe>
+      <name>uox_spent</name>
+      <basis>mass</basis>
+      <nuclide><id>U235</id> <comp>.000756</comp> </nuclide>
+      <nuclide><id>U238</id> <comp>0.909</comp></nuclide>
+      <nuclide><id>Pu239</id> <comp>0.00637</comp></nuclide>
+      <nuclide><id>Pu240</id> <comp>0.00311</comp></nuclide>
+      <nuclide><id>Pu241</id> <comp>0.00153</comp></nuclide>
+      <nuclide><id>Pu242</id> <comp>0.00112</comp></nuclide>
+      <nuclide><id>Am241</id> <comp>0.000505</comp></nuclide>
+
+      <nuclide> <id>Zr90</id> <comp>.0617</comp> </nuclide>
+  </recipe>
+
+  <recipe>
+      <name>mox</name>
+      <basis>mass</basis>
+      <nuclide><id>U235</id> <comp>.002056</comp> </nuclide>
+      <nuclide><id>U238</id> <comp>.907684</comp></nuclide>
+      <nuclide><id>Pu238</id> <comp>.002816</comp></nuclide>
+      <nuclide><id>Pu239</id> <comp>.046565</comp></nuclide>
+      <nuclide><id>Pu240</id> <comp>.021951</comp></nuclide>
+      <nuclide><id>Pu241</id> <comp>.010606</comp></nuclide>
+      <nuclide><id>Pu242</id> <comp>.007257</comp></nuclide>
+      <nuclide><id>Am241</id> <comp>.001065</comp></nuclide>
+  </recipe>
+
+  <!-- TODO: find/use a real/better spent mox recipe -->
+  <recipe>
+      <name>mox_spent</name>
+      <basis>mass</basis>
+      <nuclide><id>U235</id> <comp>.0008</comp> </nuclide>
+      <nuclide><id>U238</id> <comp>0.869</comp></nuclide>
+      <nuclide><id>Pu239</id> <comp>0.0224</comp></nuclide>
+      <nuclide><id>Pu240</id> <comp>0.0179</comp></nuclide>
+      <nuclide><id>Pu241</id> <comp>0.0110</comp></nuclide>
+      <nuclide><id>Pu242</id> <comp>0.00860</comp></nuclide>
+      <nuclide><id>Am241</id> <comp>0.00119</comp></nuclide>
+
+      <nuclide> <id>Zr90</id> <comp>.07</comp> </nuclide>
+  </recipe>
+
+</simulation>
