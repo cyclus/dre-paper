@@ -1,5 +1,27 @@
 \section{Experimentation \& Results}\label{results}
 
+This section describes scenarios that are represent unique features enabled by
+the DRE in Cyclus. As such, they are based on a general scenario that may be
+modeled by many, likely most, available fuel cycle simulators. A simple UOX-MOX
+binary recycle system is chosen in order to reduce the complexity of the fuel
+cycle and highlight departures from available simulators. A simulation timeframe
+of 50 years is chosen, sufficient to display all relevant effects. The nominal
+parameters of all common facilities in the simulation are shown in Appendix
+\ref{}. Importantly, reactors are allowed to be fueled by either UOX or MOX,
+with a preference for MOX over UOX.
+
+In order to involve dynamicism in the simulation, the population reactors grows
+linearly over time at a rate of 1 reactor every 5 years with an initial
+population of 20 reactors. Further, the presence of the the recycled-fuel supply
+chain appears at some time, $t_{sc}$, after the beginning of the simulation,
+chosen to be 10 years into the simulation. Therefore, all reactors will be
+neccessarily fueled with UOX before $t_{sc}$ and MOX as available thereafter. 
+
+The diagram of the base-case fuel cycle is shown in Figure \ref{}. It represents
+a simple light-water reactor recycle scenario, with repository flows comprised
+of separated minor actinides. The remaining portion of this section perturbs
+this basic fuel cycle.
+
 \subsection{Fuel Cycles with Demand Fungibility and Supply Disruption}
 
 The DRE provides a unifying framework in which any instance of supply and demand
@@ -65,7 +87,7 @@ preference distribution for fuel supplied to Region B could have the following
 relation
 
 \begin{equation}
-  p_{MOX, a} > p_{UOX, a} > p_{UOX, b}
+  p_{MOX, a} > p_{UOX, a} > p_{UOX, b} > 1
 \end{equation}
 
 This preference distribution implies that Region B's domestic fuel cycle will
