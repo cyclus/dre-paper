@@ -1171,9 +1171,9 @@ condition and tariff, preferences are adjusted as shown in Algorithm
 
 \begin{algorithm}[!h]
  \SetAlgoLined
- \KwData{A potential trade, a condition, and a tariff value, $t$.}
+ \KwData{A potential trade, a condition, and a tariff value, $x$.}
  \KwResult{An updated preference value, $p$.}
- \eIf{trade meets condition}{return $p * t$}{return $p$}
+ \eIf{trade meets condition}{return $p * x$}{return $p$}
  \caption{\texttt{TariffRegion} Preference Adjustment}\label{alg::tariff}
 \end{algorithm}
 

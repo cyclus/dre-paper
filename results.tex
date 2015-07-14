@@ -1,28 +1,94 @@
 \section{Experimentation \& Results}\label{results}
 
-The model flexibility and generality that the DRE provides is demonstrated using
-three scenarios. 
+\subsection{Fuel Cycles with Demand Fungibility and Supply Disruption}
 
-First, a base case is presented. 
+The DRE provides a unifying framework in which any instance of supply and demand
+can be formulated and solved. This flexibility lends itself well to dynamic
+simulation in which the state of actors in a simulation, by definition, can (and
+will) change as the simulation progresses. In order to show case the types of
+simulations that are enabled by this feature, a fuel cycle simulation is
+constructed that has multiple types of reactor fuel input and a defined supply
+disruption within the recycled-fuel supply chain.
 
-\subsection{Base Case}
+To motivate this type of scenario, consider a nation state with a MOX and
+UOX-based reactor fuel supply chain in addition to a (possibly former) weapons
+program. Two sources of light-water reactor fuel exist for the entirety of the
+simulation: UOX fuel and civilian MOX. At some time, $t_0$, MOX from
+military-grade plutonium becomes available at production rate of $p_{MOX,
+  m}$. Such a scenario is not outside of the realm of possibility; the United
+States, for instance, is currently building the Mixed Oxide Fuel Fabrication
+Facility for just such a purpose. Further, consider the following preference
+distribution: civilian MOX is preferred over military MOX which is preferred
+over civilian UOX. Preferring civilian MOX is reasonable because of the
+likelihood of existing fuel contracts and a desire of reaching a reactor cycle
+equilibrium. Preferring military MOX over civilian UOX is reasonable due to a
+desire to reduce the stockpile of weapons-grade plutonium and increasing overall
+resource utilization. Of course, a fuel cycle analyst is free to explore the
+results due to different preference distribution choices.
 
-\subsection{Fuel Cycles with Demand Fungibility}
+Given sufficient supply of civilian MOX, such a scenario would not fully utilize
+the source of military-based MOX. However, the supply of civilian MOX depends on
+the entire recycled-fuel supply chain. Utilizing Cycamore and Cycamore-like
+entities, this supply chain is comprised of a \texttt{Separations} facility
+archetype and a \texttt{FuelFab} facility archetype. For use in this
+proof-of-concept simulation, the Cycamore \texttt{Separations} archetype was
+forked and updated to include a ``pausing'' feature. That is, it can be
+temporarily removed from the simulation for some time, simulating a disruption
+or disturbance. Due to the flexibility of the DRE, one expects the
+military-based MOX to be fully utilized during the supply disruption.
 
-% general cycle layout
+% description of military source and pause
 
-% single cycle example
+% deployment description
 
-% large scale simulation
+% fc diagram
 
-% solver comparison
+% with/without pause results
+
+% timing between greedy/coin
+
 
 \subsection{Fuel Cycles with International Instruments}
 
-% general cycle layout
+The DRE also allows for different geographical and managing entity
+representations to be laid over otherwise regional-agnostic fuel cycles and
+affect the outcome of possible trades within those fuel cycles. To showcase this
+feature, consider the following two-region simulation. In one region, say Region
+A, a fuel cycle with both UOX and MOX-based fuels is available. Further, this
+region has an over-abundance of supply of fuel and can thus provide fuel
+services to other regions. A second region, Region B, houses a simple,
+once-through fuel cycle. This fuel cycle setup is shown in Figure \ref{}.
 
-% single cycle example
+In an undeturbed setting, preferences can be set such that fuel input into
+Region B is always preferred over domestic fuel production. In other words, a
+preference distribution for fuel supplied to Region B could have the following
+relation
 
-% large scale simulation
+\begin{equation}
+  p_{MOX, a} > p_{UOX, a} > p_{UOX, b}
+\end{equation}
 
-% solver comparison
+This preference distribution implies that Region B's domestic fuel cycle will
+never be utilized -- it will always be fueled by Region A, as long as Region A
+has available capacity.
+
+However, suppose a tariff is applied perturbing preference values along arcs
+connecting Region A fuel suppliers with Region B fuel consumers. Consider a
+tariff with the following values
+
+\begin{equation}
+f(t)
+\begin{cases}
+1, & \text{if } 0 \leq t < t_0 \\
+\frac{p_{UOX, b} - 1}{p_{UOX, a}}, & \text{if } t_0 \leq t < t_1 \\
+\frac{p_{UOX, b} - 1}{p_{MOX, a}}, & \text{otherwise}
+\end{cases} 
+\end{equation}
+
+% deployment description
+
+% fc diagram
+
+% with/without tariff results
+
+% timing between greedy/coin
