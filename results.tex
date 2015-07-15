@@ -86,7 +86,7 @@ Region B is always preferred over domestic fuel production. In other words, a
 preference distribution for fuel supplied to Region B could have the following
 relation
 
-\begin{equation}
+\begin{equation}\label{eqn:bigdefault}
   p_{MOX, a} > p_{UOX, a} > p_{UOX, b} > 1
 \end{equation}
 
@@ -101,11 +101,35 @@ tariff with the following values
 \begin{equation}
 f(t)
 \begin{cases}
-1, & \text{if } 0 \leq t < t_0 \\
+1, & \text{if } t < t_0 \\
 \frac{p_{UOX, b} - 1}{p_{UOX, a}}, & \text{if } t_0 \leq t < t_1 \\
-\frac{p_{UOX, b} - 1}{p_{MOX, a}}, & \text{otherwise}
+\frac{p_{UOX, b} - 1}{p_{MOX, a}}, & \text{if } t_1 \leq t < t_2 \\
+\frac{p_{UOX, b} - 1}{p_{UOX, a}}, & \text{if } t_2 \leq t < t_3 \\
+1, & \text{if } t \geq t_3
 \end{cases} 
 \end{equation}
+
+with the addition preference relation
+
+\begin{equation}\label{eqn:bigp1}
+  p_{UOX, b} \left( 1 - \frac{p_{UOX, a}}{p_{MOX, a}} \right) > 1.
+\end{equation}
+
+Choosing nominal values that satisfy Equations \ref{eqn:bigdefault} and
+\ref{eqn:bigp1}, $p_{MOX, a} = 9$, $p_{UOX, a} = 4$, and $p_{UOX, b} = 2$, one
+arrives at actual preference values as shown in Figure \ref{}.
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[]{tariff_prefs.pdf}
+    \caption[]{
+      \label{fig:prefs}
+      Resulting preference values for incoming fuel commodities in Region B
+      after tariffs have been applied.}
+  \end{center}
+\end{figure}
+
 
 % deployment description
 
