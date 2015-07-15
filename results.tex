@@ -17,10 +17,19 @@ chain appears at some time, $t_{sc}$, after the beginning of the simulation,
 chosen to be 10 years into the simulation. Therefore, all reactors will be
 neccessarily fueled with UOX before $t_{sc}$ and MOX as available thereafter. 
 
-The diagram of the base-case fuel cycle is shown in Figure \ref{}. It represents
-a simple light-water reactor recycle scenario, with repository flows comprised
-of separated minor actinides. The remaining portion of this section perturbs
-this basic fuel cycle.
+The diagram of the base-case fuel cycle is shown in Figure \ref{fig:base}. It
+represents a simple light-water reactor recycle scenario, with repository flows
+comprised of separated minor actinides. The remaining portion of this section
+perturbs this basic fuel cycle.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[height=10cm]{base.pdf}
+    \caption[]{
+      \label{fig:base}
+      The base, single-pass MOX fuel cycle used for all comparisons.}
+  \end{center}
+\end{figure}
 
 \subsection{Fuel Cycles with Demand Fungibility and Supply Disruption}
 
@@ -63,7 +72,15 @@ military-based MOX to be fully utilized during the supply disruption.
 
 % deployment description
 
-% fc diagram
+\begin{figure}
+  \begin{center}
+    \includegraphics[height=10cm]{military.pdf}
+    \caption[]{
+      \label{fig:military}
+      The base fuel cycle shown in Figure \ref{fig:base} with the addition of a
+      military-based MOX fuel source.}
+  \end{center}
+\end{figure}
 
 % with/without pause results
 
@@ -79,7 +96,20 @@ feature, consider the following two-region simulation. In one region, say Region
 A, a fuel cycle with both UOX and MOX-based fuels is available. Further, this
 region has an over-abundance of supply of fuel and can thus provide fuel
 services to other regions. A second region, Region B, houses a simple,
-once-through fuel cycle. This fuel cycle setup is shown in Figure \ref{}.
+once-through fuel cycle. This fuel cycle setup is shown in Figure
+\ref{fig:region}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[height=10cm]{region.pdf}
+    \caption[]{
+      \label{fig:region}
+      A two-region set of fuel cycles separated by a dotted-red line. The upper
+      region (Region A) includes a one-pass MOX fuel cycle, and the bottom
+      region (Region B) includes a once-through fuel cycle connected to the
+      one-pass MOX fuel cycle.}
+  \end{center}
+\end{figure}
 
 In an undeturbed setting, preferences can be set such that fuel input into
 Region B is always preferred over domestic fuel production. In other words, a
@@ -87,18 +117,19 @@ preference distribution for fuel supplied to Region B could have the following
 relation
 
 \begin{equation}\label{eqn:bigdefault}
-  p_{MOX, a} > p_{UOX, a} > p_{UOX, b} > 1
+  p_{MOX, a} > p_{UOX, a} > p_{UOX, b} > 1.
 \end{equation}
 
+\noindent
 This preference distribution implies that Region B's domestic fuel cycle will
 never be utilized -- it will always be fueled by Region A, as long as Region A
-has available capacity.
+has available capacity. However, a tariff can be applied which perturbs
+preference values along arcs connecting Region A fuel suppliers with Region B
+fuel consumers. Consider a tariff defined by function in Equation
+\ref{eqn:tariff} with preferences adhering to the relation provided in Equation
+\ref{eqn:bigp1}, which guarantees a strict preference ordering under $f(t)$.
 
-However, suppose a tariff is applied perturbing preference values along arcs
-connecting Region A fuel suppliers with Region B fuel consumers. Consider a
-tariff with the following values
-
-\begin{equation}
+\begin{equation}\label{eqn:tariff}
 f(t)
 \begin{cases}
 1, & \text{if } t < t_0 \\
@@ -109,20 +140,17 @@ f(t)
 \end{cases} 
 \end{equation}
 
-with the addition preference relation
-
 \begin{equation}\label{eqn:bigp1}
   p_{UOX, b} \left( 1 - \frac{p_{UOX, a}}{p_{MOX, a}} \right) > 1.
 \end{equation}
 
 Choosing nominal values that satisfy Equations \ref{eqn:bigdefault} and
-\ref{eqn:bigp1}, $p_{MOX, a} = 9$, $p_{UOX, a} = 4$, and $p_{UOX, b} = 2$, one
-arrives at actual preference values as shown in Figure \ref{}.
-
+\ref{eqn:bigp1}, e.g., $p_{MOX, a} = 9$, $p_{UOX, a} = 4$, and $p_{UOX, b} = 2$,
+one arrives at actual preference values as shown in Figure \ref{fig:prefs}.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[]{tariff_prefs.pdf}
+    \includegraphics[height=7.5cm]{tariff_prefs.pdf}
     \caption[]{
       \label{fig:prefs}
       Resulting preference values for incoming fuel commodities in Region B
