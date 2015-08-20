@@ -1,6 +1,6 @@
 #!/bin/bash
 
-db=cyclus.sqlite
+db=dre.sqlite
 
 # simid= # defaults to first in db
 # simid=c2560eaf-6637-42ad-817f-8961623dbb36 # recycle
