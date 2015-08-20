@@ -13,5 +13,6 @@ cyan -db $db post
 cyan -db $db flowgraph > flow.dot
 dot -Tpng -o "$name"_flow.png flow.dot
 
+cyan -db $db built -p reactor
 cyan -db $db inv -p -nucs=Pu239 reactor
-cyan -db $db inv -p -nucs=Pu239 fabrication
+cyan -db $db inv -p -nucs=Pu239 fuelfab
