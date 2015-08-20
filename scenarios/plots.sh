@@ -1,6 +1,10 @@
 #!/bin/bash
 
-db=$1
+db=cyclus.sqlite
+
+# simid= # defaults to first in db
+# simid=c2560eaf-6637-42ad-817f-8961623dbb36 # recycle
+simid=ab7d15ed-306f-48bb-b2c1-39dd474e4fae # base_case
 
 # split db in two, take first item as name for other files
 IFS='.' read -ra FOO <<< $db
@@ -10,9 +14,9 @@ echo working on $db
 
 cyan -db $db post
 
-cyan -db $db flowgraph > flow.dot
+cyan -db=$db -simid=$simid -simid=$simid flowgraph > flow.dot
 dot -Tpng -o "$name"_flow.png flow.dot
 
-cyan -db $db built -p reactor
-cyan -db $db inv -p -nucs=Pu239 reactor
-cyan -db $db inv -p -nucs=Pu239 fuelfab
+cyan -db=$db -simid=$simid built -p reactor
+cyan -db=$db -simid=$simid inv -p -nucs=Pu239 reactor
+cyan -db=$db -simid=$simid inv -p -nucs=Pu239 fuelfab
