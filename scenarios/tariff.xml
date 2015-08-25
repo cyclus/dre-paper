@@ -3,7 +3,7 @@
     <duration>600</duration>
     <startmonth>1</startmonth>
     <startyear>2015</startyear>
-    <simhandle>dre_base</simhandle>
+    <simhandle>dre_tariffs</simhandle>
   </control>
 
   <archetypes>
@@ -159,7 +159,7 @@
     <name>RegionA</name>
     <config><NullRegion/></config>
     <institution>
-      <name>SingleInstitution</name>
+      <name>InstA</name>
       <initialfacilitylist>
         <entry>
           <prototype>mine</prototype>
@@ -262,7 +262,7 @@
       </TariffRegion> 
     </config>
     <institution>
-      <name>SingleInstitution</name>
+      <name>InstB</name>
       <initialfacilitylist>
         <entry>
           <prototype>b_uox</prototype>
