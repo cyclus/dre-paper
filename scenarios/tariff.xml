@@ -265,19 +265,26 @@
       <name>InstB</name>
       <initialfacilitylist>
         <entry>
-          <prototype>b_uox</prototype>
-          <number>1</number>
-        </entry>
-        <entry>
-          <prototype>b_repo</prototype>
-          <number>1</number>
-        </entry>
-        <entry>
           <prototype>b_reactor</prototype>
           <number>5</number>
         </entry>
       </initialfacilitylist>
-      <config><NullInst/></config>
+      <config>
+        <DeployInst>
+          <prototypes>
+            <val>b_uox</val>
+            <val>b_repo</val>
+          </prototypes>
+          <n_build>
+            <val>1</val>
+            <val>1</val>          
+          </n_build>
+          <build_times>
+            <val>1</val>
+            <val>1</val>          
+          </build_times>
+        </DeployInst>
+      </config>
     </institution>
   </region>
 
