@@ -1,0 +1,121 @@
+#!/usr/bin/env python
+
+import subprocess
+
+import sqlite3 as sql
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.style as style
+
+query_mass = """SELECT tl.Time AS Time,IFNULL(sub.qty, 0) AS Quantity
+FROM timelist as tl
+LEFT JOIN (
+SELECT tl.Time as time,SUM(inv.Quantity) AS qty
+FROM inventories as inv
+JOIN timelist as tl ON UNLIKELY(inv.starttime <= tl.time) AND inv.endtime > tl.time AND tl.simid=inv.simid
+JOIN agents as a on a.agentid=inv.agentid AND a.simid=inv.simid
+WHERE a.simid=? AND a.prototype=? 
+GROUP BY tl.Time
+) AS sub ON sub.time=tl.time
+WHERE tl.simid=?
+"""
+
+query_239 = """SELECT tl.Time AS Time,IFNULL(sub.qty, 0) AS Quantity FROM timelist as tl
+LEFT JOIN (
+        SELECT tl.Time as time,SUM(inv.Quantity*c.MassFrac) AS qty
+        FROM inventories as inv
+        JOIN timelist as tl ON UNLIKELY(inv.starttime <= tl.time) AND inv.endtime > tl.time AND tl.simid=inv.simid
+        JOIN agents as a on a.agentid=inv.agentid AND a.simid=inv.simid
+        JOIN compositions as c on c.qualid=inv.qualid AND c.simid=inv.simid
+        WHERE a.simid=? AND a.prototype=?  AND c.nucid = 942390000
+        GROUP BY tl.Time
+) AS sub ON sub.time=tl.time
+WHERE tl.simid=?"""
+
+def post_dbs(dbs):
+    for name in dbs:
+        cmd = "cyan -db {}.sqlite post".format(name)
+        subprocess.call(cmd.split(), shell=False)
+
+def mass_time_series(protos, query):
+    args = []
+    for name, kinds in protos.items():
+        con = sql.connect('{}.sqlite'.format(name))
+        cur = con.cursor()
+        
+        info = cur.execute('SELECT * from INFO').fetchall()
+        simid = info[0][0]
+        
+        x, y = None, None
+        for kind in kinds:
+            data = np.array(cur.execute(query, [simid, kind, simid]).fetchall())
+            x = data[:, 0] if x is None else x
+            if y is not None:
+                y += data[:, 1]
+            else:
+                y = data[:, 1]
+        args.extend([x, y])
+    return args
+
+def plot_pu_in_rxtrs(protos, args):
+    plt.plot(*args)
+    plt.title('Inventory of $^{239}Pu$ in All Reactors')
+    plt.ylabel('Mass (kg)')
+    plt.xlabel('Timesteps (months)')
+    plt.legend(list(protos.keys()))
+#    plt.show()
+    plt.savefig('figs/pu_in_rxtrs.png')
+
+def plot_pu_in_fabs(protos, args):
+    plt.plot(*args)
+    plt.title('Inventory of $^{239}Pu$ in Recycled-Fuel Fabrication Facilities')
+    plt.ylabel('Mass (kg)')
+    plt.xlabel('Timesteps (months)')
+    plt.legend(list(protos.keys()))
+#    plt.show()
+    plt.savefig('figs/pu_in_fabs.png')
+
+def plot_mass_in_repos(protos, args):
+    plt.plot(*args)
+    plt.title('Total Inventory of Material in Repositories')
+    plt.ylabel('Mass (kg)')
+    plt.xlabel('Timesteps (months)')
+    plt.legend(list(protos.keys()))
+#    plt.show()
+    plt.savefig('figs/mass_in_repos.png')
+
+rxtrs = {
+    'base_case': ['reactor'],
+    'military': ['reactor'],
+    'tariff': ['reactor', 'b_reactor'],
+}
+
+fabs = {
+    'base_case': ['fuelfab'],
+    'military': ['fuelfab'],
+    'tariff': ['fuelfab'],
+}
+
+repos = {
+    'base_case': ['repo'],
+    'military': ['repo'],
+    'tariff': ['repo', 'b_repo'],
+}
+
+if __name__ == "__main__":
+    print("Postprocessing dbs")
+    post_dbs(rxtrs.keys())
+
+    style.use('bmh')
+
+    # print("Rxtrs")
+    # args = mass_time_series(rxtrs, query_239)
+    # plot_pu_in_rxtrs(rxtrs, args)
+
+    # print("Fabs")
+    # args = mass_time_series(fabs, query_239)
+    # plot_pu_in_fabs(fabs, args)
+
+    print("Repos")
+    args = mass_time_series(fabs, query_mass)
+    plot_mass_in_repos(repos, args)
