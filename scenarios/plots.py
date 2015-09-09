@@ -32,6 +32,18 @@ LEFT JOIN (
 ) AS sub ON sub.time=tl.time
 WHERE tl.simid=?"""
 
+query_built = """SELECT tl.time AS Time,ifnull(sub.n, 0) AS N_Built
+FROM timelist AS tl
+LEFT JOIN (
+SELECT a.simid,tl.time AS time,COUNT(a.agentid) AS n
+FROM agents AS a
+JOIN timelist AS tl ON tl.time=a.entertime
+WHERE a.simid=? AND a.prototype=?
+GROUP BY time
+) AS sub ON tl.time=sub.time AND tl.simid=sub.simid
+WHERE tl.simid=?
+"""
+
 def post_dbs(dbs):
     for name in dbs:
         cmd = "cyan -db {}.sqlite post".format(name)
@@ -55,7 +67,7 @@ def mass_time_series(protos, query):
             else:
                 y = data[:, 1]
         args.extend([x, y])
-    return args
+    return args    
 
 def plot_pu_in_rxtrs(protos, args):
     plt.plot(*args)
@@ -84,6 +96,14 @@ def plot_mass_in_repos(protos, args):
 #    plt.show()
     plt.savefig('figs/mass_in_repos.png')
 
+def plot_base_rxtr_deployment(args):
+    plt.plot(*args)
+    plt.title('Number of Reators')
+    plt.xlabel('Timesteps (months)')
+    plt.ylim(0, 30)
+#    plt.show()
+    plt.savefig('figs/base_rxtr_deploy.png')
+    
 rxtrs = {
     'base_case': ['reactor'],
     'military': ['reactor'],
@@ -108,14 +128,18 @@ if __name__ == "__main__":
 
     style.use('bmh')
 
-    # print("Rxtrs")
-    # args = mass_time_series(rxtrs, query_239)
-    # plot_pu_in_rxtrs(rxtrs, args)
+    print("Rxtrs")
+    args = mass_time_series(rxtrs, query_239)
+    plot_pu_in_rxtrs(rxtrs, args)
 
-    # print("Fabs")
-    # args = mass_time_series(fabs, query_239)
-    # plot_pu_in_fabs(fabs, args)
+    print("Fabs")
+    args = mass_time_series(fabs, query_239)
+    plot_pu_in_fabs(fabs, args)
 
     print("Repos")
     args = mass_time_series(fabs, query_mass)
     plot_mass_in_repos(repos, args)
+
+    args = mass_time_series({"base_case": ["reactor"]}, query_built)
+    args[1] = np.cumsum(args[1])
+    plot_base_rxtr_deployment(args)
