@@ -70,6 +70,7 @@ def mass_time_series(protos, query):
     return args    
 
 def plot_pu_in_rxtrs(protos, args):
+    plt.clf()
     plt.plot(*args)
     plt.title('Inventory of $^{239}Pu$ in All Reactors')
     plt.ylabel('Mass (kg)')
@@ -79,6 +80,7 @@ def plot_pu_in_rxtrs(protos, args):
     plt.savefig('figs/pu_in_rxtrs.png')
 
 def plot_pu_in_fabs(protos, args):
+    plt.clf()
     plt.plot(*args)
     plt.title('Inventory of $^{239}Pu$ in Recycled-Fuel Fabrication Facilities')
     plt.ylabel('Mass (kg)')
@@ -88,6 +90,7 @@ def plot_pu_in_fabs(protos, args):
     plt.savefig('figs/pu_in_fabs.png')
 
 def plot_mass_in_repos(protos, args):
+    plt.clf()
     plt.plot(*args)
     plt.title('Total Inventory of Material in Repositories')
     plt.ylabel('Mass (kg)')
@@ -96,7 +99,18 @@ def plot_mass_in_repos(protos, args):
 #    plt.show()
     plt.savefig('figs/mass_in_repos.png')
 
+def plot_pu_in_repos(protos, args):
+    plt.clf()
+    plt.plot(*args)
+    plt.title('Inventory of $^{239}Pu$ in Repositories')
+    plt.ylabel('Mass (kg)')
+    plt.xlabel('Timesteps (months)')
+    plt.legend(list(protos.keys()))
+#    plt.show()
+    plt.savefig('figs/pu_in_repos.png')
+
 def plot_base_rxtr_deployment(args):
+    plt.clf()
     plt.plot(*args)
     plt.title('Number of Reators')
     plt.xlabel('Timesteps (months)')
@@ -137,8 +151,10 @@ if __name__ == "__main__":
     plot_pu_in_fabs(fabs, args)
 
     print("Repos")
-    args = mass_time_series(fabs, query_mass)
+    args = mass_time_series(repos, query_mass)
     plot_mass_in_repos(repos, args)
+    args = mass_time_series(repos, query_239)
+    plot_pu_in_repos(repos, args)
 
     args = mass_time_series({"base_case": ["reactor"]}, query_built)
     args[1] = np.cumsum(args[1])
