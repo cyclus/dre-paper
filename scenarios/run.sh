@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dbs="base_case military tariff"
+dbs="base_case base_case_cbc military military_cbc tariff tariff_cbc"
 
 for db in $dbs; do
     echo running $db
