@@ -3,7 +3,7 @@
     <duration>600</duration>
     <startmonth>1</startmonth>
     <startyear>2015</startyear>
-    <simhandle>dre_tariffs</simhandle>
+    <simhandle>tariff</simhandle>
   </control>
 
   <archetypes>

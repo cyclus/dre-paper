@@ -3,7 +3,7 @@
     <duration>600</duration>
     <startmonth>1</startmonth>
     <startyear>2015</startyear>
-    <simhandle>dre_base</simhandle>
+    <simhandle>military</simhandle>
   </control>
 
   <archetypes>
