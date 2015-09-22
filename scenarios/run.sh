@@ -1,6 +1,7 @@
 #!/bin/bash
 
 run() {
+    echo $1
     for db in $1; do
 	echo running $db
 	rm $db.sqlite
@@ -8,9 +9,7 @@ run() {
     done
 }
 
-dbs="base_case military tariff outage"
-run $dbs
+run "base_case military tariff outage"
 
-# dbs="base_case_cbc military_cbc tariff_cbc"
-# run $dbs
+# run "base_case_cbc military_cbc tariff_cbc"
 
