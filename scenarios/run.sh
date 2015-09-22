@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 run() {
     for db in $1; do
 	echo running $db
@@ -9,9 +8,9 @@ run() {
     done
 }
 
-dbs="base_case military tariff outage "
-run dbs
+dbs="base_case military tariff outage"
+run $dbs
 
 # dbs="base_case_cbc military_cbc tariff_cbc"
-# run dbs
+# run $dbs
 
