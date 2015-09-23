@@ -130,10 +130,6 @@
           <number>1</number>
         </entry>
         <entry>
-          <prototype>reactor</prototype>
-          <number>20</number>
-        </entry>
-        <entry>
           <prototype>fuelfab</prototype>
           <number>1</number>
         </entry>
@@ -158,8 +154,48 @@
             <val>reactor</val>
             <val>reactor</val>
             <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
           </prototypes>
           <n_build>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
             <val>1</val>
             <val>1</val>
             <val>1</val>
@@ -171,6 +207,26 @@
             <val>1</val>          
           </n_build>
           <build_times>
+            <val>1</val>
+            <val>2</val>
+            <val>3</val>
+            <val>4</val>
+            <val>5</val>
+            <val>6</val>
+            <val>7</val>
+            <val>8</val>
+            <val>9</val>
+            <val>10</val>
+            <val>11</val>
+            <val>12</val>
+            <val>13</val>
+            <val>14</val>
+            <val>15</val>
+            <val>16</val>
+            <val>17</val>
+            <val>18</val>
+            <val>19</val>
+            <val>20</val>
             <val>60</val>
             <val>120</val>
             <val>180</val>
