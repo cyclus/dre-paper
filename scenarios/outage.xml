@@ -76,7 +76,7 @@
               </item>
           </streams>
           
-          <pauses><val><first>250</first><second>300</second></val></pauses>
+          <pauses><val><first>250</first><second>50</second></val></pauses>
 
           <leftover_commod>waste</leftover_commod>
           <throughput>1e100</throughput>
