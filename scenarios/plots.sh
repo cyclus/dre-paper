@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dbs="base_case military tariff"
+dbs="base_case military tariff outage"
 
 for db in $dbs; do
     echo $db.sqlite "-> $db"_flow.png
