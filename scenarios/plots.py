@@ -49,7 +49,7 @@ def post_dbs(dbs):
         cmd = "cyan -db {}.sqlite post".format(name)
         subprocess.call(cmd.split(), shell=False)
 
-def mass_time_series(protos, query):
+def time_series(protos, query):
     args = []
     for name, kinds in protos.items():
         con = sql.connect('{}.sqlite'.format(name))
@@ -117,15 +117,8 @@ def plot_base_rxtr_deployment(args):
     plt.ylim(0, 30)
 #    plt.show()
     plt.savefig('figs/base_rxtr_deploy.png') 
-   
 
-if __name__ == "__main__":
-    print("Postprocessing dbs")
-    dbs = ['base_case', 'military', 'tariff', 'outage']
-    post_dbs(dbs)
-
-    style.use('bmh')
-
+def primary():   
     print("Rxtrs")
     rxtrs = {
         'base_case': ['reactor'],
@@ -133,7 +126,7 @@ if __name__ == "__main__":
         'tariff': ['reactor', 'b_reactor'],
         'outage': ['reactor'],
     }
-    args = mass_time_series(rxtrs, query_239)
+    args = time_series(rxtrs, query_239)
     plot_pu_in_rxtrs(rxtrs, args)
 
     print("Fabs")
@@ -143,7 +136,7 @@ if __name__ == "__main__":
         'tariff': ['fuelfab'],
         'outage': ['fuelfab'],
     }
-    args = mass_time_series(fabs, query_239)
+    args = time_series(fabs, query_239)
     plot_pu_in_fabs(fabs, args)
 
     print("Repos")
@@ -153,11 +146,22 @@ if __name__ == "__main__":
         'outage': ['repo'],
         'tariff': ['repo', 'b_repo'],
     }
-    args = mass_time_series(repos, query_mass)
+    args = time_series(repos, query_mass)
     plot_mass_in_repos(repos, args)
-    args = mass_time_series(repos, query_239)
+    args = time_series(repos, query_239)
     plot_pu_in_repos(repos, args)
 
-    args = mass_time_series({"base_case": ["reactor"]}, query_built)
+    args = time_series({"base_case": ["reactor"]}, query_built)
     args[1] = np.cumsum(args[1])
     plot_base_rxtr_deployment(args)
+
+
+
+if __name__ == "__main__":
+    print("Postprocessing dbs")
+    dbs = ['base_case', 'military', 'tariff', 'outage']
+    post_dbs(dbs)
+
+    style.use('bmh')
+    
+    primary()
