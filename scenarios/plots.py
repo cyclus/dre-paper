@@ -116,41 +116,43 @@ def plot_base_rxtr_deployment(args):
     plt.xlabel('Timesteps (months)')
     plt.ylim(0, 30)
 #    plt.show()
-    plt.savefig('figs/base_rxtr_deploy.png')
-    
-rxtrs = {
-    'base_case': ['reactor'],
-    'military': ['reactor'],
-    'tariff': ['reactor', 'b_reactor'],
-}
-
-fabs = {
-    'base_case': ['fuelfab'],
-    'military': ['fuelfab'],
-    'tariff': ['fuelfab'],
-}
-
-repos = {
-    'base_case': ['repo'],
-    'military': ['repo'],
-    'tariff': ['repo', 'b_repo'],
-}
+    plt.savefig('figs/base_rxtr_deploy.png') 
+   
 
 if __name__ == "__main__":
     print("Postprocessing dbs")
-    post_dbs(rxtrs.keys())
+    dbs = ['base_case', 'military', 'tariff', 'outage']
+    post_dbs(dbs)
 
     style.use('bmh')
 
     print("Rxtrs")
+    rxtrs = {
+        'base_case': ['reactor'],
+        'military': ['reactor'],
+        'tariff': ['reactor', 'b_reactor'],
+        'outage': ['reactor'],
+    }
     args = mass_time_series(rxtrs, query_239)
     plot_pu_in_rxtrs(rxtrs, args)
 
     print("Fabs")
+    fabs = {
+        'base_case': ['fuelfab'],
+        'military': ['fuelfab'],
+        'tariff': ['fuelfab'],
+        'outage': ['fuelfab'],
+    }
     args = mass_time_series(fabs, query_239)
     plot_pu_in_fabs(fabs, args)
 
     print("Repos")
+    repos = {
+        'base_case': ['repo'],
+        'military': ['repo'],
+        'outage': ['repo'],
+        'tariff': ['repo', 'b_repo'],
+    }
     args = mass_time_series(repos, query_mass)
     plot_mass_in_repos(repos, args)
     args = mass_time_series(repos, query_239)
