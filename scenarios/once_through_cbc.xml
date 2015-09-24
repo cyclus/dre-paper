@@ -3,7 +3,8 @@
     <duration>600</duration>
     <startmonth>1</startmonth>
     <startyear>2015</startyear>
-    <simhandle>once_through</simhandle>
+    <simhandle>once_through_cbc</simhandle>
+    <solver><config><coin-or><timeout>3599</timeout></coin-or></config></solver>
   </control>
 
   <archetypes>
