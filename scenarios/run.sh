@@ -15,6 +15,7 @@ run() {
 	echo "$db" >> $timing_file
 	cat out | tail -n 3 >> $timing_file
 	rm out
+	cyan -db $db.sqlite post
     done
 }
 
