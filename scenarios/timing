@@ -7,8 +7,8 @@ real	0m0.937s
 user	0m0.921s
 sys	0m0.016s
 military
-real	0m1.489s
-user	0m1.471s
+real	0m1.399s
+user	0m1.382s
 sys	0m0.016s
 tariff
 real	0m1.689s
@@ -27,9 +27,9 @@ real	0m1.542s
 user	0m1.521s
 sys	0m0.020s
 military_cbc
-real	0m2.567s
-user	0m2.526s
-sys	0m0.040s
+real	0m2.636s
+user	0m2.583s
+sys	0m0.052s
 tariff_cbc
 real	0m2.815s
 user	0m2.770s

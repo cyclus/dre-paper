@@ -59,7 +59,7 @@
         <fuel_outrecipes> <val>spent_uox</val>  <val>spent_mox</val> <val>spent_mox</val></fuel_outrecipes>
         <fuel_incommods>  <val>uox</val>        <val>mox</val> <val>mil_mox</val></fuel_incommods>
         <fuel_outcommods> <val>spent_uox</val>  <val>spent_mox</val> <val>spent_mox</val></fuel_outcommods>
-        <fuel_prefs>      <val>1.0</val>        <val>3.0</val> <val>2.0</val></fuel_prefs>
+        <fuel_prefs>      <val>5.0</val>        <val>15.0</val> <val>10.0</val></fuel_prefs>
 
         <cycle_time>17</cycle_time>
         <refuel_time>2</refuel_time>
