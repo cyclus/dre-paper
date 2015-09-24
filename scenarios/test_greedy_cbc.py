@@ -45,6 +45,8 @@ protos = "reactor b_reactor"
 
 msg = """Case: {}, Commod: {}, Proto: {}
 Different at t={}
+Greedy vals: {}
+Cbc vals:    {}
 """
 
 def main():
@@ -59,7 +61,10 @@ def main():
                 cbc = flow(cdb, commod, proto)
                 if not np.allclose(greedy, cbc):
                     times = np.where(np.abs(greedy - cbc) > 1e-2)[0]
-                    print(msg.format(case, commod, proto, times))
+                    print(msg.format(case, commod, proto, 
+                                     times,
+                                     greedy[times].flatten(), 
+                                     cbc[times].flatten()))
 
 if __name__ == "__main__":
     main()
