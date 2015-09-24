@@ -6,7 +6,7 @@ run() {
     echo $1
     for db in $1; do
 	echo running $db
-	rm $db.sqlite
+	rm -f $db.sqlite
 	cyclus $db.xml -o $db.sqlite &> out
 	rm out
     done
