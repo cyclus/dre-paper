@@ -44,13 +44,29 @@ GROUP BY time
 WHERE tl.simid=?
 """
 
+query_receiver_flow = """SELECT tl.Time AS Time,TOTAL(sub.qty) AS Quantity
+FROM timelist as tl
+LEFT JOIN (
+SELECT t.simid AS simid,t.time as time,SUM(c.massfrac*r.quantity) as qty
+FROM transactions AS t
+JOIN resources as r ON t.resourceid=r.resourceid AND r.simid=t.simid
+JOIN agents as send ON t.senderid=send.agentid AND send.simid=t.simid
+JOIN agents as recv ON t.receiverid=recv.agentid AND recv.simid=t.simid
+JOIN compositions as c ON c.qualid=r.qualid AND c.simid=r.simid
+WHERE t.simid=?  AND recv.prototype=? AND t.commodity=?  
+GROUP BY t.time
+) AS sub ON tl.time=sub.time AND tl.simid=sub.simid
+WHERE tl.simid=?
+GROUP BY tl.Time;
+"""
+
 def post_dbs(dbs):
     for name in dbs:
         cmd = "cyan -db {}.sqlite post".format(name)
         subprocess.call(cmd.split(), shell=False)
 
 def time_series(protos, query):
-    args = []
+    series = []
     for name, kinds in protos.items():
         con = sql.connect('{}.sqlite'.format(name))
         cur = con.cursor()
@@ -60,14 +76,16 @@ def time_series(protos, query):
         
         x, y = None, None
         for kind in kinds:
-            data = np.array(cur.execute(query, [simid, kind, simid]).fetchall())
+            args = [simid, kind, simid] if not isinstance(kind, list) else \
+                [simid] + kind + [simid]
+            data = np.array(cur.execute(query, args).fetchall())
             x = data[:, 0] if x is None else x
             if y is not None:
                 y += data[:, 1]
             else:
                 y = data[:, 1]
-        args.extend([x, y])
-    return args    
+        series.extend([x, y])
+    return series
 
 def plot_pu_in_rxtrs(protos, args):
     plt.clf()
@@ -118,6 +136,15 @@ def plot_base_rxtr_deployment(args):
 #    plt.show()
     plt.savefig('figs/base_rxtr_deploy.png') 
 
+def plot_reciever_flow(receivers, args):
+    plt.clf()
+    plt.plot(*args)
+    plt.legend(receivers.values()[0])
+    plt.title('Flow of Commodities')
+    plt.xlabel('Timesteps (months)')
+#    plt.show()
+    plt.savefig('figs/receiver_flow.png') 
+
 def primary():   
     print("Rxtrs")
     rxtrs = {
@@ -155,7 +182,15 @@ def primary():
     args[1] = np.cumsum(args[1])
     plot_base_rxtr_deployment(args)
 
-
+def tariff():
+    print('Tariff BReactor Flows')
+    recievers = {'b_reactor': ['uox', 'mox', 'b_uox']}
+    # recievers = {'b_reactor': ['b_uox', 'mox']}
+    args = []
+    for proto, commods in recievers.items():
+        for commod in commods:
+            args += time_series({'tariff': [[proto, commod]]}, query_receiver_flow)
+    plot_reciever_flow(recievers, args)
 
 if __name__ == "__main__":
     print("Postprocessing dbs")
@@ -164,4 +199,5 @@ if __name__ == "__main__":
 
     style.use('bmh')
     
-    primary()
+    # primary()
+    tariff()           
