@@ -8,7 +8,7 @@ import numpy as np
 from plots import post_dbs
 
 query = """
-SELECT tl.Time AS Time,TOTAL(sub.qty) AS Quantity
+SELECT TOTAL(sub.qty) AS Quantity
 FROM timelist as tl
 LEFT JOIN (
 	SELECT t.simid AS simid,t.time as time,SUM(c.massfrac*r.quantity) as qty
@@ -43,6 +43,10 @@ cases = "base_case once_through military tariff outage"
 commods = "uox mox b_uox mil_mox"
 protos = "reactor b_reactor"
 
+msg = """Case: {}, Commod: {}, Proto: {}
+Different at t={}
+"""
+
 def main():
     for case in cases.split():
         print('Testing {}'.format(case))
@@ -53,10 +57,9 @@ def main():
                 post_dbs([gdb, cdb])
                 greedy = flow(gdb, commod, proto)
                 cbc = flow(cdb, commod, proto)
-                msg = "Case: {}, Commod: {}, Proto: {}".format(
-                    case, commod, proto)
-                np.testing.assert_array_almost_equal(
-                    greedy, cbc, err_msg=msg, verbose=True)
+                if not np.allclose(greedy, cbc):
+                    times = np.where(np.abs(greedy - cbc) > 1e-2)[0]
+                    print(msg.format(case, commod, proto, times))
 
 if __name__ == "__main__":
     main()
