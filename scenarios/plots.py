@@ -182,30 +182,10 @@ def primary():
     args[1] = np.cumsum(args[1])
     plot_base_rxtr_deployment(args)
 
-def plot_tariff_flow(receivers, args):
-    plt.clf()
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    lines = ax.plot(*args)
-    
-    # words
-    ax.legend(receivers.values()[0])
-    fig.suptitle('Cumulative Refuelings of Reactors in the B Region')
-    ax.set_xlabel('Timesteps (month)')
-    ax.set_ylabel('Quantity (kg)')
-
-    # point to tariff changes
-    x, y = 150, 1.5e6
-    ax.annotate('$t_0$', xy=(x, y - 5.5e5), xytext=(x, y + .1e6), 
-                arrowprops=dict(width=2.5, headwidth=8))
-    x, y = 300, 1.7e6
-    ax.annotate('$t_1$', xy=(x, y - 5.5e5), xytext=(x, y + .1e6), 
-                arrowprops=dict(width=2.5, headwidth=8))
-
-    fig.savefig('figs/tariff_b_reactor_flow.png') 
-
 def tariff():
     print('Tariff BReactor Flows')
+    
+    # data
     recievers = {'b_reactor': ['uox', 'mox', 'b_uox']}
     args = []
     for proto, commods in recievers.items():
@@ -214,7 +194,72 @@ def tariff():
             # 12th timestep is last time a b_reactor gets a full core
             # (only show refuels, not initial cores)
             args += [x[11:], np.cumsum(y[11:])]
-    plot_tariff_flow(recievers, args)
+
+    # plotting
+    plt.clf()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    lines = ax.plot(*args)
+
+    # point to tariff changes
+    x, y = 150, 1.5e6
+    ax.annotate('$t_0$', xy=(x, y - 5.5e5), xytext=(x, y + .1e6), 
+                arrowprops=dict(width=2.5, headwidth=8))
+    x, y = 300, 1.7e6
+    ax.annotate('$t_1$', xy=(x, y - 5.5e5), xytext=(x, y + .1e6), 
+                arrowprops=dict(width=2.5, headwidth=8))
+    
+    # wordsand layout
+    ax.legend(recievers.values()[0])
+    ax.set_xlabel('Timesteps (month)')
+    ax.set_ylabel('Quantity (kg)')
+    fig.tight_layout()
+
+    fig.savefig('figs/tariff_b_reactor_flow.png') 
+
+def outage():
+    print('Outage Inventories')
+
+    # data
+    protos = ['reactor', 'separations', 'fuelfab']
+    args1, args2, args3 = [], [], []
+    zoomx, zoomy = 200, 400
+    for proto in protos:
+        args1 += time_series({'base_case': [proto]}, query_239)
+        x, y = time_series({'outage': [proto]}, query_239)
+        args2 += [x, y]
+        args3 += [x[zoomx:zoomy], y[zoomx:zoomy]]
+
+    # plotting
+    plt.clf()
+    fig = plt.figure()
+    
+    # # base case on top, outage on bottom
+    # ax1 = plt.subplot2grid((2, 1), (0, 0))
+    # ax1.plot(*args1)
+    # ax1.set_xticklabels([])
+    # ax2 = plt.subplot2grid((2, 1), (1, 0), sharey=ax1)
+    # ax2.plot(*args2)
+
+    # base case on top, outage on bottom, closeup on right    
+    ax1 = plt.subplot2grid((2, 3), (0, 0), colspan=2)
+    ax1.plot(*args1)
+    ax1.set_xticklabels([])
+    ax2 = plt.subplot2grid((2, 3), (1, 0), colspan=2, sharey=ax1)
+    ax2.plot(*args2)
+    ax3 = plt.subplot2grid((2, 3), (0, 2), rowspan=2)
+    ax3.plot(*args3)
+    ticks = [5000 * x for x in range(1, 5)]
+    ax3.set_yticklabels([])
+
+    # words and layout
+    ax1.legend(protos, loc='upper left')
+    fig.text(0.015, 0.65, 'Inventory of $^{239}Pu$ (kg)', rotation='vertical')
+    fig.text(0.45, 0.015, 'Timesteps (month)')    
+    fig.tight_layout()
+    fig.subplots_adjust(left=0.13, bottom=0.09)
+
+    fig.savefig('figs/outage_invs.png') 
 
 if __name__ == "__main__":
     print("Postprocessing dbs")
@@ -225,3 +270,4 @@ if __name__ == "__main__":
     
     primary()
     tariff()           
+    outage()
