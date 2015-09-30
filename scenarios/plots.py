@@ -90,10 +90,11 @@ def time_series(protos, query):
 def plot_pu_in_rxtrs(protos, args):
     plt.clf()
     plt.plot(*args)
-    plt.title('Inventory of $^{239}Pu$ in All Reactors')
-    plt.ylabel('Mass (kg)')
+    # plt.title('Inventory in All Reactors')
+    plt.ylabel('Mass of $^{239}Pu$ (kg)')
     plt.xlabel('Timesteps (months)')
     plt.legend(list(protos.keys()))
+    plt.tight_layout()
 #    plt.show()
     plt.savefig('figs/pu_in_rxtrs.png')
 
@@ -253,7 +254,7 @@ def outage():
 
     # words and layout
     ax1.legend(protos, loc='upper left')
-    fig.text(0.015, 0.65, 'Inventory of $^{239}Pu$ (kg)', rotation='vertical')
+    fig.text(0.015, 0.65, 'Mass of $^{239}Pu$ (kg)', rotation='vertical')
     fig.text(0.45, 0.015, 'Timesteps (month)')    
     fig.tight_layout()
     fig.subplots_adjust(left=0.13, bottom=0.09)
