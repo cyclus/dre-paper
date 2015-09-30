@@ -120,11 +120,10 @@ def plot_mass_in_repos(protos, args):
 def plot_pu_in_repos(protos, args):
     plt.clf()
     plt.plot(*args)
-    plt.title('Inventory of $^{239}Pu$ in Repositories')
-    plt.ylabel('Mass (kg)')
+    plt.ylabel('Mass of $^{239}Pu$ (kg)')
     plt.xlabel('Timesteps (months)')
-    plt.legend(list(protos.keys()))
-#    plt.show()
+    plt.legend(list(protos.keys()), loc='upper left')
+    plt.tight_layout()
     plt.savefig('figs/pu_in_repos.png')
 
 def plot_base_rxtr_deployment(args):
@@ -263,7 +262,7 @@ def outage():
 
 if __name__ == "__main__":
     print("Postprocessing dbs")
-    dbs = ['base_case', 'military', 'tariff', 'outage']
+    dbs = ['base_case', 'military', 'tariff', 'outage', 'once_through']
     post_dbs(dbs)
 
     style.use('bmh')
