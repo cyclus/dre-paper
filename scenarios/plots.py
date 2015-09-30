@@ -127,15 +127,6 @@ def plot_pu_in_repos(protos, args):
     plt.tight_layout()
     plt.savefig('figs/pu_in_repos.png')
 
-def plot_base_rxtr_deployment(args):
-    plt.clf()
-    plt.plot(*args)
-    plt.title('Number of Reators')
-    plt.xlabel('Timesteps (months)')
-    plt.ylim(0, 30)
-#    plt.show()
-    plt.savefig('figs/base_rxtr_deploy.png') 
-
 def plot_reciever_flow(receivers, args):
     plt.clf()
     plt.plot(*args)
@@ -145,7 +136,28 @@ def plot_reciever_flow(receivers, args):
 #    plt.show()
     plt.savefig('figs/{}_flow.png'.format(receivers.keys()[0])) 
 
-def primary():   
+def invs():
+    print('Inventories across Sims')
+    rxtrs = {
+        'base_case': ['reactor'],
+        'military': ['reactor'],
+        'tariff': ['reactor', 'b_reactor'],
+        'outage': ['reactor'],
+    }
+    args = time_series(rxtrs, query_239)
+    plot_pu_in_rxtrs(rxtrs, args)
+
+    print("Repos")
+    repos = {
+        'base_case': ['repo'],
+        'military': ['repo'],
+        'outage': ['repo'],
+        'tariff': ['repo', 'b_repo'],
+    }
+    args = time_series(repos, query_239)
+    plot_pu_in_repos(repos, args)
+
+def explore():   
     print("Rxtrs")
     rxtrs = {
         'base_case': ['reactor'],
@@ -178,9 +190,24 @@ def primary():
     args = time_series(repos, query_239)
     plot_pu_in_repos(repos, args)
 
-    args = time_series({"base_case": ["reactor"]}, query_built)
-    args[1] = np.cumsum(args[1])
-    plot_base_rxtr_deployment(args)
+def deployment():
+    print('Rxtr Deployment')
+
+    # data for individual and cumulative deployments
+    x, y = time_series({"base_case": ["reactor"]}, query_built)
+    args = []
+    args += [x, np.cumsum(y)]
+    args += [x[np.where(y > 0)], np.cumsum(y[np.where(y > 0)]), 'o']
+
+    # plot
+    plt.clf()
+    plt.plot(*args)
+    
+    # words and formatting
+    plt.ylabel('Number of Reactors')
+    plt.xlabel('Timesteps (month)')
+    plt.tight_layout()
+    plt.savefig('figs/rxtr_deploy.png') 
 
 def tariff():
     print('Tariff BReactor Flows')
@@ -268,6 +295,8 @@ if __name__ == "__main__":
 
     style.use('bmh')
     
-    primary()
+    explore()
+    deployment()
+    invs()
     tariff()           
     outage()
