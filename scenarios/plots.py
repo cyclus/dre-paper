@@ -143,7 +143,7 @@ def plot_reciever_flow(receivers, args):
     plt.title('Flow of Commodities')
     plt.xlabel('Timesteps (months)')
 #    plt.show()
-    plt.savefig('figs/receiver_flow.png') 
+    plt.savefig('figs/{}_flow.png'.format(receivers.keys()[0])) 
 
 def primary():   
     print("Rxtrs")
@@ -182,15 +182,39 @@ def primary():
     args[1] = np.cumsum(args[1])
     plot_base_rxtr_deployment(args)
 
+def plot_tariff_flow(receivers, args):
+    plt.clf()
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    lines = ax.plot(*args)
+    
+    # words
+    ax.legend(receivers.values()[0])
+    fig.suptitle('Cumulative Refuelings of Reactors in the B Region')
+    ax.set_xlabel('Timesteps (month)')
+    ax.set_ylabel('Quantity (kg)')
+
+    # point to tariff changes
+    x, y = 150, 1.5e6
+    ax.annotate('$t_0$', xy=(x, y - 5.5e5), xytext=(x, y + .1e6), 
+                arrowprops=dict(width=2.5, headwidth=8))
+    x, y = 300, 1.7e6
+    ax.annotate('$t_1$', xy=(x, y - 5.5e5), xytext=(x, y + .1e6), 
+                arrowprops=dict(width=2.5, headwidth=8))
+
+    fig.savefig('figs/tariff_b_reactor_flow.png') 
+
 def tariff():
     print('Tariff BReactor Flows')
     recievers = {'b_reactor': ['uox', 'mox', 'b_uox']}
-    # recievers = {'b_reactor': ['b_uox', 'mox']}
     args = []
     for proto, commods in recievers.items():
         for commod in commods:
-            args += time_series({'tariff': [[proto, commod]]}, query_receiver_flow)
-    plot_reciever_flow(recievers, args)
+            x, y = time_series({'tariff': [[proto, commod]]}, query_receiver_flow)
+            # 12th timestep is last time a b_reactor gets a full core
+            # (only show refuels, not initial cores)
+            args += [x[11:], np.cumsum(y[11:])]
+    plot_tariff_flow(recievers, args)
 
 if __name__ == "__main__":
     print("Postprocessing dbs")
@@ -199,5 +223,5 @@ if __name__ == "__main__":
 
     style.use('bmh')
     
-    # primary()
+    primary()
     tariff()           
