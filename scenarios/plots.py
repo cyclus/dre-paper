@@ -60,6 +60,22 @@ WHERE tl.simid=?
 GROUP BY tl.Time;
 """
 
+query_sender_flow = """SELECT tl.Time AS Time,TOTAL(sub.qty) AS Quantity
+FROM timelist as tl
+LEFT JOIN (
+SELECT t.simid AS simid,t.time as time,SUM(c.massfrac*r.quantity) as qty
+FROM transactions AS t
+JOIN resources as r ON t.resourceid=r.resourceid AND r.simid=t.simid
+JOIN agents as send ON t.senderid=send.agentid AND send.simid=t.simid
+JOIN agents as recv ON t.receiverid=recv.agentid AND recv.simid=t.simid
+JOIN compositions as c ON c.qualid=r.qualid AND c.simid=r.simid
+WHERE t.simid=? AND send.prototype=?  AND t.commodity=?  
+GROUP BY t.time
+) AS sub ON tl.time=sub.time AND tl.simid=sub.simid
+WHERE tl.simid=?
+GROUP BY tl.Time;
+"""
+
 def post_dbs(dbs):
     for name in dbs:
         cmd = "cyan -db {}.sqlite post".format(name)
@@ -209,6 +225,36 @@ def deployment():
     plt.tight_layout()
     plt.savefig('figs/rxtr_deploy.png') 
 
+def flows():
+    print('flows out of producers')
+
+    # data
+    cases = ['base_case', 'military', 'tariff', 'outage']
+    sources = {"mox": [["fuelfab", "mox"]], 
+               "uox": [["b_uox", "b_uox"], 
+                       ["enrichment", "uox"]]}
+    for commod, query_args in sources.items():
+        plt.clf()
+
+        for case in cases:
+            y = None
+            for query_arg in query_args:
+                if y is not None:
+                    y += time_series({case: [query_arg]}, query_sender_flow)[1]
+                else:
+                    x, y = time_series({case: [query_arg]}, query_sender_flow)
+            if case == 'base_case':
+                plt.plot(x, np.cumsum(y), '--', zorder=10)
+            else:
+                plt.plot(x, np.cumsum(y))
+            
+        # plot
+        plt.ylabel('{} Flow (kg)'.format(commod.upper()))
+        plt.xlabel('Timesteps (month)')
+        plt.legend(cases, loc='upper left')
+        plt.tight_layout()
+        plt.savefig('figs/{}_flow.png'.format(commod))
+
 def tariff():
     print('Tariff BReactor Flows')
     
@@ -300,3 +346,4 @@ if __name__ == "__main__":
     invs()
     tariff()           
     outage()
+    flows()
