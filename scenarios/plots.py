@@ -221,7 +221,7 @@ def outage():
     print('Outage Inventories')
 
     # data
-    protos = ['reactor', 'separations', 'fuelfab']
+    protos = ['fuelfab', 'separations', 'reactor']
     args1, args2, args3 = [], [], []
     zoomx, zoomy = 200, 400
     for proto in protos:
