@@ -34,6 +34,7 @@
         <outcommod>mil_mox</outcommod>
         <outrecipe>mil_mox</outrecipe>
         <throughput>30001</throughput>
+        <inventory_size>300001</inventory_size>
       </Source>
     </config>
   </facility>
@@ -247,7 +248,7 @@
             <val>420</val>
             <val>480</val>
             <val>540</val>          
-            <val>200</val>          
+            <val>250</val>          
           </build_times>
         </DeployInst>
       </config>
