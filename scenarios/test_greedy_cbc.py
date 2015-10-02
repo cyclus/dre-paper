@@ -7,18 +7,33 @@ import numpy as np
 
 from plots import post_dbs
 
-query = """
-SELECT TOTAL(sub.qty) AS Quantity
+query_receiver_flow = """SELECT TOTAL(sub.qty) AS Quantity
 FROM timelist as tl
 LEFT JOIN (
-	SELECT t.simid AS simid,t.time as time,SUM(c.massfrac*r.quantity) as qty
-	FROM transactions AS t
-	JOIN resources as r ON t.resourceid=r.resourceid AND r.simid=t.simid
-	JOIN agents as send ON t.senderid=send.agentid AND send.simid=t.simid
-	JOIN agents as recv ON t.receiverid=recv.agentid AND recv.simid=t.simid
-	JOIN compositions as c ON c.qualid=r.qualid AND c.simid=r.simid
-	WHERE t.simid=?  AND recv.prototype=? AND t.commodity=?  
-	GROUP BY t.time
+SELECT t.simid AS simid,t.time as time,SUM(c.massfrac*r.quantity) as qty
+FROM transactions AS t
+JOIN resources as r ON t.resourceid=r.resourceid AND r.simid=t.simid
+JOIN agents as send ON t.senderid=send.agentid AND send.simid=t.simid
+JOIN agents as recv ON t.receiverid=recv.agentid AND recv.simid=t.simid
+JOIN compositions as c ON c.qualid=r.qualid AND c.simid=r.simid
+WHERE t.simid=?  AND recv.prototype=? AND t.commodity=?  
+GROUP BY t.time
+) AS sub ON tl.time=sub.time AND tl.simid=sub.simid
+WHERE tl.simid=?
+GROUP BY tl.Time;
+"""
+
+query_sender_flow = """SELECT TOTAL(sub.qty) AS Quantity
+FROM timelist as tl
+LEFT JOIN (
+SELECT t.simid AS simid,t.time as time,SUM(c.massfrac*r.quantity) as qty
+FROM transactions AS t
+JOIN resources as r ON t.resourceid=r.resourceid AND r.simid=t.simid
+JOIN agents as send ON t.senderid=send.agentid AND send.simid=t.simid
+JOIN agents as recv ON t.receiverid=recv.agentid AND recv.simid=t.simid
+JOIN compositions as c ON c.qualid=r.qualid AND c.simid=r.simid
+WHERE t.simid=? AND send.prototype=?  AND t.commodity=?  
+GROUP BY t.time
 ) AS sub ON tl.time=sub.time AND tl.simid=sub.simid
 WHERE tl.simid=?
 GROUP BY tl.Time;
@@ -30,7 +45,7 @@ def flow(db, commod, proto):
     info = cur.execute('SELECT * from INFO').fetchall()
     simid = info[0][0]
     args = [simid, proto, commod, simid]
-    data = np.array(cur.execute(query, args).fetchall())
+    data = np.array(cur.execute(query_sender_flow, args).fetchall())
     con.close()
     return data
 
@@ -39,9 +54,10 @@ def post_dbs(dbs):
         cmd = "cyan -db {} post".format(name)
         subprocess.call(cmd.split(), shell=False)
 
-cases = "base_case once_through military tariff outage"
-commods = "uox mox b_uox mil_mox"
-protos = "reactor b_reactor"
+# cases = "base_case once_through military tariff outage"
+cases = "base_case"
+commods = "uox mox spent_uox spent_mox natl_u depleted_u sep_stream waste mil_mox b_uox"
+protos = "enrichment reactor separations fuelfab repo b_reactor"
 
 msg = """Case: {}, Commod: {}, Proto: {}
 Different at t={}
