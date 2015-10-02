@@ -19,16 +19,6 @@
   </archetypes>
 
   <facility>
-    <name>mine</name>
-    <config>
-      <Source>
-        <outcommod>natl_u</outcommod>
-        <outrecipe>natl_u</outrecipe>
-      </Source>
-    </config>
-  </facility>
-
-  <facility>
     <name>enrichment</name>
     <config>
       <Enrichment>
@@ -37,6 +27,7 @@
         <product_commod>uox</product_commod>
         <tails_assay>0.003</tails_assay>
         <tails_commod>depleted_u</tails_commod>
+        <initial_feed>1e100</initial_feed>
       </Enrichment>
     </config>
   </facility>
@@ -122,10 +113,6 @@
     <institution>
       <name>SingleInstitution</name>
       <initialfacilitylist>
-        <entry>
-          <prototype>mine</prototype>
-          <number>1</number>
-        </entry>
         <entry>
           <prototype>enrichment</prototype>
           <number>1</number>
