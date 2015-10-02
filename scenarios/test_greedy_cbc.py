@@ -45,7 +45,7 @@ def flow(db, commod, proto):
     info = cur.execute('SELECT * from INFO').fetchall()
     simid = info[0][0]
     args = [simid, proto, commod, simid]
-    data = np.array(cur.execute(query_sender_flow, args).fetchall())
+    data = np.array(cur.execute(query_receiver_flow, args).fetchall())
     con.close()
     return data
 
@@ -55,9 +55,6 @@ def post_dbs(dbs):
         subprocess.call(cmd.split(), shell=False)
 
 # cases = "base_case once_through military tariff outage"
-cases = "base_case"
-commods = "uox mox spent_uox spent_mox natl_u depleted_u sep_stream waste mil_mox b_uox"
-protos = "enrichment reactor separations fuelfab repo b_reactor"
 
 msg = """Case: {}, Commod: {}, Proto: {}
 Different at t={}
@@ -65,7 +62,7 @@ Greedy vals: {}
 Cbc vals:    {}
 """
 
-def main():
+def test(cases, commods, protos):
     for case in cases.split():
         print('Testing {}'.format(case))
         for commod in commods.split():
@@ -81,6 +78,30 @@ def main():
                                      times,
                                      greedy[times].flatten(), 
                                      cbc[times].flatten()))
+
+def main():
+    cases = "once_through base_case outage"
+
+    print ""
+    print "-" * 20
+    print "Testing cases: " + cases
+    print "-" * 20
+    print ""
+    
+    commods = "uox mox mil_mox b_uox"
+    protos = "reactor b_reactor"
+    test(cases, commods, protos)
+
+    print ""
+    print "-" * 20
+    print "Reactor Testing Complete"
+    print "-" * 20
+    print ""
+
+    commods = "uox mox spent_uox spent_mox natl_u depleted_u sep_stream waste mil_mox b_uox"
+    protos = "enrichment reactor separations fuelfab repo b_reactor"
+    test(cases, commods, protos)
+
 
 if __name__ == "__main__":
     main()
