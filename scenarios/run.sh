@@ -19,7 +19,8 @@ run() {
     done
 }
 
-run "base_case once_through military tariff outage"
+run "base_case once_through outage military tariff"
+run "base_case_cbc once_through_cbc outage_cbc military_cbc tariff_cbc"
 
-run "base_case_cbc once_through_cbc military_cbc tariff_cbc outage_cbc"
-
+# run "tariff"
+# run "tariff_cbc"

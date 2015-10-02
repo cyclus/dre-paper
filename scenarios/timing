@@ -1,40 +1,40 @@
 base_case
-real	0m1.548s
-user	0m1.531s
-sys	0m0.016s
+real	0m3.304s
+user	0m3.228s
+sys	0m0.069s
 once_through
-real	0m0.937s
-user	0m0.921s
-sys	0m0.016s
-military
-real	0m1.399s
-user	0m1.382s
-sys	0m0.016s
-tariff
-real	0m1.689s
-user	0m1.672s
-sys	0m0.016s
+real	0m2.267s
+user	0m1.829s
+sys	0m0.301s
 outage
-real	0m1.554s
-user	0m1.533s
-sys	0m0.020s
+real	0m3.324s
+user	0m2.959s
+sys	0m0.234s
+military
+real	0m3.452s
+user	0m3.393s
+sys	0m0.046s
+tariff
+real	0m3.418s
+user	0m3.350s
+sys	0m0.052s
 base_case_cbc
-real	0m2.826s
-user	0m2.737s
-sys	0m0.088s
+real	0m7.979s
+user	0m7.745s
+sys	0m0.211s
 once_through_cbc
-real	0m1.542s
-user	0m1.521s
-sys	0m0.020s
-military_cbc
-real	0m2.636s
-user	0m2.583s
-sys	0m0.052s
-tariff_cbc
-real	0m2.815s
-user	0m2.770s
-sys	0m0.044s
+real	0m5.011s
+user	0m4.854s
+sys	0m0.142s
 outage_cbc
-real	0m2.783s
-user	0m2.730s
-sys	0m0.052s
+real	0m6.508s
+user	0m6.337s
+sys	0m0.157s
+military_cbc
+real	0m6.571s
+user	0m6.392s
+sys	0m0.166s
+tariff_cbc
+real	0m6.746s
+user	0m6.551s
+sys	0m0.169s

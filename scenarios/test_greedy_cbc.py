@@ -80,7 +80,7 @@ def test(cases, commods, protos):
                                      cbc[times].flatten()))
 
 def main():
-    cases = "once_through base_case outage"
+    cases = "once_through base_case outage military tariff"
 
     print ""
     print "-" * 20
@@ -100,7 +100,7 @@ def main():
 
     commods = "uox mox spent_uox spent_mox natl_u depleted_u sep_stream waste mil_mox b_uox"
     protos = "enrichment reactor separations fuelfab repo b_reactor"
-    test(cases, commods, protos)
+    # test(cases, commods, protos)
 
 
 if __name__ == "__main__":
