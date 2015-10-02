@@ -18,16 +18,6 @@
   </archetypes>
 
   <facility>
-    <name>mine</name>
-    <config>
-      <Source>
-        <outcommod>natl_u</outcommod>
-        <outrecipe>natl_u</outrecipe>
-      </Source>
-    </config>
-  </facility>
-
-  <facility>
     <name>enrichment</name>
     <config>
       <Enrichment>
@@ -36,6 +26,7 @@
         <product_commod>uox</product_commod>
         <tails_assay>0.003</tails_assay>
         <tails_commod>depleted_u</tails_commod>
+        <initial_feed>1e100</initial_feed>
       </Enrichment>
     </config>
   </facility>
@@ -49,7 +40,6 @@
         <fuel_incommods>  <val>uox</val>        <val>mox</val></fuel_incommods>
         <fuel_outcommods> <val>spent_uox</val>  <val>spent_mox</val></fuel_outcommods>
         <fuel_prefs>      <val>1.0</val>        <val>2.0</val></fuel_prefs>
-
         <cycle_time>17</cycle_time>
         <refuel_time>2</refuel_time>
         <assem_size>30000</assem_size>
@@ -120,16 +110,8 @@
       <name>SingleInstitution</name>
       <initialfacilitylist>
         <entry>
-          <prototype>mine</prototype>
-          <number>1</number>
-        </entry>
-        <entry>
           <prototype>enrichment</prototype>
           <number>1</number>
-        </entry>
-        <entry>
-          <prototype>reactor</prototype>
-          <number>20</number>
         </entry>
         <entry>
           <prototype>repo</prototype>
@@ -139,6 +121,26 @@
       <config>
         <DeployInst>
           <prototypes>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
+            <val>reactor</val>
             <val>reactor</val>
             <val>reactor</val>
             <val>reactor</val>
@@ -158,9 +160,49 @@
             <val>1</val>
             <val>1</val>
             <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
+            <val>1</val>
             <val>1</val>          
           </n_build>
           <build_times>
+            <val>1</val>
+            <val>2</val>
+            <val>3</val>
+            <val>4</val>
+            <val>5</val>
+            <val>6</val>
+            <val>7</val>
+            <val>8</val>
+            <val>9</val>
+            <val>10</val>
+            <val>11</val>
+            <val>12</val>
+            <val>13</val>
+            <val>14</val>
+            <val>15</val>
+            <val>16</val>
+            <val>17</val>
+            <val>18</val>
+            <val>19</val>
+            <val>20</val>
             <val>60</val>
             <val>120</val>
             <val>180</val>
