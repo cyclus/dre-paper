@@ -5,7 +5,6 @@ import subprocess
 import sqlite3 as sql
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.style as style
 
 query_mass = """SELECT tl.Time AS Time,IFNULL(sub.qty, 0) AS Quantity
 FROM timelist as tl
@@ -339,7 +338,7 @@ if __name__ == "__main__":
     dbs = ['base_case', 'military', 'tariff', 'outage', 'once_through']
     post_dbs(dbs)
 
-    style.use('bmh')
+    plt.style.use('ggplot')
     
     explore()
     deployment()
