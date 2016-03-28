@@ -5,8 +5,6 @@ import subprocess
 import sqlite3 as sql
 import numpy as np
 
-from plots import post_dbs
-
 query_receiver_flow = """SELECT TOTAL(sub.qty) AS Quantity
 FROM timelist as tl
 LEFT JOIN (
@@ -54,8 +52,6 @@ def post_dbs(dbs):
         cmd = "cyan -db {} post".format(name)
         subprocess.call(cmd.split(), shell=False)
 
-# cases = "base_case once_through military tariff outage"
-
 msg = """Case: {}, Commod: {}, Proto: {}
 Different at t={}
 Greedy vals: {}
@@ -81,6 +77,7 @@ def test(cases, commods, protos):
 
 def main():
     cases = "once_through base_case outage military tariff"
+#    cases = "base_case"
 
     print ""
     print "-" * 20
@@ -100,7 +97,7 @@ def main():
 
     commods = "uox mox spent_uox spent_mox natl_u depleted_u sep_stream waste mil_mox b_uox"
     protos = "enrichment reactor separations fuelfab repo b_reactor"
-    # test(cases, commods, protos)
+    test(cases, commods, protos)
 
 
 if __name__ == "__main__":
