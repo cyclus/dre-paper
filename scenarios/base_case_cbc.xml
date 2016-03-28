@@ -4,7 +4,7 @@
     <startmonth>1</startmonth>
     <startyear>2015</startyear>
     <simhandle>base_case_cbc</simhandle>
-    <solver><config><coin-or><mps>1</mps><timeout>3599</timeout></coin-or></config></solver>
+    <solver><config><coin-or><timeout>3599</timeout></coin-or></config></solver>
   </control>
 
   <archetypes>
