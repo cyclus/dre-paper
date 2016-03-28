@@ -113,15 +113,18 @@ def plot_pu_in_rxtrs(protos, args):
 #    plt.show()
     plt.savefig('figs/pu_in_rxtrs.png')
 
-def plot_pu_in_fabs(protos, args):
+def plot_pu_in_fabs(protos, args, zoom=False):
     plt.clf()
     plt.plot(*args)
     plt.title('Inventory of $^{239}Pu$ in Recycled-Fuel Fabrication Facilities')
     plt.ylabel('Mass (kg)')
     plt.xlabel('Timesteps (months)')
     plt.legend(list(protos.keys()))
+    if zoom:
+        plt.xlim(400, 500)
+        plt.ylim(0, 2000)
 #    plt.show()
-    plt.savefig('figs/pu_in_fabs.png')
+    plt.savefig('figs/pu_in_fabs{}.png'.format('' if not zoom else '_zoom'))
 
 def plot_mass_in_repos(protos, args):
     plt.clf()
@@ -191,7 +194,8 @@ def explore():
         'outage': ['fuelfab'],
     }
     args = time_series(fabs, query_239)
-    plot_pu_in_fabs(fabs, args)
+    plot_pu_in_fabs(fabs, args, zoom=False)
+    plot_pu_in_fabs(fabs, args, zoom=True)
 
     print("Repos")
     repos = {
