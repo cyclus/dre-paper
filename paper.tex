@@ -1,15 +1,29 @@
-\input{ntfrontmatter}
+%% %%%
+%% % NT includes
+%% \documentclass{ntmanuscript}
+%% \bibliographystyle{ans}
+%% \usepackage{cite} % for ans
+%% %%%
 
-\usepackage{graphicx}
-\usepackage{booktabs} % nice rules for tables
-\usepackage{microtype} % if using PDF
-\usepackage{hyperref}
+%%%
+% ELS includes
+\documentclass[review]{elsarticle}
+\usepackage{lineno,hyperref}
+\modulolinenumbers[5]
+\journal{Nuclear Engineering and Design}
+\bibliographystyle{elsarticle-num}
+%%%
 
 %%%%% Packages and related options
 %%
 %% Note, order matters!
 %%
-\usepackage{cite} % right order for multiple entries in cite
+\usepackage[acronym,toc]{glossaries}
+\usepackage{graphicx}
+\usepackage{booktabs} % nice rules for tables
+\usepackage{microtype} % if using PDF
+\usepackage{hyperref}
+\usepackage{amsmath}
 \usepackage{moreverb} % for verbatim snippets of code
 \usepackage{fancyvrb}
 \usepackage{tabularx} % for tables with line breaks
@@ -87,11 +101,16 @@
 
 %%%%%
 
-\date{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \graphicspath{{./figs/}}
+\include{acros}
+\makeglossaries
 
+
+%\input{ntfrontmatter} % for nuclear tech 
 \begin{document}
+\input{elsfrontmatter} 
+
 \input{intro}
 \input{litrev}
 \input{methods}
@@ -102,6 +121,5 @@ Don't forget there is text in \texttt{old.tex}.
 %\input{old}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliographystyle{ans}
 \bibliography{refs}
 \end{document}
