@@ -321,7 +321,7 @@ The result of the DRE is flow determined along arcs, where arcs connect supply
 nodes to request nodes. A number of properties are defined on arcs, namely
 commodities, constraint coefficients, and preferences.
 
-\paragraph{Commodities}
+%\paragraph{Commodities}
 
 During the information gathering step in \secref{abm:dre:info}, consumers and
 suppliers are queried based on \textit{commodities}. A consumer is allowed to
@@ -379,7 +379,7 @@ be partitioned by collections of commodities. However, once minimally connected
 exchange graphs are established, solution mechanisms do not employ the notion of
 commodities. Rather, quantities, constraints, and preferences are used.
 
-\paragraph{Constraint Coefficients}
+%\paragraph{Constraint Coefficients}
 
 Constraint coefficients are determined for an arc based on the proposed resource
 to be transferred along that arc, the requester's constraint conversion
@@ -475,7 +475,7 @@ equations for the enrichment facility by combining Equations
 \sum_{j \in J}\beta_{s}^{SWU}(\varepsilon_{j}) \: x_{s,j} & \leq b_{s}^{SWU}
 \end{align}
 
-\paragraph{Preferences \& Costs}
+%\paragraph{Preferences \& Costs}
 
 In any network flow problem, of which transportation problems are a subset, the
 objective coefficients associated with transporting commodities is what drives
@@ -647,7 +647,7 @@ a change requires a Mixed Integer-Linear Program (MILP) formulation and solution
 via the branch-and-bound method which solves NP-Hard combinatorial optimization
 problems.
 
-\paragraph{Binary Variables}
+%\paragraph{Binary Variables}
 
 The primary difference between the LP and MILP formulations is the inclusion
 binary decision variables $y_{i,j}$. A variable $y_{i,j}$ has a value of 1 if
@@ -679,7 +679,7 @@ supplier and requester.
   A = \bigcup_{s \in S} A_{p_s} \cup A_{e_s}
 \end{equation}
 
-\paragraph{Mutually Exclusive Constraints}
+%\paragraph{Mutually Exclusive Constraints}
 
 \textit{Mutual} requests and responses were described in 
 \secref{abm:dre:info}. These are defined as a set of requests or responses, of
@@ -701,7 +701,7 @@ Equations \ref{eqs:mutual_sup} and \ref{eqs:mutual_req}.
   \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 \: \forall \: r \in R 
 \end{equation}
 
-\paragraph{Formulation}
+%\paragraph{Formulation}
 
 Using the above arc partition notation allows for a much simpler written
 formulation of the MILP that looks quite close to the related LP formulation
@@ -1171,9 +1171,9 @@ condition and tariff, preferences are adjusted as shown in Algorithm
 
 \begin{algorithm}[!h]
  \SetAlgoLined
- \KwData{A potential trade, a condition, and a tariff value, $t$.}
+ \KwData{A potential trade, a condition, and a tariff value, $x$.}
  \KwResult{An updated preference value, $p$.}
- \eIf{trade meets condition}{return $p * t$}{return $p$}
+ \eIf{trade meets condition}{return $p * x$}{return $p$}
  \caption{\texttt{TariffRegion} Preference Adjustment}\label{alg::tariff}
 \end{algorithm}
 
