@@ -6,16 +6,27 @@ of the DRE using both the greedy heuristic and to optimality with COINOR-CBC. A
 UOX-MOX binary recycle system with all required fuel cycle facilities is taken
 as a base-case scenario in order to reduce the complexity of the fuel cycle and
 highlight departures from available simulators. A simulation timeframe of 50
-years is chosen (totaling 600 simulation time steps), sufficient to display all
-relevant effects. The nominal parameters of all common facilities in the
-simulation are shown in Appendix \ref{}. Importantly, reactors are allowed to be
-fueled by either UOX or MOX, with a preference for MOX over UOX. Spent UOX fuel
-is allowed to be recycled, whereas spent MOX fuel is sent directly to a
-repository. In order to involve dynamicism in the simulation, the population
-reactors grows linearly over time at a rate of 1 reactor every 5 years. An
-initial population of 20 reactors are deployed individually in each of the first
-20 timesteps of the simulation. The diagram of the base-case fuel cycle is shown
-in Figure \ref{fig:base}.
+years is chosen with one-month timesteps (totaling 600 simulation time steps),
+sufficient to display all relevant effects. The nominal parameters of all common
+facilities in the simulation are shown in Appendix \ref{}. Importantly, reactors
+are allowed to be fueled by either UOX or MOX, with a preference for MOX over
+UOX. Spent UOX fuel is allowed to be recycled, whereas spent MOX fuel is sent
+directly to a repository. In order to involve dynamicism in the simulation, the
+population reactors grows linearly over time at a rate of 1 reactor every 5
+years. An initial population of 20 reactors are deployed individually in each of
+the first 20 timesteps of the simulation as shown in Figure
+\ref{fig:deploy}. Note that deployments are staggered in the initial period in
+order to avoid supply/demand clustering effect. A diagram of the full
+base-case fuel cycle is shown in Figure \ref{fig:base}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\columnwidth]{rxtr_deploy.pdf}
+    \caption[]{
+      \label{fig:deploy}
+      Reactor deployment in each simulation as a function of simulation time steps.}
+  \end{center}
+\end{figure}
 
 \begin{figure}
   \begin{center}
@@ -173,4 +184,74 @@ in each Region, allowing the application of tariffs by the Region agents.
       in Region B as a function of time.}
   \end{center}
 \end{figure}
+
+\subsection{Scenario Comparisons}
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\columnwidth]{outage_invs.pdf}
+    \caption[]{
+      \label{fig:prefs}
+      Facility inventories in Outage scenario.}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.67\textwidth}
+    \centering
+    \subfloat[A]{\includegraphics[height=0.3\textheight]{outage_invs_a.pdf}}
+    \vfill
+    \subfloat[B]{\includegraphics[height=0.3\textheight]{outage_invs_b.pdf}}
+  \end{minipage}%
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \subfloat[C]{\includegraphics[height=0.6\textheight]{outage_invs_c.pdf}}
+  \end{minipage}%
+  \caption[]{
+    \label{fig:prefs}
+    Facility inventories in Outage scenario.}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{minipage}{\textwidth}
+    \centering
+    \subfloat[A]{\includegraphics[width=0.5\textwidth]{uox_flow.pdf}}
+    \subfloat[B]{\includegraphics[width=0.5\textwidth]{mox_flow.pdf}}
+  \end{minipage}%
+  \caption[]{
+    \label{fig:prefs}
+    Cumulative flow of MOX in all Scenarios.}
+\end{figure}
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\columnwidth]{tariff_b_reactor_flow.pdf}
+    \caption[]{
+      \label{fig:prefs}
+      Commodity flows in Region B.}
+  \end{center}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.5\columnwidth}
+    \centering
+    \subfloat[A]{\includegraphics[width=\columnwidth]{pu_in_rxtrs.pdf}}
+    \vfill
+    \subfloat[C]{\includegraphics[width=\columnwidth]{pu_in_fabs.pdf}}
+  \end{minipage}%
+  \begin{minipage}{0.5\columnwidth}
+    \centering
+    \subfloat[B]{\includegraphics[width=\columnwidth]{pu_in_repos.pdf}}
+    \vfill
+    \subfloat[D]{\includegraphics[width=\columnwidth]{pu_in_fabs_zoom.pdf}}
+  \end{minipage}
+  \caption{Pu Inventory}\label{foo}
+\end{figure}
+
+\subsection{Solver Comparisons}
 
