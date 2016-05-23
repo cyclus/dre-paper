@@ -83,6 +83,9 @@ def legend_replace(labels):
     replace = {
         'military': 'external',
         'base_case': 'base case',
+        'fuelfab': 'Fabrication',
+        'separations': 'Separations',
+        'reactor': 'Reactor',
     }
     return map(lambda x: replace[x] if x in replace.keys() else x, labels)
 
@@ -141,7 +144,7 @@ def plot_pu_in_fabs(protos, args, zoom=False):
         plt.ylim(0, 2000)
 #    plt.show()
     plt.savefig(
-        'figs/pu_in_fabs{}.{}'.format(ext).format('' if not zoom else '_zoom'))
+        'figs/pu_in_fabs{}.{}'.format('' if not zoom else '_zoom', ext))
 
 
 def plot_mass_in_repos(protos, args):
@@ -172,7 +175,7 @@ def plot_reciever_flow(receivers, args):
     # plt.title('Flow of Commodities')
     plt.xlabel('Timesteps (months)')
 #    plt.show()
-    plt.savefig('figs/{}_flow.{}'.format(ext).format(receivers.keys()[0]))
+    plt.savefig('figs/{}_flow.{}'.format(receivers.keys()[0], ext))
 
 
 def invs():
@@ -280,7 +283,7 @@ def flows():
         plt.xlabel('Timesteps (month)')
         plt.legend(legend_replace(cases), loc='upper left')
         plt.tight_layout()
-        plt.savefig('figs/{}_flow.{}'.format(ext).format(commod))
+        plt.savefig('figs/{}_flow.{}'.format(commod, ext))
 
 
 def tariff():
@@ -320,8 +323,8 @@ def tariff():
     fig.savefig('figs/tariff_b_reactor_flow.{}'.format(ext))
 
 
-def outage():
-    print('Outage Inventories')
+def puinvs(kind):
+    print('Pu Invs: {}'.format(kind))
 
     # data
     protos = ['fuelfab', 'separations', 'reactor']
@@ -329,7 +332,7 @@ def outage():
     zoomx, zoomy = 200, 400
     for proto in protos:
         args1 += time_series({'base_case': [proto]}, query_239)
-        x, y = time_series({'outage': [proto]}, query_239)
+        x, y = time_series({kind: [proto]}, query_239)
         args2 += [x, y]
         args3 += [x[zoomx:zoomy], y[zoomx:zoomy]]
 
@@ -361,7 +364,7 @@ def outage():
     fig.text(0.45, 0.015, 'Timesteps (month)')
     fig.tight_layout()
     fig.subplots_adjust(left=0.13, bottom=0.09)
-    fig.savefig('figs/outage_invs.{}'.format(ext))
+    fig.savefig('figs/{}_invs.{}'.format(kind, ext))
 
     # individual
     w, h = rcParams['figure.figsize']
@@ -376,7 +379,7 @@ def outage():
         if name == 'a':
             plt.legend(legend_replace(protos), loc='best')
         plt.tight_layout()
-        plt.savefig('figs/outage_invs_{}.{}'.format(name, ext))
+        plt.savefig('figs/{}_invs_{}.{}'.format(kind, name, ext))
 
 
 if __name__ == "__main__":
@@ -387,8 +390,16 @@ if __name__ == "__main__":
     plt.style.use('ggplot')
 
     explore()
+    plt.clf()
     deployment()
+    plt.clf()
     invs()
+    plt.clf()
     tariff()
-    outage()
+    plt.clf()
     flows()
+    plt.clf()
+    puinvs('outage')
+    plt.clf()
+    puinvs('military')
+    plt.clf()
