@@ -4,7 +4,7 @@ A number of computational experiments are conducted to highlight unique features
 enabled by the DRE in Cyclus. Each experiment is performed by solving instances
 of the DRE using both the greedy heuristic and to optimality with COINOR-CBC. A
 UOX-MOX binary recycle system with all required fuel cycle facilities is taken
-as a base-case scenario in order to reduce the complexity of the fuel cycle and
+as the \basecase scenario in order to reduce the complexity of the fuel cycle and
 highlight departures from available simulators. A simulation timeframe of 50
 years is chosen with one-month timesteps (totaling 600 simulation time steps),
 sufficient to display all relevant effects. The nominal parameters of all common
@@ -17,14 +17,16 @@ years. An initial population of 20 reactors are deployed individually in each of
 the first 20 timesteps of the simulation as shown in Figure
 \ref{fig:deploy}. Note that deployments are staggered in the initial period in
 order to avoid supply/demand clustering effect. A diagram of the full
-base-case fuel cycle is shown in Figure \ref{fig:base}.
+\basecase fuel cycle is shown in Figure \ref{fig:base}.
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=\columnwidth]{rxtr_deploy.pdf}
     \caption[]{
       \label{fig:deploy}
-      Reactor deployment in each simulation as a function of simulation time steps.}
+      Reactor deployment in each simulation as a function of simulation time
+      steps. Each point in the graph is a reactor being deployed in the
+      simulation.}
   \end{center}
 \end{figure}
 
@@ -33,14 +35,12 @@ base-case fuel cycle is shown in Figure \ref{fig:base}.
     \includegraphics[width=\columnwidth]{base.pdf}
     \caption[]{
       \label{fig:base}
-      Material routing between in the base-case, single-pass MOX fuel
+      Material routing between in the \basecase scenario, single-pass MOX fuel
       cycle. Possible arc flows are labeled with commodity names.}
   \end{center}
 \end{figure}
 
-\subsection{Description of Scenarios}
-
-Four perturbations from the base-case scenario are used to provide examples of
+Four perturbations from the \basecase scenario are used to provide examples of
 modeling capability enabled through the use of the DRE. The scenarios are
 summarized in Table \ref{scenarios} below and described in more detail in the
 following sections.
@@ -52,13 +52,13 @@ following sections.
 \begin{tabularx}{\textwidth}{|p{1.5cm}|p{1.5cm}|X|X|}
 \hline
 \textbf{Scenario  Name} & \textbf{Scenario Handle} & \textbf{Primary Departure from Base Case}                & \textbf{Capability Highlighted}                             \\ \hline
-Separations Outage      & \texttt{outage}                   & Separations facility halts operation mid-simulation      & System flexibility to recycling facilities operation        \\ \hline
-External MOX Supplier   & \texttt{external}                 & An additional supplier of MOX enters mid-simulation      & System flexibility to entry and exit of commodity suppliers \\ \hline
-Regional Tariffs        & \texttt{tariff}                   & Two regions are modeled with dynamic trade relationships & Ability to model nontrivial international relationships     \\ \hline
+Separations Outage      & \outage                   & Separations facility halts operation mid-simulation      & System flexibility to recycling facilities operation        \\ \hline
+External MOX Supplier   & \external                 & An additional supplier of MOX enters mid-simulation      & System flexibility to entry and exit of commodity suppliers \\ \hline
+Regional Tariffs        & \tariff                   & Two regions are modeled with dynamic trade relationships & Ability to model nontrivial international relationships     \\ \hline
 \end{tabularx}
 \end{table}
 
-\subsubsection{Separations Outage: Fuel Cycles with Supply Disruption}
+\subsection{Separations Outage: Fuel Cycles with Supply Disruption}
 
 The DRE provides a unifying framework in which any instance of supply and demand
 can be formulated and solved. This flexibility lends itself well to dynamic
@@ -69,22 +69,83 @@ constructed that has multiple types of reactor fuel input and a defined supply
 disruption within the recycled-fuel supply chain. 
 
 The chosen disruption is an outage of the separations facility shown in Figure
-\ref{fig:base}. The outage begins at $t_i = 250$ lasts 50 time steps. During the
-outage, the remaining facilities in the supply chain operate normally, and the
-flow of fuel into and out of reactors adapts according to the state of available
-fresh fuel. 
+\ref{fig:base}. The outage begins at $t_i = 250$, lasts 50 time steps, and ends
+at $t_f = 300$. During the outage, the remaining facilities in the supply chain
+operate normally, and the flow of fuel into and out of reactors adapts according
+to the state of available fresh fuel.
 
-\subsubsection{External MOX Supplier: Fuel Cycles with Demand Fungibility}
+A comparison of the inventories of Plutonium-239 in each facility type of
+interest among the \basecase and \outage scenarios is shown in Figure
+\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv}, the quantity of
+MOX in \reactors is under a dynamic equilibrium, oscilliating between the
+maximum quanity allowable in the system and one refueling quantity less than the
+maximum, based on refueling schedules. The equilibrium value increases in a
+stair-step-function manner as the number of reactors increases to being able to
+provide sufficient used UOX for the next marginal refueling quantity of MOX. The
+quantity of MOX in \fabrication oscillates between a minimal value and a maximum
+value which is sufficient for a single reactor's refueling quantity. As soon as
+there is sufficient MOX fuel for another refueling \textit{and} a reactor makes
+a request to be refueled, it is provided the quantity of MOX in of fresh
+fuel. Finally, \separations separates the various actinides of used fuel and
+passes on fissile isotopes to \fabrication, thus maintaining a small oscillating
+inventory in each timestep.
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.67\textwidth}
+    \centering 
+    \subfloat[Pu-239 inventories in the \basecase scenario.]{
+      \includegraphics[height=0.3\textheight]{outage_invs_a.pdf}
+      \label{fig:baseinv}}
+    \vfill 
+    \subfloat[Pu-239 inventories in the \outage scenario.]{
+      \includegraphics[height=0.3\textheight]{outage_invs_b.pdf}
+    \label{fig:outageinv}}
+  \end{minipage}%
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \subfloat[A close-up of the \outage scenario perturbation.]{
+      \includegraphics[height=0.6\textheight]{outage_invs_c.pdf}
+      \label{fig:outagezoom}}
+  \end{minipage}%
+  \caption[]{
+    \label{fig:outage}
+    Facility inventories of Pu-239 in \basecase and \outage scenarios.}
+\end{figure}
+
+The dynamic equilibrium behavior changes in the \outage scenario after the
+initial outage time, $t_i$, as is observable in Figures \ref{fig:outageinv} and
+\ref{fig:outagezoom}. Because the outage occurs in \separations, which takes
+inputfrom the \reactors and provides output to \fabrication, the inventories of
+both \separations and \fabrication remain constant for the duration of the
+outage period. The inventory of Pu-239 in \reactors continues to oscillate
+because MOX assemblies are discharged and continue to be sent to \storage,
+whereas spent UOX assemblies (with significant Pu-239 inventories) are stored on
+site. In the first timestep of renewed service of \separations, $t_f$, the
+entirety of the pent-up store of used fuel in \reactors is send to \separations,
+reducing the inventory to zero, causing the delta-function behavior in \reactor
+flows seen in Figure \ref{fig:outagezoom} at $t = t_f$. \separations then
+extracts all of Pu-239 in a single timestep, sending it to \fabrication and
+causing the delta-function behavior in \separations flows seen in Figure
+\ref{fig:outagezoom} at $t = t_f + 1$. Finally, the stock of Pu-239 in \reactors
+after the outage increases due to the higher availability of MOX fuel in
+\fabrication, until the dynamic equilibrium returns. The length of the full
+perturbation is function of both the amount of Pu-239 required per refueling and
+the number of refuelings that occurs during the outage. The more refuelings that
+happen during the outage, the more excess MOX assemblies can be made, thus
+continuing the dynamic equilibrium perturbation.
+
+\subsection{External MOX Supplier: Fuel Cycles with Demand Fungibility}
 
 The DRE allows for both positive and negative perturbations in fuel
-availability. While the \texttt{outage} scenario models a case where there is a
-supply-chain disruption, the \texttt{external} scenario models a case where
+availability. While the \outage scenario models a case where there is a
+supply-chain disruption, the \external scenario models a case where
 there is an injection of a preferred fuel source. An example of such a scenario
 occuring in the real world includes the downblending of military-grade fuel
 sources, such as the Megatons to Megawatts program and the MOX Fuel Fabrication
 Facility.
 
-In the \texttt{external} scenario, a new source of MOX fuel enters halfway
+In the \external scenario, a new source of MOX fuel enters halfway
 through the simulation at $t = 250$, creating the fuel cycle shown in Figure
 \ref{fig:military}. The total quantity of fuel the new source can provide is
 limited to 10 refueling quantities (where reactors refuel one third of their
@@ -104,17 +165,57 @@ recycling.
     \includegraphics[width=\columnwidth]{military.pdf}
     \caption[]{
       \label{fig:military}
-      Material routing between in the \texttt{external} scenario fuel
+      Material routing between in the \external scenario fuel
       cycle. Possible arc flows are labeled with commodity names.}
   \end{center}
 \end{figure}
 
-\subsubsection{Regional Tariffs: Fuel Cycles with International Instruments}
+The dynamic equilibrium of Pu-239 inventories again changes with the \external
+perturbation, as shown in Figure \ref{fig:military}. A number of new features
+arise, however. First, the equilibrium value during the initial transient
+increases by the total quantity of refueling quantities available from the
+external source of MOX (in this case 10 refueling quantities). Second, the
+equilibrium value upon exiting the transient is lower than the value upon its
+entrance. This is due to the fact that the amount of spent UOX in the overall
+recycle system has decreased, due to the usage of external MOX, thus reducing
+the availability of MOX. The system has been shocked into a new dynamic
+equilibrium, with Pu-239 values slightly lower than the previous
+equilibirum. This suggests that the injection of external recycled fuel can
+reduce the level of which a system can sustain a recycling fuel cycle. Finally,
+a small lag can be seen in the inventory of Pu-239 in \fabrication, which is due
+to a loss of available spent UOX due to the increased presence of spent MOX
+exiting reactors that were able to utilize external MOX. This transient is
+quickly recovered from, however.
+
+\begin{figure}
+  \centering
+  \begin{minipage}{0.67\textwidth}
+    \centering 
+    \subfloat[Pu-239 inventories in the \basecase scenario.]{
+      \includegraphics[height=0.3\textheight]{military_invs_a.pdf}
+      \label{fig:baseinv}}
+    \vfill 
+    \subfloat[Pu-239 inventories in the \external scenario.]{
+      \includegraphics[height=0.3\textheight]{military_invs_b.pdf}
+    \label{fig:militaryinv}}
+  \end{minipage}%
+  \begin{minipage}{0.33\textwidth}
+    \centering
+    \subfloat[A close-up of the \external scenario perturbation.]{
+      \includegraphics[height=0.6\textheight]{military_invs_c.pdf}
+      \label{fig:militaryzoom}}
+  \end{minipage}%
+  \caption[]{
+    \label{fig:military}
+    Facility inventories of Pu-239 in \basecase and \external scenarios.}
+\end{figure}
+
+\subsection{Regional Tariffs: Fuel Cycles with International Instruments}
 
 One of the novel features of the DRE is the ability for different geographical
 and managing entity representations to be laid over otherwise regional-agnostic
 fuel cycles and affect the outcome of possible trades between those fuel
-cycles. The \texttt{tariff} two-region scenario showcases the ability to model
+cycles. The \tariff two-region scenario showcases the ability to model
 such situations.
 
 Two regions, Region A and Region B, are modeled. Region A houses a fuel cycle
@@ -171,7 +272,7 @@ f(t)
 Choosing nominal values that satisfy Equations \ref{eqn:bigdefault} and
 \ref{eqn:bigp1}, e.g., $p_{MOX, a} = 9$, $p_{UOX, a} = 4$, and $p_{UOX, b} = 2$,
 one arrives at actual preference values as shown in Figure \ref{fig:prefs}. In
-the \texttt{tariff} scenario, $t_0$ is chosen to be 150 and $t_1$ is set to
+the \tariff scenario, $t_0$ is chosen to be 150 and $t_1$ is set to
 300. The DRE naturally handles the flow of commodities between Facility agents
 in each Region, allowing the application of tariffs by the Region agents.
 
@@ -185,34 +286,16 @@ in each Region, allowing the application of tariffs by the Region agents.
   \end{center}
 \end{figure}
 
-\subsection{Scenario Comparisons}
-
-
 \begin{figure}
   \begin{center}
-    \includegraphics[width=\columnwidth]{outage_invs.pdf}
+    \includegraphics[width=\columnwidth]{tariff_b_reactor_flow.pdf}
     \caption[]{
       \label{fig:prefs}
-      Facility inventories in Outage scenario.}
+      Commodity flows in Region B.}
   \end{center}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \begin{minipage}{0.67\textwidth}
-    \centering
-    \subfloat[A]{\includegraphics[height=0.3\textheight]{outage_invs_a.pdf}}
-    \vfill
-    \subfloat[B]{\includegraphics[height=0.3\textheight]{outage_invs_b.pdf}}
-  \end{minipage}%
-  \begin{minipage}{0.33\textwidth}
-    \centering
-    \subfloat[C]{\includegraphics[height=0.6\textheight]{outage_invs_c.pdf}}
-  \end{minipage}%
-  \caption[]{
-    \label{fig:prefs}
-    Facility inventories in Outage scenario.}
-\end{figure}
+\subsection{Comparisons between Scenarios}
 
 \begin{figure}
   \centering
@@ -224,16 +307,6 @@ in each Region, allowing the application of tariffs by the Region agents.
   \caption[]{
     \label{fig:prefs}
     Cumulative flow of MOX in all Scenarios.}
-\end{figure}
-
-
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=\columnwidth]{tariff_b_reactor_flow.pdf}
-    \caption[]{
-      \label{fig:prefs}
-      Commodity flows in Region B.}
-  \end{center}
 \end{figure}
 
 \begin{figure}
