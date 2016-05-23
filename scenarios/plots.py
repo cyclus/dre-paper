@@ -279,17 +279,24 @@ def flows():
                     y += time_series({case: [query_arg]}, query_sender_flow)[1]
                 else:
                     x, y = time_series({case: [query_arg]}, query_sender_flow)
+            y = np.cumsum(y)
+            window = (x > 200) & (x < 400)
+            x = x[np.where(window)]
+            y = y[np.where(window)]
             if case == 'base_case':
-                plt.plot(x, np.cumsum(y), '--', zorder=10)
+                plt.plot(x, y, '--', zorder=10)
             else:
-                plt.plot(x, np.cumsum(y))
+                plt.plot(x, y)
 
         # plot
+        plt.xlim(200, 400)
         plt.ylabel('{} Flow (kg)'.format(commod.upper()))
         plt.xlabel('Timesteps (month)')
         plt.legend(legend_replace(cases), loc='upper left')
         plt.tight_layout()
-        plt.savefig('figs/{}_flow.{}'.format(commod, ext))
+        fname = 'figs/{}_flow.{}'.format(commod, ext)
+        print('writing', fname)
+        plt.savefig(fname)
 
 
 def tariff():

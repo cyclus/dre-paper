@@ -316,33 +316,51 @@ $t_1$, Region B's \reactors stop utilizing Region A's fuel cycle entirely.
 
 \subsection{Comparisons between Scenarios}
 
+Comparisons between all scenarios is most easily made by observing the total
+fuel usage by reactors for each commodity type. A summary of this metric is
+provided in Figure \ref{fig:flows}. Figure \ref{fig:uoxflow} displays the
+cumulative flow of UOX fuel into reactors over all scenarios which shows a
+number of interesting effects. First, the \external scenario has the lowest
+cumulative flow, which is expected of a scenario in which an external source of
+non-UOX is provided.  The \outage scenario initially deviates from the \basecase
+scenario, but eventually returns to match its cumulative UOX usage. This is due
+to the fact that in the defined system, outages simply serve to store fuel. When
+sufficient time has past after the outage, the system returns to its dynamic
+equilibrium. Finally, the \tariff scenario utilizes the most UOX fuel of
+all. This is expected due to the fact that there is a population of reactors
+that prefers UOX fuel (i.e., the UOX fuel in its own Region) over all other
+sources in the simulation. Therefore more UOX fuel is consumed than would be
+otherwise.
+
+Figure \ref{fig:moxflow} showcases the cumlative flow of MOX fuel into all
+reactors as a function of simulation time step. Because reactors can be fueled
+only with UOX or MOX, it represents something of an inverse of Figure
+\ref{fig:uoxflow}. For example, whereas the \tariff scenario utilizes the most
+UOX, it utilizes the least MOX for the same reasons. A number of additional
+features can be observed in Figureb\ref{fig:moxflow} dealing with departures
+from dynamic equilibrium of the \basecase scenario. The undershooting and then
+overshooting of MOX consumption in the \outage scenario is visible. During the
+outage, less MOX is consumed, but immediately after the outage, excess MOX is
+consumed until there is a return to dynamic equilibrium. Additionally, a
+reduction in the total amount of MOX (sourced from recycled UOX) consumed is
+obsevered in the \external scenario. This is due to a reduction in the available
+recycled UOX supply during periods of external MOX consumption. In short, for
+each reload of external MOX, the system loses a future amount of recyclable UOX.
+
 \begin{figure}
   \centering
   \begin{minipage}{\textwidth}
     \centering
-    \subfloat[A]{\includegraphics[width=0.5\textwidth]{uox_flow.pdf}}
-    \subfloat[B]{\includegraphics[width=0.5\textwidth]{mox_flow.pdf}}
+    \subfloat[UOX flow.]{\includegraphics[width=\textwidth]{uox_flow.pdf}}
+    \label{fig:uoxflow}
+    \vfill
+    \subfloat[MOX flow]{\includegraphics[width=\textwidth]{mox_flow.pdf}}
+    \label{fig:moxflow}
   \end{minipage}%
   \caption[]{
-    \label{fig:prefs}
-    Cumulative flow of MOX in all Scenarios.}
-\end{figure}
-
-\begin{figure}
-  \centering
-  \begin{minipage}{0.5\columnwidth}
-    \centering
-    \subfloat[A]{\includegraphics[width=\columnwidth]{pu_in_rxtrs.pdf}}
-    \vfill
-    \subfloat[C]{\includegraphics[width=\columnwidth]{pu_in_fabs.pdf}}
-  \end{minipage}%
-  \begin{minipage}{0.5\columnwidth}
-    \centering
-    \subfloat[B]{\includegraphics[width=\columnwidth]{pu_in_repos.pdf}}
-    \vfill
-    \subfloat[D]{\includegraphics[width=\columnwidth]{pu_in_fabs_zoom.pdf}}
-  \end{minipage}
-  \caption{Pu Inventory}\label{foo}
+    \label{fig:flows}
+    Cumulative flow of fuel in all Scenarios. The timestep period between 200
+    and 400 is chosen to highlight all relevant transients. }
 \end{figure}
 
 \subsection{Solver Comparisons}
