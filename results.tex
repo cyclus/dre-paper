@@ -219,10 +219,18 @@ cycles. The \tariff two-region scenario showcases the ability to model
 such situations.
 
 Two regions, Region A and Region B, are modeled. Region A houses a fuel cycle
-with both UOX and MOX-based fuels is available. Further, this region has an
-over-abundance of supply of fuel and can thus provide fuel services to other
-regions. Region B contains a simple, once-through fuel cycle. Both fuel cycles
-are shown in Figure \ref{fig:region}.
+with both UOX and MOX-based fuel services, as in the \basecase scenario. The
+same total number of \reactors are modeled in the scenario. Region A begins with
+15 \reactors and Region B begins with 5 reactors. All reactor deployment occurs
+in Region A.
+
+In this scenario, Region A has an over-abundance of supply of fuel and can thus
+provide fuel services to other regions. Region B contains a simple, once-through
+fuel cycle. Although the scenario is somewhat contrived in order to highlight a
+multi-commodity system under dynamic behavioral change, such fuel service
+arrangements are present today in countries that provide fuel for once-through
+fuel cycles \TODO{cite france/russia fuel services}. The possible flow of
+commodities between fuel cycles is shown in Figure \ref{fig:region}.
 
 \begin{figure}
   \begin{center}
@@ -286,12 +294,20 @@ in each Region, allowing the application of tariffs by the Region agents.
   \end{center}
 \end{figure}
 
+The effects of time-dependent tariff application on the simulation can be seen
+in Figure \ref{fig:tariff}. The front-end of Region B's fuel cycle is not
+utilized until $t > t_0$; all fuel is provided from Region A. After $t_0$, the
+majority of the fuel services required by \reactors in Region B comes from
+Region B's own front end. However, it is still able to utilize the MOX-based
+fuel services from Region A. Finally, after the final tariff is applied at
+$t_1$, Region B's \reactors stop utilizing Region A's fuel cycle entirely.    
+
 \begin{figure}
   \begin{center}
     \includegraphics[width=\columnwidth]{tariff_b_reactor_flow.pdf}
     \caption[]{
-      \label{fig:prefs}
-      Commodity flows in Region B.}
+      \label{fig:tariff}
+      Cumulative flow of fuel into \reactors in Region B.}
   \end{center}
 \end{figure}
 

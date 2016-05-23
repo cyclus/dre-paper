@@ -315,7 +315,7 @@ def tariff():
                 arrowprops=dict(width=2.5, headwidth=8))
 
     # wordsand layout
-    ax.legend(['$p_{UOX, a}$', '$p_{MOX, a}$', '$p_{UOX, b}$'])
+    ax.legend(['$UOX, a$', '$MOX, a$', '$UOX, b$'], loc='best')
     ax.set_xlabel('Timesteps (month)')
     ax.set_ylabel('Quantity (kg)')
     fig.tight_layout()
