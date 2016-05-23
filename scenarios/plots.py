@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import subprocess
 
 import sqlite3 as sql
@@ -242,7 +243,12 @@ def deployment():
     x, y = time_series({"base_case": ["reactor"]}, query_built)
     args = []
     args += [x, np.cumsum(y)]
-    args += [x[np.where(y > 0)], np.cumsum(y[np.where(y > 0)]), 'o']
+    x = x[np.where(y > 0)]
+    y = np.cumsum(y[np.where(y > 0)])
+
+    regbrxtrs = (y > 5) & (y < 11)  # region b deployments in tariff
+    args += [x[np.where(~regbrxtrs)], y[np.where(~regbrxtrs)], 'o']
+    args += [x[np.where(regbrxtrs)], y[np.where(regbrxtrs)], 'o']
 
     # plot
     plt.clf()
@@ -383,6 +389,9 @@ def puinvs(kind):
 
 
 if __name__ == "__main__":
+    if not os.path.exists('figs'):
+        os.mkdir('figs')
+
     print("Postprocessing dbs")
     dbs = ['base_case', 'military', 'tariff', 'outage', 'once_through']
     post_dbs(dbs)
