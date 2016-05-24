@@ -337,7 +337,7 @@ reactors as a function of simulation time step. Because reactors can be fueled
 only with UOX or MOX, it represents something of an inverse of Figure
 \ref{fig:uoxflow}. For example, whereas the \tariff scenario utilizes the most
 UOX, it utilizes the least MOX for the same reasons. A number of additional
-features can be observed in Figureb\ref{fig:moxflow} dealing with departures
+features can be observed in Figure \ref{fig:moxflow} dealing with departures
 from dynamic equilibrium of the \basecase scenario. The undershooting and then
 overshooting of MOX consumption in the \outage scenario is visible. During the
 outage, less MOX is consumed, but immediately after the outage, excess MOX is
@@ -351,11 +351,11 @@ each reload of external MOX, the system loses a future amount of recyclable UOX.
   \centering
   \begin{minipage}{\textwidth}
     \centering
-    \subfloat[UOX flow.]{\includegraphics[width=\textwidth]{uox_flow.pdf}}
-    \label{fig:uoxflow}
+    \subfloat[UOX flow.]{
+      \includegraphics[width=\textwidth]{uox_flow.pdf}\label{fig:uoxflow}}
     \vfill
-    \subfloat[MOX flow]{\includegraphics[width=\textwidth]{mox_flow.pdf}}
-    \label{fig:moxflow}
+    \subfloat[MOX flow]{
+      \includegraphics[width=\textwidth]{mox_flow.pdf}\label{fig:moxflow}}
   \end{minipage}%
   \caption[]{
     \label{fig:flows}
@@ -365,3 +365,51 @@ each reload of external MOX, the system loses a future amount of recyclable UOX.
 
 \subsection{Solver Comparisons}
 
+Each of the above scenarios was executed by solving the DRE using both the
+\greedy heuristic and full optimization (results are shown from the \greedy
+heuristic cases for clairity). Differences in simulation time are observed, as
+shown in Table \ref{tbl:timing}. Solving the DRE with full optimization takes
+approximately twice as long as solving it with the \greedy heuristic in these
+simulations. These are small simulations and one can expect this solution time
+gap to increase exponentially with simulation size, as solutions to MIPs
+increase exponentially with time and the \greedy heuristic is a polynomial-time
+algorithm.
+
+\begin{table}[]
+\centering
+\caption{Solution times required of each solver type in each
+  scenario. Simulations were performed on a Macbook Air with a duel-core i5 2.6
+  GHz processor using a Ubuntu 14.04 virtual machine.}
+\label{tbl:timing}
+\begin{tabular}{llr}
+\toprule
+          &     &  Time (s) \\
+Scenario & Solver &           \\
+\midrule
+\basecase & cbc &     6.306 \\
+          & greedy &     4.169 \\
+\external & cbc &     6.371 \\
+          & greedy &     3.149 \\
+\outage & cbc &     5.978 \\
+          & greedy &     3.161 \\
+\tariff & cbc &     6.074 \\
+          & greedy &     3.079 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Interestingly, slight differences in simulation results was also observed
+between the two solvers. This is due to timesteps in which there is problem
+degeneracy, i.e., multiple optimal solutions exist. Consider a timestep, $t_i$,
+in which one reactor is refueling and another reactor is entering the
+simulation. Four total quantities of fuel are requested - one refueling batch
+and three initial core batches. Consider further that one batch of MOX fuel is
+available. Because reactors all make requests to the DRE with identical
+preferences, there are four degenerate optimal solutions -- one for each
+potential assignment of the MOX batch. This leads to three potential simulation
+futures, one in which the MOX batch is ejected after one cycle (if it assigned
+to the refueling reactor or to the initial spot of the new reactor), one in
+which the MOX batch is ejected after two cycles, and a third after three
+cycles. In each simulation future, the quantity of fuel in the recycle loop at
+$t > t_i$ is different, causing differing future behavior and overall simulation
+results.
