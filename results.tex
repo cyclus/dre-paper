@@ -2,22 +2,22 @@
 
 A number of computational experiments are conducted to highlight unique features
 enabled by the DRE in Cyclus. Each experiment is performed by solving instances
-of the DRE using both the greedy heuristic and to optimality with COINOR-CBC. A
+of the DRE using both the \greedy heuristic and to optimality with \cbc. A
 UOX-MOX binary recycle system with all required fuel cycle facilities is taken
-as the \basecase scenario in order to reduce the complexity of the fuel cycle and
-highlight departures from available simulators. A simulation timeframe of 50
-years is chosen with one-month timesteps (totaling 600 simulation time steps),
-sufficient to display all relevant effects. The nominal parameters of all common
-facilities in the simulation are shown in Appendix \ref{}. Importantly, reactors
-are allowed to be fueled by either UOX or MOX, with a preference for MOX over
-UOX. Spent UOX fuel is allowed to be recycled, whereas spent MOX fuel is sent
-directly to a repository. In order to involve dynamicism in the simulation, the
-population reactors grows linearly over time at a rate of 1 reactor every 5
-years. An initial population of 20 reactors are deployed individually in each of
-the first 20 timesteps of the simulation as shown in Figure
-\ref{fig:deploy}. Note that deployments are staggered in the initial period in
-order to avoid supply/demand clustering effect. A diagram of the full
-\basecase fuel cycle is shown in Figure \ref{fig:base}.
+as the \basecase scenario in order to reduce the complexity of the fuel cycle
+and highlight departures from available simulators. A simulation time frame of
+50 years is chosen with one-month time-steps (totaling 600 simulation time
+steps), sufficient to display all relevant effects. The nominal parameters of
+all common facilities in the simulation are shown in Appendix
+\ref{}. Importantly, reactors are allowed to be fueled by either UOX or MOX,
+with a preference for MOX over UOX. Spent UOX fuel is allowed to be recycled,
+whereas spent MOX fuel is sent directly to a repository. In order to involve
+dynamism in the simulation, the population reactors grows linearly over time at
+a rate of 1 reactor every 5 years. An initial population of 20 reactors are
+deployed individually in each of the first 20 time-steps of the simulation as
+shown in Figure \ref{fig:deploy}. Note that deployments are staggered in the
+initial period in order to avoid supply/demand clustering effect. A diagram of
+the full \basecase fuel cycle is shown in Figure \ref{fig:base}.
 
 \begin{figure}
   \begin{center}
@@ -79,8 +79,8 @@ to the state of available fresh fuel.
 A comparison of the inventories of Plutonium-239 in each facility type of
 interest among the \basecase and \outage scenarios is shown in Figure
 \ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv}, the quantity of
-MOX in \reactors is under a dynamic equilibrium, oscilliating between the
-maximum quanity allowable in the system and one refueling quantity less than the
+MOX in \reactors is under a dynamic equilibrium, oscillating between the
+maximum quantity allowable in the system and one refueling quantity less than the
 maximum, based on refueling schedules. The equilibrium value increases in a
 stair-step-function manner as the number of reactors increases to being able to
 provide sufficient used UOX for the next marginal refueling quantity of MOX. The
@@ -118,7 +118,7 @@ inventory in each timestep.
 The dynamic equilibrium behavior changes in the \outage scenario after the
 initial outage time, $t_i$, as is observable in Figures \ref{fig:outageinv} and
 \ref{fig:outagezoom}. Because the outage occurs in \separations, which takes
-inputfrom the \reactors and provides output to \fabrication, the inventories of
+input from the \reactors and provides output to \fabrication, the inventories of
 both \separations and \fabrication remain constant for the duration of the
 outage period. The inventory of Pu-239 in \reactors continues to oscillate
 because MOX assemblies are discharged and continue to be sent to \storage,
@@ -143,7 +143,7 @@ The DRE allows for both positive and negative perturbations in fuel
 availability. While the \outage scenario models a case where there is a
 supply-chain disruption, the \external scenario models a case where
 there is an injection of a preferred fuel source. An example of such a scenario
-occuring in the real world includes the downblending of military-grade fuel
+occurring in the real world includes the down-blending of military-grade fuel
 sources, such as the Megatons to Megawatts program and the MOX Fuel Fabrication
 Facility.
 
@@ -182,7 +182,7 @@ entrance. This is due to the fact that the amount of spent UOX in the overall
 recycle system has decreased, due to the usage of external MOX, thus reducing
 the availability of MOX. The system has been shocked into a new dynamic
 equilibrium, with Pu-239 values slightly lower than the previous
-equilibirum. This suggests that the injection of external recycled fuel can
+equilibrium. This suggests that the injection of external recycled fuel can
 reduce the level of which a system can sustain a recycling fuel cycle. Finally,
 a small lag can be seen in the inventory of Pu-239 in \fabrication, which is due
 to a loss of available spent UOX due to the increased presence of spent MOX
@@ -231,8 +231,8 @@ provide fuel services to other regions. Region B contains a simple, once-through
 fuel cycle. Although the scenario is somewhat contrived in order to highlight a
 multi-commodity system under dynamic behavioral change, such fuel service
 arrangements are present today in countries that provide fuel for once-through
-fuel cycles \TODO{cite france/russia fuel services}. The possible flow of
-commodities between fuel cycles is shown in Figure \ref{fig:region}.
+fuel cycles, e.g., Russia. The possible flow of commodities between fuel cycles
+is shown in Figure \ref{fig:region}.
 
 \begin{figure}
   \begin{center}
@@ -332,7 +332,7 @@ that prefers UOX fuel (i.e., the UOX fuel in its own Region) over all other
 sources in the simulation. Therefore more UOX fuel is consumed than would be
 otherwise.
 
-Figure \ref{fig:moxflow} showcases the cumlative flow of MOX fuel into all
+Figure \ref{fig:moxflow} showcases the cumulative flow of MOX fuel into all
 reactors as a function of simulation time step. Because reactors can be fueled
 only with UOX or MOX, it represents something of an inverse of Figure
 \ref{fig:uoxflow}. For example, whereas the \tariff scenario utilizes the most
@@ -343,7 +343,7 @@ overshooting of MOX consumption in the \outage scenario is visible. During the
 outage, less MOX is consumed, but immediately after the outage, excess MOX is
 consumed until there is a return to dynamic equilibrium. Additionally, a
 reduction in the total amount of MOX (sourced from recycled UOX) consumed is
-obsevered in the \external scenario. This is due to a reduction in the available
+observed in the \external scenario. This is due to a reduction in the available
 recycled UOX supply during periods of external MOX consumption. In short, for
 each reload of external MOX, the system loses a future amount of recyclable UOX.
 
@@ -367,7 +367,7 @@ each reload of external MOX, the system loses a future amount of recyclable UOX.
 
 Each of the above scenarios was executed by solving the DRE using both the
 \greedy heuristic and full optimization (results are shown from the \greedy
-heuristic cases for clairity). Differences in simulation time are observed, as
+heuristic cases for clarity). Differences in simulation time are observed, as
 shown in Table \ref{tbl:timing}. Solving the DRE with full optimization takes
 approximately twice as long as solving it with the \greedy heuristic in these
 simulations. These are small simulations and one can expect this solution time
@@ -383,8 +383,7 @@ algorithm.
 \label{tbl:timing}
 \begin{tabular}{llr}
 \toprule
-          &     &  Time (s) \\
-Scenario & Solver &           \\
+Scenario & Solver & Time (s)           \\
 \midrule
 \basecase & cbc &     6.306 \\
           & greedy &     4.169 \\
@@ -399,7 +398,7 @@ Scenario & Solver &           \\
 \end{table}
 
 Interestingly, slight differences in simulation results was also observed
-between the two solvers. This is due to timesteps in which there is problem
+between the two solvers. This is due to time-steps in which there is problem
 degeneracy, i.e., multiple optimal solutions exist. Consider a timestep, $t_i$,
 in which one reactor is refueling and another reactor is entering the
 simulation. Four total quantities of fuel are requested - one refueling batch
