@@ -8,13 +8,13 @@
 
 \section{Methods \& Strategies}
 
-Dynamic Resource Exchange (DRE) is a novel methodology for determing
-transactions between suppliers and consumers. The core solution strategy is
-agnostic to resource types. The DRE supports fuel cycle simulation, which is
-highly dependent on specific resource properties (material isotopic vectors),
-through its agent communication framework. Because the communication framework
-can be specialized to any abstract resource type, the methodology and framework
-can be adapted to other complex supply chains.
+Dynamic Resource Exchange (DRE) is a inter-simulation, optimization-based
+methodology for determing transactions between suppliers and consumers. The core
+solution strategy is agnostic to resource types. The DRE supports fuel cycle
+simulation, which is highly dependent on specific resource properties (material
+isotopic vectors), through its agent communication framework. Because the
+communication framework can be specialized to any abstract resource type, the
+methodology and framework can be adapted to other complex supply chains.
 
 The DRE enables the constrained transaction of complex resources between
 entities in a simulation given a measure of cardinal preference for each
@@ -55,11 +55,11 @@ collective information gathering procedure is shown in Figure
 \ref{fig:procedure}.
 
 \begin{figure}
-  \begin{center}
-    \includegraphics[]{procedure.pdf}
-    \caption[]{\label{fig:procedure}
-        Schematic illustrating the DRE's information gathering procedure.}
-  \end{center}
+  \centering
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{procedure.pdf}}
+  \caption[]{Schematic illustrating the DRE's information
+    gathering phases: Request for Bids (RFB), Response to Request for Bids
+    (RRFB), and Preference Adjustment (PA).\label{fig:procedure}}
 \end{figure}
 
 The first phase allows consumers of commodities to denote both the quantity of a
@@ -93,7 +93,7 @@ requests. Arbitrary constraints over the set of requests can be provided that
 are functions of quantity or quality.  Each request may have an associated
 preference. For requests that mutually satisfy a given demand, a preference
 distribution over those requests informs the solver as to which should be
-satisfied first, given constraints. Finally, each request portfolio has a
+satisfied first, given the constraints. Finally, each request portfolio has a
 specific quantity associated with it.
 
 The second phase allows suppliers to \textit{respond} to the set of request
@@ -213,7 +213,7 @@ the coefficient is defined by the ratio between the the average request quantity
 over all mutual requests and $x_m$
 
 \begin{equation}
-  \beta_{r, m} = \frac{\bar{x_M}}{x_m}.
+  \beta_{r, m} = \frac{\overline{x_M}}{x_m}.
 \end{equation}
 
 The constraint conversion functions are utilized in the NFCTP by applying them
@@ -235,12 +235,12 @@ Finally, for each supply-request node pair, there is an associated preference,
 $p_{i, j}$. The set of all preferences is denoted $P$. Similarly, flow between a
 node pair is denoted $x_{i, j}$, and the set of all flows is denoted $X$. The
 possible flow on an arc is provided an upper bound by the request node quantity,
-$\tilde{x_j}$.
+$\widetilde{x_j}$.
 
 \subsubsection{Exchange Graph}
 
 Upon completion of the information gathering phase, a \textit{bipartite} network
-is formed. This network is called the \textit{exchange graph}. The network
+is formed which is called an \textit{exchange graph}. The network
 consists of sending (bid) nodes, $I$, and receiving (request) nodes, $J$. For
 each request node, $j$, there may be many bid nodes; however, there is a
 one-to-one mapping between bid nodes and request nodes. In other words, a given
@@ -721,7 +721,7 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
     z \:\: = 
     \sum_{(i, j) \in A_p} c_{i,j} x_{i,j} 
     \: + 
-    \sum_{(i, j) \in A_e} c_{i,j} \tilde{x_j} y_{i,j} 
+    \sum_{(i, j) \in A_e} c^{\prime}_{i,j} y_{i,j} 
     & 
     \label{eqs:NFCTP_obj} \\
     %%
@@ -729,7 +729,7 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
     &
     \sum_{(i, j) \in A_{p_s}} a^k_{i,j} x_{i,j}
     \: + 
-    \sum_{(i, j) \in A_{e_s}} a^k_{i,j} \tilde{x_j} y_{i,j}
+    \sum_{(i, j) \in A_{e_s}} a^{k\prime}_{i,j} y_{i,j}
     \leq b^k_s 
     &
     \: 
@@ -746,7 +746,7 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
     &
     \sum_{(i, j) \in A_{p_r}} a^k_{i,j} x_{i,j}
     \: + 
-    \sum_{(i, j) \in A_{e_r}} a^k_{i,j} \tilde{x_j} y_{i,j}
+    \sum_{(i, j) \in A_{e_r}} a^{k\prime}_{i,j} y_{i,j}
     \geq b^k_r 
     &
     \: 
@@ -775,6 +775,19 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
   \end{align}
 \end{subequations}
 %%% 
+
+\noindent
+The above formulation uses a simplified representation of constraint
+coefficients for binary variables shown in Equation \ref{eqs:constr_simple} and
+objective coefficients shown in Equation \ref{eqs:obj_simple}.
+
+\begin{equation}\label{eqs:constr_simple}
+a^{k\prime}_{i,j} = a^k_{i,j} \tilde{x_j}
+\end{equation}
+
+\begin{equation}\label{eqs:obj_simple}
+c^{\prime}_{i,j} = c_{i,j} \tilde{x_j}
+\end{equation}
 
 %%% 
 \begin{table} [h!]
@@ -838,84 +851,8 @@ solution in a shorter amount of time, simple heuristics exist. Such a heuristic
 used in Cyclus is provided in \secref{abm:dre:nfctp:heur}, and further heuristic
 development is a fruitful area of future work.
 
-Note that each constraint coefficient for binary variables can be rewritten as
-Equation \ref{eqs:constr_simple} and each objective coefficient can be rewritten
-as Equation \ref{eqs:obj_simple}.
-
-\begin{equation}\label{eqs:constr_simple}
-a^{k\prime}_{i,j} = a^k_{i,j} \tilde{x_j}
-\end{equation}
-
-\begin{equation}\label{eqs:obj_simple}
-c^{\prime}_{i,j} = c_{i,j} \tilde{x_j}
-\end{equation}
-
-Using both updated definitions, a simpler formulation can be written and is shown
-in Equation \ref{eqs:NFCTP_simp}.
-
 %%% 
 % this could probably be realigned 
-\begin{subequations}\label{eqs:NFCTP_simp}
-  \begin{align}
-    %%
-    \min_{x, y} \:\: 
-    & 
-    z \:\: = 
-    \sum_{(i, j) \in A_p} c_{i,j} x_{i,j} 
-    \: + 
-    \sum_{(i, j) \in A_e} c^{\prime}_{i,j} y_{i,j} 
-    & 
-    \label{eqs:NFCTP_simp_obj} \\
-    %%
-    \text{s.t.} \:\: 
-    &
-    \sum_{(i, j) \in A_{p_s}} a^k_{i,j} x_{i,j}
-    \: + 
-    \sum_{(i, j) \in A_{e_s}} a^{k\prime}_{i,j} y_{i,j}
-    \leq b^k_s 
-    &
-    \: 
-    \forall \: k \in K_s, 
-    \forall \: s \in S 
-    \label{eqs:NFCTP_simp_sup} \\
-    %%
-    &
-    \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 
-    &
-    \forall \: s \in S 
-    \label{eqs:NFCTP_simp_mut_sup} \\
-    %%
-    &
-    \sum_{(i, j) \in A_{p_r}} a^k_{i,j} x_{i,j}
-    \: + 
-    \sum_{(i, j) \in A_{e_r}} a^{k\prime}_{i,j} y_{i,j}
-    \geq b^k_r 
-    &
-    \: 
-    \forall \: k \in K_r,  
-    \forall \: r \in R 
-    \label{eqs:NFCTP_simp_req} \\
-    %%
-    &
-    \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 
-    &
-    \forall \: r \in R 
-    \label{eqs:NFCTP_simp_mut_req} \\
-    %%
-    &
-    x_{i,j} \in [0, \tilde{x_j}]
-    &
-    \forall \: (i, j) \in A_p
-    \label{eqs:NFCTP_simp_x} \\
-    %%
-    &
-    y_{i,j} \in \left\{ 0, 1 \right\}
-    &
-    \forall \: (i, j) \in A_e
-    \label{eqs:NFCTP_simp_y}
-    %%
-  \end{align}
-\end{subequations}
 %%% 
 
 \subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
