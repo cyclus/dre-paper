@@ -8,13 +8,13 @@
 
 \section{Methods \& Strategies}
 
-Dynamic Resource Exchange (DRE) is a novel methodology for determing
-transactions between suppliers and consumers. The core solution strategy is
-agnostic to resource types. The DRE supports fuel cycle simulation, which is
-highly dependent on specific resource properties (material isotopic vectors),
-through its agent communication framework. Because the communication framework
-can be specialized to any abstract resource type, the methodology and framework
-can be adapted to other complex supply chains.
+Dynamic Resource Exchange (DRE) is a inter-simulation, optimization-based
+methodology for determining transactions between suppliers and consumers. The core
+solution strategy is agnostic to resource types. The DRE supports fuel cycle
+simulation, which is highly dependent on specific resource properties (material
+isotopic vectors), through its agent communication framework. Because the
+communication framework can be specialized to any abstract resource type, the
+methodology and framework can be adapted to other complex supply chains.
 
 The DRE enables the constrained transaction of complex resources between
 entities in a simulation given a measure of cardinal preference for each
@@ -55,11 +55,11 @@ collective information gathering procedure is shown in Figure
 \ref{fig:procedure}.
 
 \begin{figure}
-  \begin{center}
-    \includegraphics[]{procedure.pdf}
-    \caption[]{\label{fig:procedure}
-        Schematic illustrating the DRE's information gathering procedure.}
-  \end{center}
+  \centering
+  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{procedure.pdf}}
+  \caption[]{Schematic illustrating the DRE's information
+    gathering phases: Request for Bids (RFB), Response to Request for Bids
+    (RRFB), and Preference Adjustment (PA).\label{fig:procedure}}
 \end{figure}
 
 The first phase allows consumers of commodities to denote both the quantity of a
@@ -93,7 +93,7 @@ requests. Arbitrary constraints over the set of requests can be provided that
 are functions of quantity or quality.  Each request may have an associated
 preference. For requests that mutually satisfy a given demand, a preference
 distribution over those requests informs the solver as to which should be
-satisfied first, given constraints. Finally, each request portfolio has a
+satisfied first, given the constraints. Finally, each request portfolio has a
 specific quantity associated with it.
 
 The second phase allows suppliers to \textit{respond} to the set of request
@@ -213,7 +213,7 @@ the coefficient is defined by the ratio between the the average request quantity
 over all mutual requests and $x_m$
 
 \begin{equation}
-  \beta_{r, m} = \frac{\bar{x_M}}{x_m}.
+  \beta_{r, m} = \frac{\overline{x_M}}{x_m}.
 \end{equation}
 
 The constraint conversion functions are utilized in the NFCTP by applying them
@@ -235,12 +235,12 @@ Finally, for each supply-request node pair, there is an associated preference,
 $p_{i, j}$. The set of all preferences is denoted $P$. Similarly, flow between a
 node pair is denoted $x_{i, j}$, and the set of all flows is denoted $X$. The
 possible flow on an arc is provided an upper bound by the request node quantity,
-$\tilde{x_j}$.
+$\widetilde{x_j}$.
 
 \subsubsection{Exchange Graph}
 
 Upon completion of the information gathering phase, a \textit{bipartite} network
-is formed. This network is called the \textit{exchange graph}. The network
+is formed which is called an \textit{exchange graph}. The network
 consists of sending (bid) nodes, $I$, and receiving (request) nodes, $J$. For
 each request node, $j$, there may be many bid nodes; however, there is a
 one-to-one mapping between bid nodes and request nodes. In other words, a given
@@ -477,14 +477,13 @@ equations for the enrichment facility by combining Equations
 
 %\paragraph{Preferences \& Costs}
 
-In any network flow problem, of which transportation problems are a subset, the
-objective coefficients associated with transporting commodities is what drives
-the solution. Given the nature of supply and demand constraints, the
-transportation problem naturally lends itself to a minimum cost formulation. A
-preference-based formulation has been presented thus far due to the difficulties
-of employing reasonable cost coefficients, as was discussed in 
-\secref{intro:prefs}. While directly using costs should be available to users, in
-practice using a more abstract notion of preferences is simpler.
+In any network flow problem, the objective coefficients associated with
+transporting commodities drive the solution. Given the nature of supply and
+demand constraints, the transportation problem naturally lends itself to a
+minimum cost formulation. A preference-based formulation has been presented thus
+far due to the difficulties of employing reasonable cost coefficients. While
+directly using costs should be available to users, in practice using a more
+abstract notion of preferences is simpler.
 
 Formally, a preference function, $p_{i, j}(h)$, is defined which is a cardinal
 preference ordering over a consumer's satisfying commodity set.
@@ -494,27 +493,21 @@ p_{i, j}(h) \:\: \forall i \in I  \:\: \forall h \in H_{r}
 \end{equation}
 
 \noindent
-A preference is assigned to each arc in the NFCTP, and are a function both of
-the consumer, $j$, and producer, $i$, and the proposed resource transfer from
+A preference is assigned to each arc in the NFCTP and is a function both of the
+consumer, $j$, and producer, $i$, and the proposed resource transfer from
 consumer to producer. The dependence on producer encapsulates the relationship
 effects due to managerial preferences. The preference set used in the NFCTP
 formulation follows directly from the Preference Adjustment phase described in
-\secref{abm:dre:info}.
-
-The notion of a preference is a positive one, that is, an optimal solution
-maximizes the product of preference and flow in the system. However, the
-transportation problem requires a cost-based objective function. Because
-preferences are a proxy for cost and there is a desire to support cost-based
-DREs in the future, a preference-to-cost translation function is utilized. A
-cost translation function, $f$, is defined that operates on the commodity
-preference function to produce an appropriate cost for the NFCTP.
+\secref{abm:dre:info}. A cost translation function, $f$, is defined that
+operates on the commodity preference function to produce an appropriate cost for
+the NFCTP.
 
 \begin{equation}
 f : p_{i,j}(h) \to c_{i,j}
 \end{equation}
 
 \noindent
-For the purposes of this work, any operator that preserves the preference
+For the purposes of this work, any operator that preserves preference
 monotonicity and cardinal ordering is suitable.  The inversion operator has been
 chosen because it preserves required features and also allows for easy
 translation from preference to cost as well as translation from cost to
@@ -528,148 +521,30 @@ If cost data and a valid cost assignment methodology is developed in the future,
 costs may be used directly, and the preference-to-cost translation may be
 ignored.
 
-\subsubsection{Linear Programming Formulation}\label{abm:dre:lp}
-
-Combining the previous discussions, the LP Formulation of the NFCTP, denoted the
-NFCTP-LP, can be constructed. In general, the NFCTP is a minimum cost
-transportation problem that includes custom constraints as described in previous
-sections. Including all of the discussion in the previous sections, the
-formulation is straightforward and shown in Equation \ref{eqs:NFCTP-LP}.
-
-%%% 
-\begin{subequations}\label{eqs:NFCTP-LP}
-  \begin{align}
-    %%
-    \min_{x} \:\: 
-    & 
-    z = \sum_{i \in I}\sum_{j \in J}c_{i,j} x_{i,j} 
-    & 
-    \label{eqs:NFCTP-LP_obj} \\
-    %%
-    \text{s.t.} \:\: 
-    &
-    \sum_{i \in I_s} \sum_{j \in J} a^k_{i,j} x_{i,j} \leq b^k_s 
-    &
-    \: 
-    \forall \: k \in K_s, 
-    \forall \: s \in S 
-    \label{eqs:NFCTP-LP_sup} \\
-    %%
-    &
-    \sum_{j \in J_r} \sum_{i \in I} a^k_{i,j} x_{i,j} \geq b^k_r 
-    &
-    \: 
-    \forall \: k \in K_r,  
-    \forall \: r \in R 
-    \label{eqs:NFCTP-LP_req} \\
-    %%
-    &
-    x_{i,j} \in [0, \tilde{x_j}]
-    &
-    \forall \: i \in I, 
-    \forall \: j \in J 
-    \label{eqs:NFCTP-LP_x}
-    %%
-  \end{align}
-\end{subequations}
-%%% 
-
-The variables and sets used to define Equation \ref{eqs:NFCTP-LP} have been
-described in detail in previous sections. A short synopsis of the sets used is
-provided in Table \ref{tbl:NFCTP-LP-sets}, and a corresponding synopsis of the
-variables used is provided in Table \ref{tbl:NFCTP-LP-vars}.
-
-%%% 
-\begin{table} [h!]
-\centering
-\begin{tabularx}{\columnwidth-10pt}{|c|X|} % line wraps second column if too long
-\hline
-Set         & Description \\
-\hline
-$S$     & suppliers \\
-$R$     & requesters \\
-$I$     & all supply nodes \\
-$I_s$   & nodes for a supplier $s$ \\
-$J$     & all request nodes \\
-$J_r$   & nodes for a requester $r$ \\
-$K_s$   & constraints for a supplier $s$ \\
-$K_r$   & constraints for a requester $r$ \\
-$X$         & the feasible set of flows between producers and consumers  \\
-\hline
-\end{tabularx}
-\caption{Sets Appearing in the NFCTP-LP Formulation}
-\label{tbl:NFCTP-LP-sets}
-\end{table}
-%%% 
-
-%%% 
-\begin{table} [h!]
-\centering
-\begin{tabularx}{\columnwidth-10pt}{|c|X|} % line wraps second column if too long
-\hline
-Variable    & Description \\
-\hline
-$c_{i,j}$             & the unit cost of flow
-                          from producer node $i$ to consumer node $j$  \\
-$x_{i,j}$             & a decision variable, the flow 
-                          from producer node $i$ to consumer node $j$  \\
-$a_{i,j}^k$ & the constraint coefficient for constraint $k$ 
-                          on flow between nodes $i$ and $j$  \\
-$b_s^k$   & the constraining value for constraint $k$ of supplier $s$ \\
-$b_r^k$   & the constraining value for constraint $k$ of requester $r$ \\
-$\tilde{x_j}$ & the requested quantity associated with request node $j$ \\
-\hline
-\end{tabularx}
-\caption{Variables Appearing in the NFCTP-LP Formulation}
-\label{tbl:NFCTP-LP-vars}
-\end{table}
-%%%
-
-Notably, a feasible solution to the formulation provided in Equation
-\ref{eqs:NFCTP-LP} is guaranteed due to the presence of false arcs. Accordingly,
-the DRE using this formulation will never fail within a simulation.
-
 \subsubsection{Mixed Integer Linear Programming Formulation}\label{abm:dre:milp}
 
-The previous linear program (LP) formulation of the Generic Fuel Cycle
-Transportation Problem fully describes many of the types of transactions that
-arise at any given time step. However, it does not allow the critical case of
+The full NFCTP can be constructed by combining the components of the previous
+sections. The NFCTP is formulated as a mixed integer-linear program (MILP),
+rather than a linear program (LP) in order to allow for the critical case of
 reactor fuel orders, which comprise a large amount of material orders within the
-simulation context. Specifically, it allows reactor fuel orders to be met by
-more than one supplier with an arbitrary amount of the order met by each
-supplier. Put another way, the LP formulation does not contain the discrete
-material information required to model the transaction of fuel assemblies. 
-
-In order to provide this capability of quantizing orders, binary decision
-variables must be introduced. The addition of integer variables changes both the
-complexity of the formulation and the complexity of the solution technique. Such
-a change requires a Mixed Integer-Linear Program (MILP) formulation and solution
-via the branch-and-bound method which solves NP-Hard combinatorial optimization
-problems.
+simulation context. By introducing binary decision variables, fuel orders can be
+guaranteed to be met by a single supplier, rather than allowing mixing of orders
+between potential suppliers. Similarly, it also guarantees that used fuel is
+sent to a single back-end facility, rather than being split between multiple
+facilities. 
 
 %\paragraph{Binary Variables}
 
-The primary difference between the LP and MILP formulations is the inclusion
-binary decision variables $y_{i,j}$. A variable $y_{i,j}$ has a value of 1 if
-flow occurs between producer node $i$ and consumer node $j$. If flow occurs, its
-quantity will be equal to the equivalent flow upper bound along that arc,
-$\tilde{x}_{j}$, which denote the quantity of a quantized order.
-
-Binary variables, representing quantized flow, are directly related to the
-notion of \textit{exclusive} bids and requests discussed in 
-\secref{abm:dre:info}. In the MILP formulation, an arc $(i, j)$ is considered
+A binary decision variable $y_{i,j}$ is defined for each arc and has a value of
+1 if flow occurs between producer node $i$ and consumer node $j$. If flow
+occurs, its quantity will be equal to the equivalent flow upper bound along that
+arc, $\tilde{x}_{j}$. Binary variables, representing quantized flow, are
+directly related to the notion of \textit{exclusive} bids and requests discussed
+in \secref{abm:dre:info}. In the MILP formulation, an arc $(i, j)$ is considered
 exclusive if either node $i$ or node $j$ was defined as exclusive in the
-information gathering phase of the DRE. Accordingly, it is useful to partition
-all arcs based on this characteristic. Given the set of arcs $A$, a partition
-exists such that $A$ can be separated into exclusive arcs, $A_e$, and
-non-exclusive arcs, or arcs that allow partial flow, $A_p$.
-
-\begin{equation}\label{eqs:arc-union}
-  A = A_{p} \cup A_{e}
-\end{equation}
-
-Similarly, each partition can be further subdivided into partitions based on
-supplier and requester. 
+information gathering phase of the DRE. Given the set of arcs $A$, a partition
+exists such that $A$ can be separated into exclusive arcs and non-exclusive
+arcs, or arcs that allow partial flow, for each supplier and requester.
 
 \begin{equation}\label{eqs:arc-union}
   A = \bigcup_{r \in R} A_{p_r} \cup A_{e_r}
@@ -681,16 +556,12 @@ supplier and requester.
 
 %\paragraph{Mutually Exclusive Constraints}
 
-\textit{Mutual} requests and responses were described in 
-\secref{abm:dre:info}. These are defined as a set of requests or responses, of
-which only one may be satisfied. This is represented in the formulation as a
-constraint on the associated variables. Again, if a variable $y_{i,j}$ is set to
-$1$, flow is sent along arc $(i, j)$. If it is $0$, no flow occurs. A
-\textit{mutually exclusive} constraint simply says that only one arc in a mutual
-set may have a value of 1.
-
-The set of mutually satisfying arcs is denoted $M_s$ and $M_r$ for suppliers and
-requesters, respectively. The associated constraints are then defined by
+\textit{Mutual} requests and responses, described in \secref{abm:dre:info}, are
+defined as a set of requests or responses, of which only one may be
+satisfied. This is represented in the formulation as a constraint on the
+associated $y_{i,j}$ variables: only one arc in a mutual set may have a value of
+1. The set of mutually satisfying arcs is denoted $M_s$ and $M_r$ for suppliers
+and requesters, respectively. The associated constraints are then defined by
 Equations \ref{eqs:mutual_sup} and \ref{eqs:mutual_req}.
 
 \begin{equation}\label{eqs:mutual_sup}
@@ -703,12 +574,10 @@ Equations \ref{eqs:mutual_sup} and \ref{eqs:mutual_req}.
 
 %\paragraph{Formulation}
 
-Using the above arc partition notation allows for a much simpler written
-formulation of the MILP that looks quite close to the related LP formulation
-shown in Equation \ref{eqs:NFCTP-LP}. The full formulation of the NFCTP is shown
-in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
-\ref{eqs:NFCTP} are described in Tables \ref{tbl:NFCTP-sets} and
-\ref{tbl:NFCTP-vars}.
+Using the described arc partition notation allows for a much simpler written
+formulation of the MILP. The full formulation of the NFCTP is shown in Equation
+\ref{eqs:NFCTP}.  The sets and variables involved in Equation \ref{eqs:NFCTP}
+are described in Tables \ref{tbl:NFCTP-sets} and \ref{tbl:NFCTP-vars}.
 
 
 %%% 
@@ -721,7 +590,7 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
     z \:\: = 
     \sum_{(i, j) \in A_p} c_{i,j} x_{i,j} 
     \: + 
-    \sum_{(i, j) \in A_e} c_{i,j} \tilde{x_j} y_{i,j} 
+    \sum_{(i, j) \in A_e} c^{\prime}_{i,j} y_{i,j} 
     & 
     \label{eqs:NFCTP_obj} \\
     %%
@@ -729,7 +598,7 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
     &
     \sum_{(i, j) \in A_{p_s}} a^k_{i,j} x_{i,j}
     \: + 
-    \sum_{(i, j) \in A_{e_s}} a^k_{i,j} \tilde{x_j} y_{i,j}
+    \sum_{(i, j) \in A_{e_s}} a^{k\prime}_{i,j} y_{i,j}
     \leq b^k_s 
     &
     \: 
@@ -746,7 +615,7 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
     &
     \sum_{(i, j) \in A_{p_r}} a^k_{i,j} x_{i,j}
     \: + 
-    \sum_{(i, j) \in A_{e_r}} a^k_{i,j} \tilde{x_j} y_{i,j}
+    \sum_{(i, j) \in A_{e_r}} a^{k\prime}_{i,j} y_{i,j}
     \geq b^k_r 
     &
     \: 
@@ -775,6 +644,19 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
   \end{align}
 \end{subequations}
 %%% 
+
+\noindent
+A simplified representation of constraint coefficients for binary variables
+shown in Equation \ref{eqs:constr_simple} and objective coefficients shown in
+Equation \ref{eqs:obj_simple} is used.
+
+\begin{equation}\label{eqs:constr_simple}
+a^{k\prime}_{i,j} = a^k_{i,j} \tilde{x_j}
+\end{equation}
+
+\begin{equation}\label{eqs:obj_simple}
+c^{\prime}_{i,j} = c_{i,j} \tilde{x_j}
+\end{equation}
 
 %%% 
 \begin{table} [h!]
@@ -827,105 +709,17 @@ $\tilde{x_j}$ & the requested quantity associated with request node $j$ \\
 \end{table}
 %%%
 
-The examples of the various constraints from the previous section also apply
-here. The only difference is the notion of the binary variables, $y_{i,j}$,
-which act as on/off switch as to whether a consumer's entire requested amount of
-a resource is met by a supplier or not. 
-
-Using this advanced formulation adds significant complexity to the resolution
-method at every time step. However, should a user wish to find a feasible
-solution in a shorter amount of time, simple heuristics exist. Such a heuristic
-used in Cyclus is provided in \secref{abm:dre:nfctp:heur}, and further heuristic
-development is a fruitful area of future work.
-
-Note that each constraint coefficient for binary variables can be rewritten as
-Equation \ref{eqs:constr_simple} and each objective coefficient can be rewritten
-as Equation \ref{eqs:obj_simple}.
-
-\begin{equation}\label{eqs:constr_simple}
-a^{k\prime}_{i,j} = a^k_{i,j} \tilde{x_j}
-\end{equation}
-
-\begin{equation}\label{eqs:obj_simple}
-c^{\prime}_{i,j} = c_{i,j} \tilde{x_j}
-\end{equation}
-
-Using both updated definitions, a simpler formulation can be written and is shown
-in Equation \ref{eqs:NFCTP_simp}.
-
 %%% 
 % this could probably be realigned 
-\begin{subequations}\label{eqs:NFCTP_simp}
-  \begin{align}
-    %%
-    \min_{x, y} \:\: 
-    & 
-    z \:\: = 
-    \sum_{(i, j) \in A_p} c_{i,j} x_{i,j} 
-    \: + 
-    \sum_{(i, j) \in A_e} c^{\prime}_{i,j} y_{i,j} 
-    & 
-    \label{eqs:NFCTP_simp_obj} \\
-    %%
-    \text{s.t.} \:\: 
-    &
-    \sum_{(i, j) \in A_{p_s}} a^k_{i,j} x_{i,j}
-    \: + 
-    \sum_{(i, j) \in A_{e_s}} a^{k\prime}_{i,j} y_{i,j}
-    \leq b^k_s 
-    &
-    \: 
-    \forall \: k \in K_s, 
-    \forall \: s \in S 
-    \label{eqs:NFCTP_simp_sup} \\
-    %%
-    &
-    \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 
-    &
-    \forall \: s \in S 
-    \label{eqs:NFCTP_simp_mut_sup} \\
-    %%
-    &
-    \sum_{(i, j) \in A_{p_r}} a^k_{i,j} x_{i,j}
-    \: + 
-    \sum_{(i, j) \in A_{e_r}} a^{k\prime}_{i,j} y_{i,j}
-    \geq b^k_r 
-    &
-    \: 
-    \forall \: k \in K_r,  
-    \forall \: r \in R 
-    \label{eqs:NFCTP_simp_req} \\
-    %%
-    &
-    \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 
-    &
-    \forall \: r \in R 
-    \label{eqs:NFCTP_simp_mut_req} \\
-    %%
-    &
-    x_{i,j} \in [0, \tilde{x_j}]
-    &
-    \forall \: (i, j) \in A_p
-    \label{eqs:NFCTP_simp_x} \\
-    %%
-    &
-    y_{i,j} \in \left\{ 0, 1 \right\}
-    &
-    \forall \: (i, j) \in A_e
-    \label{eqs:NFCTP_simp_y}
-    %%
-  \end{align}
-\end{subequations}
 %%% 
 
 \subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
 
-With full simulation domain knowledge of supply and demand, including false
-arcs, a feasible solution can be found. By definition a feasible solution is a
-\textit{solution} to the possible flow of resources, but not necessarily an
-\textit{optimal} solution. Many heuristics may be applied to bipartite graphs
-with constrained flows. A simple \textit{greedy} heuristic is presented here
-and implemented. 
+Given an exchange graph, including false arcs, a feasible solution can be
+found. By definition a feasible solution is a \textit{solution} to the possible
+flow of resources, but not necessarily an \textit{optimal} solution. Many
+heuristics may be applied to bipartite graphs with constrained flows. A simple
+\textit{greedy} heuristic is presented here and implemented.
 
 The maximum flow along an arc, $x_{max}$, depends on the constraints associated
 with each node on the arc. For nodes $i$ and $j$ belonging to portfolios $s$ and
@@ -941,11 +735,11 @@ $r$, respectively, the maximum allowable flow is defined as
         \rbrace.
 \end{equation}
 
-The Greedy Exchange Heuristic matches maximum flow along arcs, up to the
-requested amount defined by each request portfolio, $q_r$, after having sorted
-all arcs. The constraining values of each arc, $b_k$, are updated upon
-declaration of a match (via an \code{AddMatch} function) in Algorithm
-\ref{alg::greedy}.
+The Greedy Exchange Heuristic, described in Algorithm \ref{alg::greedy} ,
+matches maximum flow along arcs, up to the requested amount defined by each
+request portfolio, $q_r$, after having sorted all arcs. The constraining values
+of each arc, $b_k$, are updated upon declaration of a match (via an
+\code{AddMatch} function) .
 
 \begin{algorithm}[!h]
  \SetAlgoLined
@@ -983,24 +777,6 @@ arcs. Because each node pairing, $(i, j)$, corresponds to a specific, proposed
 resource transfer, it can only have one commodity associated with it. Instead,
 the constraint set, $K$, is applied over multiple arcs, where each arc is
 assigned its own commodity. 
-
-Take the enrichment facility example, expanding on the previous discussion. Note
-that an enrichment facility takes feed uranium and then enriches its
-\nucl{235}{U} content. This feed uranium can come from different sources which
-have different feed enrichments. In practice, the most likely sources of feed
-uranium are natural uranium (NU) or recycled uranium (RU), a product of
-reprocessing light water reactor fuel. Recycled uranium may be advantageous to
-use if it has a higher weight percent of \nucl{235}{U} than does natural
-uranium. We can now state the set the values for $H_{r}$ for this facility:
-
-\begin{equation}\label{eqs:enr-dem-commods}
-  H_{r} = \{ \mbox{NU}, \mbox{RU} \}
-\end{equation}
-
-\noindent
-One or more constraints would then accompany any requests. For example, one
-could constraint total \nucl{235}{U} content needed, which would include both NU
-and RU flows.
 
 \subsection{Implementation}\label{abm:dre:impl}
 
@@ -1117,7 +893,7 @@ While a solver may operate on the exchange layer, an instance of an
 \code{ExchangeGraph} can be translated fully into the NFCTP. Once in an LP or
 MILP form, the DRE instance can be solved by sophisticated 3\textsuperscript{rd}
 party libraries. In order to interface with a large number of the possible
-solvers, including COIN-OR and CPLEX, the COIN-OR OSI API \cite{coinosi} is
+solvers, including \cbc and CPLEX, the COIN-OR OSI API \cite{coinosi} is
 utilized.
 
 The translation from the exchange layer to formulation layer is managed by the
@@ -1157,13 +933,12 @@ prototype may set its preference for MOX-based fuels higher than UOX-based
 fuels, and the DRE will provide it with MOX-based fuels if it is able.
 
 A new \texttt{Region} archetype has been developed to explicitly support both
-static and dynamic inter-region policy instrument models
-\cite{tariff_region_doi}. Named the \texttt{TariffRegion}, it applies instrument
-models, such as tariffs, during the preference-adjustment phase of the DRE
-according to a given \textit{rule}. Rules may be applied, updated, and removed
-as a function of time, thereby supporting dynamic instrument models. Static
-models are trivially supported by applying a rule at the initial time step and
-not removing it.
+static and dynamic inter-region policy instrument models. Named the
+\texttt{TariffRegion}, it applies instrument models, such as tariffs, during the
+preference-adjustment phase of the DRE according to a given \textit{rule}. Rules
+may be applied, updated, and removed as a function of time, thereby supporting
+dynamic instrument models. Static models are trivially supported by applying a
+rule at the initial time step and not removing it.
 
 Rules are comprised of \textit{conditions} and \textit{tariffs}. Given a
 condition and tariff, preferences are adjusted as shown in Algorithm
@@ -1177,7 +952,7 @@ condition and tariff, preferences are adjusted as shown in Algorithm
  \caption{\texttt{TariffRegion} Preference Adjustment}\label{alg::tariff}
 \end{algorithm}
 
-A rule's condition may depend on any factor that is queryable during the
+A rule's condition may depend on any factor that is query-able during the
 preference adjustment phase of the DRE. During PA, each potential resource
 transfer is known. Therefore, rules may depend on information regarding the
 supplier or consumer (e.g., in which region each resides), the commodity
