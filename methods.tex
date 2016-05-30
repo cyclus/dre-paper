@@ -521,148 +521,30 @@ If cost data and a valid cost assignment methodology is developed in the future,
 costs may be used directly, and the preference-to-cost translation may be
 ignored.
 
-\subsubsection{Linear Programming Formulation}\label{abm:dre:lp}
-
-Combining the previous discussions, the LP Formulation of the NFCTP, denoted the
-NFCTP-LP, can be constructed. In general, the NFCTP is a minimum cost
-transportation problem that includes custom constraints as described in previous
-sections. Including all of the discussion in the previous sections, the
-formulation is straightforward and shown in Equation \ref{eqs:NFCTP-LP}.
-
-%%% 
-\begin{subequations}\label{eqs:NFCTP-LP}
-  \begin{align}
-    %%
-    \min_{x} \:\: 
-    & 
-    z = \sum_{i \in I}\sum_{j \in J}c_{i,j} x_{i,j} 
-    & 
-    \label{eqs:NFCTP-LP_obj} \\
-    %%
-    \text{s.t.} \:\: 
-    &
-    \sum_{i \in I_s} \sum_{j \in J} a^k_{i,j} x_{i,j} \leq b^k_s 
-    &
-    \: 
-    \forall \: k \in K_s, 
-    \forall \: s \in S 
-    \label{eqs:NFCTP-LP_sup} \\
-    %%
-    &
-    \sum_{j \in J_r} \sum_{i \in I} a^k_{i,j} x_{i,j} \geq b^k_r 
-    &
-    \: 
-    \forall \: k \in K_r,  
-    \forall \: r \in R 
-    \label{eqs:NFCTP-LP_req} \\
-    %%
-    &
-    x_{i,j} \in [0, \tilde{x_j}]
-    &
-    \forall \: i \in I, 
-    \forall \: j \in J 
-    \label{eqs:NFCTP-LP_x}
-    %%
-  \end{align}
-\end{subequations}
-%%% 
-
-The variables and sets used to define Equation \ref{eqs:NFCTP-LP} have been
-described in detail in previous sections. A short synopsis of the sets used is
-provided in Table \ref{tbl:NFCTP-LP-sets}, and a corresponding synopsis of the
-variables used is provided in Table \ref{tbl:NFCTP-LP-vars}.
-
-%%% 
-\begin{table} [h!]
-\centering
-\begin{tabularx}{\columnwidth-10pt}{|c|X|} % line wraps second column if too long
-\hline
-Set         & Description \\
-\hline
-$S$     & suppliers \\
-$R$     & requesters \\
-$I$     & all supply nodes \\
-$I_s$   & nodes for a supplier $s$ \\
-$J$     & all request nodes \\
-$J_r$   & nodes for a requester $r$ \\
-$K_s$   & constraints for a supplier $s$ \\
-$K_r$   & constraints for a requester $r$ \\
-$X$         & the feasible set of flows between producers and consumers  \\
-\hline
-\end{tabularx}
-\caption{Sets Appearing in the NFCTP-LP Formulation}
-\label{tbl:NFCTP-LP-sets}
-\end{table}
-%%% 
-
-%%% 
-\begin{table} [h!]
-\centering
-\begin{tabularx}{\columnwidth-10pt}{|c|X|} % line wraps second column if too long
-\hline
-Variable    & Description \\
-\hline
-$c_{i,j}$             & the unit cost of flow
-                          from producer node $i$ to consumer node $j$  \\
-$x_{i,j}$             & a decision variable, the flow 
-                          from producer node $i$ to consumer node $j$  \\
-$a_{i,j}^k$ & the constraint coefficient for constraint $k$ 
-                          on flow between nodes $i$ and $j$  \\
-$b_s^k$   & the constraining value for constraint $k$ of supplier $s$ \\
-$b_r^k$   & the constraining value for constraint $k$ of requester $r$ \\
-$\tilde{x_j}$ & the requested quantity associated with request node $j$ \\
-\hline
-\end{tabularx}
-\caption{Variables Appearing in the NFCTP-LP Formulation}
-\label{tbl:NFCTP-LP-vars}
-\end{table}
-%%%
-
-Notably, a feasible solution to the formulation provided in Equation
-\ref{eqs:NFCTP-LP} is guaranteed due to the presence of false arcs. Accordingly,
-the DRE using this formulation will never fail within a simulation.
-
 \subsubsection{Mixed Integer Linear Programming Formulation}\label{abm:dre:milp}
 
-The previous linear program (LP) formulation of the Generic Fuel Cycle
-Transportation Problem fully describes many of the types of transactions that
-arise at any given time step. However, it does not allow the critical case of
+The full NFCTP can be constructed by combining the components of the previous
+sections. The NFCTP is formulated as a mixed integer-linear program (MILP),
+rather than a linear program (LP) in order to allow for the critical case of
 reactor fuel orders, which comprise a large amount of material orders within the
-simulation context. Specifically, it allows reactor fuel orders to be met by
-more than one supplier with an arbitrary amount of the order met by each
-supplier. Put another way, the LP formulation does not contain the discrete
-material information required to model the transaction of fuel assemblies. 
-
-In order to provide this capability of quantizing orders, binary decision
-variables must be introduced. The addition of integer variables changes both the
-complexity of the formulation and the complexity of the solution technique. Such
-a change requires a Mixed Integer-Linear Program (MILP) formulation and solution
-via the branch-and-bound method which solves NP-Hard combinatorial optimization
-problems.
+simulation context. By introducing binary decision variables, fuel orders can be
+guaranteed to be met by a single supplier, rather than allowing mixing of orders
+between potential suppliers. Similarly, it also guarantees that used fuel is
+sent to a single back-end facility, rather than being split between multiple
+facilities. 
 
 %\paragraph{Binary Variables}
 
-The primary difference between the LP and MILP formulations is the inclusion
-binary decision variables $y_{i,j}$. A variable $y_{i,j}$ has a value of 1 if
-flow occurs between producer node $i$ and consumer node $j$. If flow occurs, its
-quantity will be equal to the equivalent flow upper bound along that arc,
-$\tilde{x}_{j}$, which denote the quantity of a quantized order.
-
-Binary variables, representing quantized flow, are directly related to the
-notion of \textit{exclusive} bids and requests discussed in 
-\secref{abm:dre:info}. In the MILP formulation, an arc $(i, j)$ is considered
+A binary decision variable $y_{i,j}$ is defined for each arc and has a value of
+1 if flow occurs between producer node $i$ and consumer node $j$. If flow
+occurs, its quantity will be equal to the equivalent flow upper bound along that
+arc, $\tilde{x}_{j}$. Binary variables, representing quantized flow, are
+directly related to the notion of \textit{exclusive} bids and requests discussed
+in \secref{abm:dre:info}. In the MILP formulation, an arc $(i, j)$ is considered
 exclusive if either node $i$ or node $j$ was defined as exclusive in the
-information gathering phase of the DRE. Accordingly, it is useful to partition
-all arcs based on this characteristic. Given the set of arcs $A$, a partition
-exists such that $A$ can be separated into exclusive arcs, $A_e$, and
-non-exclusive arcs, or arcs that allow partial flow, $A_p$.
-
-\begin{equation}\label{eqs:arc-union}
-  A = A_{p} \cup A_{e}
-\end{equation}
-
-Similarly, each partition can be further subdivided into partitions based on
-supplier and requester. 
+information gathering phase of the DRE. Given the set of arcs $A$, a partition
+exists such that $A$ can be separated into exclusive arcs and non-exclusive
+arcs, or arcs that allow partial flow, for each supplier and requester.
 
 \begin{equation}\label{eqs:arc-union}
   A = \bigcup_{r \in R} A_{p_r} \cup A_{e_r}
@@ -674,16 +556,12 @@ supplier and requester.
 
 %\paragraph{Mutually Exclusive Constraints}
 
-\textit{Mutual} requests and responses were described in 
-\secref{abm:dre:info}. These are defined as a set of requests or responses, of
-which only one may be satisfied. This is represented in the formulation as a
-constraint on the associated variables. Again, if a variable $y_{i,j}$ is set to
-$1$, flow is sent along arc $(i, j)$. If it is $0$, no flow occurs. A
-\textit{mutually exclusive} constraint simply says that only one arc in a mutual
-set may have a value of 1.
-
-The set of mutually satisfying arcs is denoted $M_s$ and $M_r$ for suppliers and
-requesters, respectively. The associated constraints are then defined by
+\textit{Mutual} requests and responses, described in \secref{abm:dre:info}, are
+defined as a set of requests or responses, of which only one may be
+satisfied. This is represented in the formulation as a constraint on the
+associated $y_{i,j}$ variables: only one arc in a mutual set may have a value of
+1. The set of mutually satisfying arcs is denoted $M_s$ and $M_r$ for suppliers
+and requesters, respectively. The associated constraints are then defined by
 Equations \ref{eqs:mutual_sup} and \ref{eqs:mutual_req}.
 
 \begin{equation}\label{eqs:mutual_sup}
@@ -696,12 +574,10 @@ Equations \ref{eqs:mutual_sup} and \ref{eqs:mutual_req}.
 
 %\paragraph{Formulation}
 
-Using the above arc partition notation allows for a much simpler written
-formulation of the MILP that looks quite close to the related LP formulation
-shown in Equation \ref{eqs:NFCTP-LP}. The full formulation of the NFCTP is shown
-in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
-\ref{eqs:NFCTP} are described in Tables \ref{tbl:NFCTP-sets} and
-\ref{tbl:NFCTP-vars}.
+Using the described arc partition notation allows for a much simpler written
+formulation of the MILP. The full formulation of the NFCTP is shown in Equation
+\ref{eqs:NFCTP}.  The sets and variables involved in Equation \ref{eqs:NFCTP}
+are described in Tables \ref{tbl:NFCTP-sets} and \ref{tbl:NFCTP-vars}.
 
 
 %%% 
@@ -770,9 +646,9 @@ in Equation \ref{eqs:NFCTP}.  The sets and variables involved in Equation
 %%% 
 
 \noindent
-The above formulation uses a simplified representation of constraint
-coefficients for binary variables shown in Equation \ref{eqs:constr_simple} and
-objective coefficients shown in Equation \ref{eqs:obj_simple}.
+A simplified representation of constraint coefficients for binary variables
+shown in Equation \ref{eqs:constr_simple} and objective coefficients shown in
+Equation \ref{eqs:obj_simple} is used.
 
 \begin{equation}\label{eqs:constr_simple}
 a^{k\prime}_{i,j} = a^k_{i,j} \tilde{x_j}
@@ -833,17 +709,6 @@ $\tilde{x_j}$ & the requested quantity associated with request node $j$ \\
 \end{table}
 %%%
 
-The examples of the various constraints from the previous section also apply
-here. The only difference is the notion of the binary variables, $y_{i,j}$,
-which act as on/off switch as to whether a consumer's entire requested amount of
-a resource is met by a supplier or not. 
-
-Using this advanced formulation adds significant complexity to the resolution
-method at every time step. However, should a user wish to find a feasible
-solution in a shorter amount of time, simple heuristics exist. Such a heuristic
-used in Cyclus is provided in \secref{abm:dre:nfctp:heur}, and further heuristic
-development is a fruitful area of future work.
-
 %%% 
 % this could probably be realigned 
 %%% 
@@ -870,11 +735,11 @@ $r$, respectively, the maximum allowable flow is defined as
         \rbrace.
 \end{equation}
 
-The Greedy Exchange Heuristic matches maximum flow along arcs, up to the
-requested amount defined by each request portfolio, $q_r$, after having sorted
-all arcs. The constraining values of each arc, $b_k$, are updated upon
-declaration of a match (via an \code{AddMatch} function) in Algorithm
-\ref{alg::greedy}.
+The Greedy Exchange Heuristic, described in Algorithm \ref{alg::greedy} ,
+matches maximum flow along arcs, up to the requested amount defined by each
+request portfolio, $q_r$, after having sorted all arcs. The constraining values
+of each arc, $b_k$, are updated upon declaration of a match (via an
+\code{AddMatch} function) .
 
 \begin{algorithm}[!h]
  \SetAlgoLined
@@ -912,24 +777,6 @@ arcs. Because each node pairing, $(i, j)$, corresponds to a specific, proposed
 resource transfer, it can only have one commodity associated with it. Instead,
 the constraint set, $K$, is applied over multiple arcs, where each arc is
 assigned its own commodity. 
-
-Take the previous enrichment facility example, and note that an enrichment
-facility takes feed uranium and then enriches its \nucl{235}{U} content. This
-feed uranium can come from different sources which have different feed
-enrichments. In practice, the most likely sources of feed uranium are natural
-uranium (NU) or recycled uranium (RU), a product of reprocessing light water
-reactor fuel. Recycled uranium may be advantageous to use if it has a higher
-weight percent of \nucl{235}{U} than does natural uranium. We can now state the
-set the values for $H_{r}$ for this facility:
-
-\begin{equation}\label{eqs:enr-dem-commods}
-  H_{r} = \{ \mbox{NU}, \mbox{RU} \}
-\end{equation}
-
-\noindent
-One or more constraints would then accompany any requests. For example, one
-could constraint total \nucl{235}{U} content needed, which would include both NU
-and RU flows.
 
 \subsection{Implementation}\label{abm:dre:impl}
 
