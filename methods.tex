@@ -9,7 +9,7 @@
 \section{Methods \& Strategies}
 
 Dynamic Resource Exchange (DRE) is a inter-simulation, optimization-based
-methodology for determing transactions between suppliers and consumers. The core
+methodology for determining transactions between suppliers and consumers. The core
 solution strategy is agnostic to resource types. The DRE supports fuel cycle
 simulation, which is highly dependent on specific resource properties (material
 isotopic vectors), through its agent communication framework. Because the
@@ -893,7 +893,7 @@ While a solver may operate on the exchange layer, an instance of an
 \code{ExchangeGraph} can be translated fully into the NFCTP. Once in an LP or
 MILP form, the DRE instance can be solved by sophisticated 3\textsuperscript{rd}
 party libraries. In order to interface with a large number of the possible
-solvers, including COIN-OR and CPLEX, the COIN-OR OSI API \cite{coinosi} is
+solvers, including \cbc and CPLEX, the COIN-OR OSI API \cite{coinosi} is
 utilized.
 
 The translation from the exchange layer to formulation layer is managed by the
@@ -933,13 +933,12 @@ prototype may set its preference for MOX-based fuels higher than UOX-based
 fuels, and the DRE will provide it with MOX-based fuels if it is able.
 
 A new \texttt{Region} archetype has been developed to explicitly support both
-static and dynamic inter-region policy instrument models
-\cite{tariff_region_doi}. Named the \texttt{TariffRegion}, it applies instrument
-models, such as tariffs, during the preference-adjustment phase of the DRE
-according to a given \textit{rule}. Rules may be applied, updated, and removed
-as a function of time, thereby supporting dynamic instrument models. Static
-models are trivially supported by applying a rule at the initial time step and
-not removing it.
+static and dynamic inter-region policy instrument models. Named the
+\texttt{TariffRegion}, it applies instrument models, such as tariffs, during the
+preference-adjustment phase of the DRE according to a given \textit{rule}. Rules
+may be applied, updated, and removed as a function of time, thereby supporting
+dynamic instrument models. Static models are trivially supported by applying a
+rule at the initial time step and not removing it.
 
 Rules are comprised of \textit{conditions} and \textit{tariffs}. Given a
 condition and tariff, preferences are adjusted as shown in Algorithm
@@ -953,7 +952,7 @@ condition and tariff, preferences are adjusted as shown in Algorithm
  \caption{\texttt{TariffRegion} Preference Adjustment}\label{alg::tariff}
 \end{algorithm}
 
-A rule's condition may depend on any factor that is queryable during the
+A rule's condition may depend on any factor that is query-able during the
 preference adjustment phase of the DRE. During PA, each potential resource
 transfer is known. Therefore, rules may depend on information regarding the
 supplier or consumer (e.g., in which region each resides), the commodity
