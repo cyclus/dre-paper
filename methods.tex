@@ -477,14 +477,13 @@ equations for the enrichment facility by combining Equations
 
 %\paragraph{Preferences \& Costs}
 
-In any network flow problem, of which transportation problems are a subset, the
-objective coefficients associated with transporting commodities is what drives
-the solution. Given the nature of supply and demand constraints, the
-transportation problem naturally lends itself to a minimum cost formulation. A
-preference-based formulation has been presented thus far due to the difficulties
-of employing reasonable cost coefficients, as was discussed in 
-\secref{intro:prefs}. While directly using costs should be available to users, in
-practice using a more abstract notion of preferences is simpler.
+In any network flow problem, the objective coefficients associated with
+transporting commodities drive the solution. Given the nature of supply and
+demand constraints, the transportation problem naturally lends itself to a
+minimum cost formulation. A preference-based formulation has been presented thus
+far due to the difficulties of employing reasonable cost coefficients. While
+directly using costs should be available to users, in practice using a more
+abstract notion of preferences is simpler.
 
 Formally, a preference function, $p_{i, j}(h)$, is defined which is a cardinal
 preference ordering over a consumer's satisfying commodity set.
@@ -494,27 +493,21 @@ p_{i, j}(h) \:\: \forall i \in I  \:\: \forall h \in H_{r}
 \end{equation}
 
 \noindent
-A preference is assigned to each arc in the NFCTP, and are a function both of
-the consumer, $j$, and producer, $i$, and the proposed resource transfer from
+A preference is assigned to each arc in the NFCTP and is a function both of the
+consumer, $j$, and producer, $i$, and the proposed resource transfer from
 consumer to producer. The dependence on producer encapsulates the relationship
 effects due to managerial preferences. The preference set used in the NFCTP
 formulation follows directly from the Preference Adjustment phase described in
-\secref{abm:dre:info}.
-
-The notion of a preference is a positive one, that is, an optimal solution
-maximizes the product of preference and flow in the system. However, the
-transportation problem requires a cost-based objective function. Because
-preferences are a proxy for cost and there is a desire to support cost-based
-DREs in the future, a preference-to-cost translation function is utilized. A
-cost translation function, $f$, is defined that operates on the commodity
-preference function to produce an appropriate cost for the NFCTP.
+\secref{abm:dre:info}. A cost translation function, $f$, is defined that
+operates on the commodity preference function to produce an appropriate cost for
+the NFCTP.
 
 \begin{equation}
 f : p_{i,j}(h) \to c_{i,j}
 \end{equation}
 
 \noindent
-For the purposes of this work, any operator that preserves the preference
+For the purposes of this work, any operator that preserves preference
 monotonicity and cardinal ordering is suitable.  The inversion operator has been
 chosen because it preserves required features and also allows for easy
 translation from preference to cost as well as translation from cost to
@@ -857,12 +850,11 @@ development is a fruitful area of future work.
 
 \subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
 
-With full simulation domain knowledge of supply and demand, including false
-arcs, a feasible solution can be found. By definition a feasible solution is a
-\textit{solution} to the possible flow of resources, but not necessarily an
-\textit{optimal} solution. Many heuristics may be applied to bipartite graphs
-with constrained flows. A simple \textit{greedy} heuristic is presented here
-and implemented. 
+Given an exchange graph, including false arcs, a feasible solution can be
+found. By definition a feasible solution is a \textit{solution} to the possible
+flow of resources, but not necessarily an \textit{optimal} solution. Many
+heuristics may be applied to bipartite graphs with constrained flows. A simple
+\textit{greedy} heuristic is presented here and implemented.
 
 The maximum flow along an arc, $x_{max}$, depends on the constraints associated
 with each node on the arc. For nodes $i$ and $j$ belonging to portfolios $s$ and
@@ -921,14 +913,14 @@ resource transfer, it can only have one commodity associated with it. Instead,
 the constraint set, $K$, is applied over multiple arcs, where each arc is
 assigned its own commodity. 
 
-Take the enrichment facility example, expanding on the previous discussion. Note
-that an enrichment facility takes feed uranium and then enriches its
-\nucl{235}{U} content. This feed uranium can come from different sources which
-have different feed enrichments. In practice, the most likely sources of feed
-uranium are natural uranium (NU) or recycled uranium (RU), a product of
-reprocessing light water reactor fuel. Recycled uranium may be advantageous to
-use if it has a higher weight percent of \nucl{235}{U} than does natural
-uranium. We can now state the set the values for $H_{r}$ for this facility:
+Take the previous enrichment facility example, and note that an enrichment
+facility takes feed uranium and then enriches its \nucl{235}{U} content. This
+feed uranium can come from different sources which have different feed
+enrichments. In practice, the most likely sources of feed uranium are natural
+uranium (NU) or recycled uranium (RU), a product of reprocessing light water
+reactor fuel. Recycled uranium may be advantageous to use if it has a higher
+weight percent of \nucl{235}{U} than does natural uranium. We can now state the
+set the values for $H_{r}$ for this facility:
 
 \begin{equation}\label{eqs:enr-dem-commods}
   H_{r} = \{ \mbox{NU}, \mbox{RU} \}
