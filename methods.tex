@@ -180,34 +180,27 @@ dynamic modeling of multi-lateral scenarios ranging 100+ years in a
 Supply and demand in a nuclear fuel cycle context is inherently a multicommodity
 problem. A light water reactor can be fueled by both UOX and MOX fuel, for
 instance. How it is fueled is a result both of fuel availability and associated
-preferences. Allowing for complex physical and chemical constraints on both
-processes and inventories, as well as including economics-based approaches for
-determining exchange preferences is a complicated affair. Determining the
-optimum solution to such a system is even more complicated. Accordingly,
-sophisticated tools in both the operations research and agent based modeling
-realms have been leveraged to accomplish the task.
+preferences. In order to allow for complex physical and chemical constraints on
+both processes and inventories, an optimization-based approach is used which
+employs economics-based proxies to arrive at a solution of resource transfers
+within a simulation time-step. 
 
-An instance of supply and demand defined by the DRE information gathering step
-can be solved in a variety of ways. It can be cast to a constrained, bipartite
-network, and any heuristic that provides a feasible solution to such networks
-are valid. The system can be solved optimally, however, by formulating the
-system as a mathematical program. This section describes a Multicommodity
-Transportation Problem variant used for this approach, entitled the
-\textit{Nuclear Fuel Cycle Transportation Problem} (NFCTP). A linear program
-(LP) formulation and a mixed-integer linear program (MILP) formulation are
-provided. A greedy heuristic is also designed and implemented.
-
-The LP formulation can be solved quickly, but allows split orders. In other
-words, the LP formulation solves a relaxation of the defined instance that does
-not take into account \textit{exclusive} requests or bids. The nuclear fuel
-cycle deals with bundled orders, such as nuclear fuel assemblies, thus this
-modeling paradigm is only an approximation. The MILP provides a more realistic
-exchange, but can take much longer to solve. 
+An instance of supply and demand defined by the DRE's information gathering step
+is cast to a constrained, bipartite network which represents a variant of the
+Multicommodity Transportation Problem, entitled the \textit{Nuclear Fuel Cycle
+  Transportation Problem} (NFCTP). It can be solved by any heuristic that
+provides a feasible solution to such networks are valid.  A greedy heuristic is
+also designed and implemented. The system can be solved optimally, however, by
+formulating the system as a mathematical program, and a mixed-integer linear
+program (MILP) formulation is provided provided. Formulated as a MILP, the
+system can be solved with any available solver. \cbc\cite{forrestcbc}, a popular
+open-source branch-and-bound solver, is used in this work.
 
 \subsubsection{Terminology}
 
 Objects and data structures generated in the information gathering procedure are
-used in the formal definition of the NFCTP. Each portfolio can be considered
+used in the formal definition of the NFCTP. Collections of supply and demand are
+collected in \textit{portfolios}. Each portfolio can be considered
 separately. The set of supply portfolios is denoted as $S$ and the set of
 request portfolios is denoted as $R$, and each agent may have multiple
 portfolios in a given exchange. Each supply portfolio is comprised of $s_M$
@@ -227,17 +220,18 @@ and
 
 Each portfolio has a set of commodities, $H$, associated with it. These are
 denoted $H_s$ for supply portfolios and $H_r$ for request
-portfolios. Furthermore, each portfolio has a set of constraints, $K$,
-associated with it. Each constraint has a constraining value, $b_s^k$ and
-$b_r^k$, respectively. Additionally, each unique combination of portfolio and
-constraint has an associated \textit{constraint coefficient conversion
-  function}, denoted $\beta_s^k$ for supply portfolios and $\beta_r^k$ for
-request portfolios. Each constraint coefficient conversion function takes as an
-argument a proposed resource $q_{i,j}$. Request portfolios are provided a
-quantity constraint by default for which coefficients are unity. For a set of
-\textit{mutual requests}, $M$, where each request has a request quantity, $x_m$,
-the coefficient is defined by the ratio between the the average request quantity
-over all mutual requests and $x_m$
+portfolios. Furthermore, each portfolio has a set of constraints, $K$. Each
+constraint has a constraining value, $b_s^k$ and $b_r^k$,
+respectively. Additionally, each unique combination of portfolio and constraint
+has an associated \textit{constraint coefficient conversion function}, denoted
+$\beta_s^k$ for supply portfolios and $\beta_r^k$ for request portfolios. Each
+constraint coefficient conversion function takes as an argument a proposed
+resource quality $q_{i,j}$. Request portfolios are provided a quantity
+constraint by default for which coefficients are unity and whose constraining
+value is is $b^{x}_{r}$. For a set of \textit{mutual requests}, $M$,
+where each request has a request quantity, $x_m$, the coefficient is defined by
+the ratio between the the average request quantity over all mutual requests and
+$x_m$
 
 \begin{equation}
   \beta_{r, m} = \frac{\overline{x_M}}{x_m}.
@@ -248,14 +242,14 @@ to the proposed resource transfers, creating constraint
 coefficients. Coefficients for supply constraints are defined as
 
 \begin{equation}
-  a^k_{i, j} = \beta_s^k(q_{i_j}).
+  a^k_{i, j} = \beta_s^k(q_{i,j}).
 \end{equation}
 
 \noindent
 Coefficients for request constraints are defined as
 
 \begin{equation}
-  a^k_{j, i} = \beta_r^k(q_{i_j}).
+  a^k_{j, i} = \beta_r^k(q_{i,j}).
 \end{equation}
 
 Finally, for each supply-request node pair, there is an associated preference,
@@ -267,12 +261,12 @@ $\widetilde{x_j}$.
 \subsubsection{Exchange Graph}
 
 Upon completion of the information gathering phase, a \textit{bipartite} network
-is formed which is called an \textit{exchange graph}. The network
-consists of sending (bid) nodes, $I$, and receiving (request) nodes, $J$. For
-each request node, $j$, there may be many bid nodes; however, there is a
-one-to-one mapping between bid nodes and request nodes. In other words, a given
-bid node, $i$, is a unique response to a request node, $j$. An example of a bare
-exchange graph graph is shown in Figure \ref{fig:ex_bare}.
+is formed which is called an Exchange Graph. The network consists of sending
+(bid) nodes, $I$, and receiving (request) nodes, $J$. For each request node,
+$j$, there may be many bid nodes; however, there is a one-to-one mapping between
+bid nodes and request nodes. In other words, a given bid node, $i$, is a unique
+response to a request node, $j$. An example of a bare Exchange Graph is shown in
+Figure \ref{fig:ex_bare}.
 
 \begin{figure}
   \begin{center}
@@ -289,7 +283,7 @@ exchange graph graph is shown in Figure \ref{fig:ex_bare}.
 In the bipartite graph, portfolios act as partitions that group nodes
 together. Node groups share common constraints, and request node groups share a
 common notion of satisfiable quantity, i.e., a default mass-based constraint. An
-example of a partitioned exchange graph is shown in Figure \ref{fig:ex_groups}.
+example of a partitioned Exchange Graph is shown in Figure \ref{fig:ex_groups}.
 
 \begin{figure}
   \begin{center}
@@ -306,7 +300,7 @@ example of a partitioned exchange graph is shown in Figure \ref{fig:ex_groups}.
 
 Because of defined constraints, there may not be sufficient supply in the
 simulated exchange. To ensure a feasible solution, an unconstrained false supply
-node is added to the exchange graph. Additionally, false nodes are added to each
+node is added to the Exchange Graph. Additionally, false nodes are added to each
 request portfolio and are connected to the false supply source. These arcs are
 denoted as \textit{false arcs}. The preferences given to each false arc, $p_f$,
 is defined to be lower than the lowest preference in the system, $P$.
@@ -325,9 +319,9 @@ by the number of request portfolios, i.e.,
 
 Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
 arc will only be engaged if no other possible arc can be engage, due to capacity
-constraints. If any flow is assigned to false arcs after the exchange graph is
+constraints. If any flow is assigned to false arcs after the Exchange Graph is
 solved, that flow is ignored when initiating transactions. Figure
-\ref{fig:ex_false} shows a fully defined exchange graph.
+\ref{fig:ex_false} shows a fully defined Exchange Graph.
 
 \begin{figure}
   \begin{center}
@@ -344,7 +338,7 @@ solved, that flow is ignored when initiating transactions. Figure
 
 \subsubsection{Arc Properties}\label{abm:dre:fctp:arcs}
 
-The result of the DRE is flow determined along arcs, where arcs connect supply
+The result of the DRE is flow determined along arcs, from supply
 nodes to request nodes. A number of properties are defined on arcs, namely
 commodities, constraint coefficients, and preferences.
 
@@ -357,10 +351,11 @@ commodities. However, each possible resource transfer, i.e., each arc, is based
 on a single commodity. Accordingly, it is possible to color each arc, given a
 commodity-to-color mapping.
 
-For example, consider an exchange similar to that shown in Figure
-\ref{fig:ex_groups} with two fuel commodities ($A$, $B$), two requesters ($R_1$,
-$R_2$), and two suppliers ($S_1$, $S_2$, $S_3$) in the configuration described
-by Tables \ref{tbl:ex_sup} and \ref{tbl:ex_req}.
+For example, consider the Exchange Graph shown in Figure \ref{fig:ex_groups}
+with two fuel commodities ($A$, $B$), two requesters ($R_1$, $R_2$), and three
+suppliers ($S_1$, $S_2$, $S_3$) in the configuration described by Tables
+\ref{tbl:ex_sup} and \ref{tbl:ex_req}. The resulting Exchange Graph can be
+colored as shown in Figure \ref{fig:ex_groups_color}.
 
 \begin{table}[h]
 \centering
@@ -385,9 +380,6 @@ $R_2$             & $B$
 \label{tbl:ex_req}
 \end{table}
 
-Given the color map $A$: green, $B$: brown, the resulting exchange
-graph can be colored as shown in Figure \ref{fig:ex_groups_color}.
-
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.75\textwidth]{exchange_groups_color.pdf}
@@ -401,50 +393,48 @@ graph can be colored as shown in Figure \ref{fig:ex_groups_color}.
 
 The notion of commodities is critical during the information gathering step as
 it is the basic classification used in communicating supply and demand. It is
-also useful when an exchange graph is formed, because the graph may be able to
+also useful when an Exchange Graph is formed, because the graph may be able to
 be partitioned by collections of commodities. However, once minimally connected
-exchange graphs are established, solution mechanisms do not employ the notion of
+Exchange Graphs are established, solution mechanisms do not employ the notion of
 commodities. Rather, quantities, constraints, and preferences are used.
 
 %\paragraph{Constraint Coefficients}
 
 Constraint coefficients are determined for an arc based on the proposed resource
 to be transferred along that arc, the requester's constraint conversion
-functions, and the suppliers constraint conversion function. An example of
-supply-based constraints is provided to help clarify its purpose.
-
-Consider a supplier enrichment facility, $s$, which produces the commodity
-enriched uranium (EU). This facility has two constraints on its operation for
-any given time period: the amount of Separative Work Units (SWU) that it can
-process, $b_{s}^{SWU}$, and the total natural uranium (NU) feed it has on hand.,
-$b_{s}^{NU}$. The constraint set for $s$ is then
+functions, and the suppliers constraint conversion function. Consider a supplier
+enrichment facility, $s$, which produces the commodity enriched uranium
+(EU). This facility has two constraints on its operation for any given time
+period: the amount of Separative Work Units (SWU) that it can process,
+$b_{s}^{\text{SWU}}$, and the total natural uranium (NU) feed it has on hand.,
+$b_{s}^{\text{NU}}$.  Note that neither of these capacities are measure directly in the
+units of the commodity it produces, i.e., kilograms of EU. The constraint set
+for $s$ is then
  
 \begin{equation}\label{eqs:enr-constr-commods}
-  K_{s} = \{ \mbox{SWU}, \mbox{NU} \}.
+  K_{s} = \{ \text{\text{SWU}}, \text{\text{NU}} \}.
 \end{equation}
 
-Note that neither of these capacities are measure directly in the units of the
-commodity it produces, i.e., kilograms of EU.
 
 Consider a set of requests for enriched uranium that this facility can possibly
 meet. Such requests have, in general, two parameters: $P_{j}$, the total product
 quantity (in kilograms), and $\varepsilon_{j}$, the product enrichment (in w/o
 \nucl{235}{U}).\footnote{The notation for enrichment, $\varepsilon_{j}$, is
   chosen over its normal form, $x_p$, to limit confusion with the notation of
-  material flow, $x^h_{i,j}$.}  For the purposes of this constraint set, the
+  material flow, $x_{i,j}$.}  For the purposes of this constraint set, the
 quality of material in question is its enrichment, i.e.,
 
 \begin{equation}\label{eqs:enr-q-swu}
   q_{j} \equiv \varepsilon_{j}.
 \end{equation}
 
-These values are set during a prior phase of the overall matching algorithm, and
-can therefore be considered constant. Further, note that, in general, an
-enrichment facility's operation, or rather its capacity, is governed by two
-parameters: $\varepsilon_{f}$, the fraction of \nucl{235}{U} in its feed
-material, and $\varepsilon_{t}$, the fraction of \nucl{235}{U} in its tails
-material. These parameters determine the amount of SWU required to produce some
-amount of enriched uranium, shown in Equation \ref{eqs:swu} as well as the
+These values are set during the information-gathering phase of the overall
+matching algorithm, and can therefore be considered constant. Further, note
+that, in general, an enrichment facility's operation, or rather its capacity, is
+governed by two parameters: $\varepsilon_{f}$, the fraction of \nucl{235}{U} in
+its feed material, and $\varepsilon_{t}$, the fraction of \nucl{235}{U} in its
+tails material. These parameters determine the amount of SWU required to produce
+some amount of enriched uranium, shown in Equation \ref{eqs:swu} as well as the
 amount of natural uranium, or feed, required, as shown in Equation \ref{eqs:nu}.
 
 \begin{align}
@@ -478,11 +468,11 @@ arguments of this facility's two capacity constraints.
 
 \begin{align}
 \label{eqs:enr-prod-beta}
-\beta_{s}^{NU}(\varepsilon_{j}) = & \:\: \frac{\varepsilon_{j} - \varepsilon_{t}}
+\beta_{s}^{\text{NU}}(\varepsilon_{j}) = & \:\: \frac{\varepsilon_{j} - \varepsilon_{t}}
                                       {\varepsilon_{f} - \varepsilon_{t}} \\
 \begin{split}
 \label{eqs:enr-swu-beta}
-\beta_{s}^{SWU}(\varepsilon_{j}) = & \:\: V(\varepsilon_{j}) \\
+\beta_{s}^{\text{SWU}}(\varepsilon_{j}) = & \:\: V(\varepsilon_{j}) \\
                          & + \frac{\varepsilon_{j} - \varepsilon_{f}}
                                   {\varepsilon_{f} - \varepsilon_{t}} V(\varepsilon_{t}) \\
                          & - \frac{\varepsilon_{j} - \varepsilon_{t}}
@@ -497,9 +487,9 @@ equations for the enrichment facility by combining Equations
 
 \begin{align}
 \label{eqs:enr-prod-constr}
-\sum_{j \in J}\beta_{s}^{NU}(\varepsilon_{j}) \: x_{s,j}  & \leq b_{s}^{NU} \\
+\sum_{j \in J}\beta_{s}^{\text{NU}}(\varepsilon_{j}) \: x_{s,j}  & \leq b_{s}^{\text{NU}} \\
 \label{eqs:enr-swu-constr}
-\sum_{j \in J}\beta_{s}^{SWU}(\varepsilon_{j}) \: x_{s,j} & \leq b_{s}^{SWU}
+\sum_{j \in J}\beta_{s}^{\text{SWU}}(\varepsilon_{j}) \: x_{s,j} & \leq b_{s}^{\text{SWU}}
 \end{align}
 
 %\paragraph{Preferences \& Costs}
@@ -521,13 +511,13 @@ p_{i, j}(h) \:\: \forall i \in I  \:\: \forall h \in H_{r}
 
 \noindent
 A preference is assigned to each arc in the NFCTP and is a function both of the
-consumer, $j$, and producer, $i$, and the proposed resource transfer from
-consumer to producer. The dependence on producer encapsulates the relationship
-effects due to managerial preferences. The preference set used in the NFCTP
-formulation follows directly from the Preference Adjustment phase described in
-\secref{abm:dre:info}. A cost translation function, $f$, is defined that
-operates on the commodity preference function to produce an appropriate cost for
-the NFCTP.
+consumer, $j$, and producer, $i$, and the quality, $q_{i, j}$, of the proposed
+resource transfer from consumer to producer. The dependence on producer
+encapsulates the relationship effects due to managerial preferences. The
+preference set used in the NFCTP formulation follows directly from the
+Preference Adjustment phase described in \secref{abm:dre:info}. A cost
+translation function, $f$, is defined that operates on the commodity preference
+function to produce an appropriate cost for the NFCTP.
 
 \begin{equation}
 f : p_{i,j}(h) \to c_{i,j}
@@ -694,8 +684,6 @@ Set         & Description \\
 \hline
 $S$     & suppliers \\
 $R$     & requesters \\
-$A_p$     & arcs that allow \textit{partial} flows \\
-$A_e$     & \textit{exclusive} flow arcs  \\
 $A_{p_s}$     & arcs that allow \textit{partial} flows for supplier $s$ \\
 $A_{e_s}$     & \textit{exclusive} flow arcs for supplier $s$ \\
 $A_{p_p}$     & arcs that allow \textit{partial} flows for requester $r$ \\
@@ -742,7 +730,7 @@ $\tilde{x_j}$ & the requested quantity associated with request node $j$ \\
 
 \subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
 
-Given an exchange graph, including false arcs, a feasible solution can be
+Given an Exchange Graph, including false arcs, a feasible solution can be
 found. By definition a feasible solution is a \textit{solution} to the possible
 flow of resources, but not necessarily an \textit{optimal} solution. Many
 heuristics may be applied to bipartite graphs with constrained flows. A simple
@@ -764,24 +752,24 @@ $r$, respectively, the maximum allowable flow is defined as
 
 The Greedy Exchange Heuristic, described in Algorithm \ref{alg::greedy} ,
 matches maximum flow along arcs, up to the requested amount defined by each
-request portfolio, $q_r$, after having sorted all arcs. The constraining values
+request portfolio, $b^x_r$, after having sorted all arcs. The constraining values
 of each arc, $b_k$, are updated upon declaration of a match (via an
 \code{AddMatch} function) .
 
 \begin{algorithm}[!h]
  \SetAlgoLined
- \KwData{A resource exchange graph with constraints and preferences.}
+ \KwData{A resource Exchange Graph with constraints and preferences.}
  \KwResult{A valid set of resource flows.}
  sort request partitions by average preference\;
  \ForAll{$r \in R$} {
    sort requests by average preference\;
    matched $\leftarrow$ 0\;        
-   \While{matched $\leq q_r$ and $\exists$ a request} {
+   \While{matched $\leq b^x_r$ and $\exists$ a request} {
      get next request\;
      sort incoming arcs by preference\;
-     \While{matched $\leq q_r$ and $\exists$ an arc} {
+     \While{matched $\leq b^x_r$ and $\exists$ an arc} {
        get next arc\;
-       remaining $\leftarrow q_r$ - matched\;
+       remaining $\leftarrow b^x_r$ - matched\;
        to\_match $\leftarrow \min \lbrace$remaining, $x_{max} \rbrace$\;
        \code{AddMatch}(arc, to\_match)\;
        matched $\leftarrow$ matched + to\_match\;
@@ -791,13 +779,13 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
  \caption{Greedy Exchange Heuristic}\label{alg::greedy}
 \end{algorithm}
 
-\subsubsection{Departure from the MCTP}
+\subsubsection{Departure from the Multicommodity Transportation Problem}
 
-The classic MCTP includes the coloring of flows based on commodity type. For
-example, for a commodity, $h$, the unit cost of flow would be $c^h_{i,j}$ rather
-than $c_{i, j}$. This is included because multiple commodities can flow along
-the same arc in the MCTP. In other words, the node-arc incidence matrix includes
-an extra commodity dimension. 
+The classic MCTP\cite{even1975complexity} includes the \textit{coloring} of flows
+based on commodity type. For example, for a commodity, $h$, the unit cost of
+flow would be $c^h_{i,j}$ rather than $c_{i, j}$. This is included because
+multiple commodities can flow along the same arc in the MCTP. In other words,
+the node-arc incidence matrix includes an extra commodity dimension.
 
 The multicommodity nature of the NFCTP is included in constraints, rather than
 arcs. Because each node pairing, $(i, j)$, corresponds to a specific, proposed
@@ -971,7 +959,13 @@ rule at the initial time step and not removing it.
 
 Rules are comprised of \textit{conditions} and \textit{tariffs}. Given a
 condition and tariff, preferences are adjusted as shown in Algorithm
-\ref{alg::tariff}.
+\ref{alg::tariff}. A rule's condition may depend on any factor that is
+query-able during the preference adjustment phase of the DRE. During PA, each
+potential resource transfer is known. Therefore, rules may depend on information
+regarding the supplier or consumer (e.g., in which region each resides), the
+commodity associated with the transfer, and both the resource quantity and
+quality (e.g., the fissile plutonium content for material resources).
+
 
 \begin{algorithm}[!h]
  \SetAlgoLined
@@ -981,15 +975,4 @@ condition and tariff, preferences are adjusted as shown in Algorithm
  \caption{\texttt{TariffRegion} Preference Adjustment}\label{alg::tariff}
 \end{algorithm}
 
-A rule's condition may depend on any factor that is query-able during the
-preference adjustment phase of the DRE. During PA, each potential resource
-transfer is known. Therefore, rules may depend on information regarding the
-supplier or consumer (e.g., in which region each resides), the commodity
-associated with the transfer, and both the resource quantity and quality (e.g.,
-the fissile plutonium content for material resources). 
-
-At present, the \texttt{TariffRegion} supports region-based rules. Each rule
-applies to another region. The rule's condition is met if the opposing facility
-involved in the trade is in the associated region. If so, a tariff, value is
-applied, per Algorithm \ref{alg::tariff}.
 
