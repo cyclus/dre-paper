@@ -1,84 +1,95 @@
 \section{Introduction}
 
-The nuclear fuel cycle (NFC) is a complex, physics-dependent supply chain that
-includes the full life cycle of Uranium and Thorium-based fuels, including
-recycling of fuel and final internment of some subset of isotopes of transmuted
-material. Uranium is mined, milled, and enriched to a variety of levels based on
-the type and vintage of the reactor which is being fueled. Used fuel can then be
-stored for a period of time before either being interred indefinitely or being
-utilized in a advanced fuel cycle by recycling its fissile and fertile
-isotopes. The ability to model such a system while maintaining physical
-consistency due to transmutation and isotopic decay is a challenging simulation
-problem. Through simulation, nuclear systems can be designed in order to support
-decision-making processes in order to address a variety of goals, e.g., reducing
-system cost, management and planning of storage facilities, studying the
-dynamics governing system transitions, and estimating long-term system
-sustainability.
+The nuclear fuel cycle (NFC) is a complex, physics-dependent supply chain of
+Uranium and Thorium-based fuels, including recycling of fuel and final disposal
+of some subset of isotopes of transmuted material. Uranium is mined, milled, and
+enriched to some level based on the type and vintage of the reactor
+which is being fueled. Used fuel can then be stored for a period of time before
+either being interred indefinitely or being utilized in a advanced fuel cycle by
+recycling its fissile and fertile isotopes. The ability to model such a system
+while maintaining physical consistency due to transmutation and isotopic decay
+is a challenging simulation problem. Through simulation, nuclear systems can be
+designed in order to support decision-making processes addressing a variety of
+goals, e.g., reducing system cost, future planning of storage facilities,
+studying the dynamics governing system transitions, and estimating long-term
+system sustainability.
 
 NFC simulation is performed by a variety of actors, including governments,
 universities, and international governance organizations. Accordingly, many
-modeling strategies have been applied to the system. Such strategies span a wide
-range of fidelity, both at the facility level and the material level. For
-instance, some simulators describe reactors by fleet (or types) and solve
-material balances for the entire fleet in aggregate
-\cite{busquim_e_silva_system_2008,yacout_vision_2006} while others instantiate
-individual (or discrete) facilities \cite{schneider_nfcsim:_2005}. Similarly,
-some simulators make detailed calculations of fuel depletion due to reactor
-fluence \cite{boucher_cosi:_2006} whereas others simply use pre-tabulated values
-that depend (generally) on burnup values for thermal reactors and conversion
-ratios for fast reactors.
+modeling strategies have been applied, spanning a wide range of modeling detail
+for both nuclear facilities and fuel. For instance, some simulators describe
+reactors by fleet (or type) and solve material balances for the entire fleet in
+aggregate \cite{busquim_e_silva_system_2008, durpel_daness_2003,
+  yacout_vision_2006} while others instantiate individual (or discrete)
+facilities \cite{schneider_nfcsim:_2005}. Similarly, some simulators make
+detailed calculations of fuel depletion due to reactor fluence
+\cite{boucher_cosi:_2006, mouginot2012class} whereas others use pre-tabulated
+values that depend (generally) on burnup values for thermal reactors and
+conversion ratios for fast reactors \cite{yacout_vision_2006}.
 
 % what are the primary design choices
 % what have other people done
 
-There are, broadly, three design-decision categories that are of concern to the
-design of an NFC simulator. The first is facility deployment, i.e., how, why,
-and when certain facilities are deployed. In the current simulation development
-environment, the most common reactor deployment mechanism is allowing a user to
-define an energy growth curve and, for each type of reactor in the simulation, a
-percentage of that total energy demand to be met by the reactor type. It is also
-common for simulators to adjust deployments based on look-ahead heuristics of
-future material availability \cite{schweitzer_improved_2008,
-  van_den_durpel_daness_2009}. The second decision category is the level of
-fidelity with which to model the physical and chemical processes involved in the
-nuclear fuel cycle. Broadly, physical fidelity includes two processes, isotopic
-decay and isotopic transmutation due to residency in a reactor. To date, there
-is still disagreement as to the physical fidelity required to accurately capture
-all system detail \cite{guerin_impact_2009}. The third concerns the connections
-between facilities and the type of material that flows along those
-connections. In general, connections between facilities can either be static or
-dynamic, and can either be fleet-based or facility-based. A static connection
-implies that material will always flow between two types of facilities, whereas
-a dynamic connection implies that a facility's input or output connection may
-change. The vast majority of simulators utilize a static, fleet-based approach.
+There are, broadly, three categories of concern to the design of an NFC
+simulator. The first is facility deployment, i.e., how, why, and when certain
+facilities are instantiated in the simulation. The most common reactor
+deployment mechanism allows a user to define an energy growth curve and, for
+each type of reactor in the simulation, a percentage of that total energy demand
+to be met by the reactor type. It is also common for simulators to adjust
+deployments based on look-ahead heuristics of future material availability
+\cite{schweitzer_improved_2008, van_den_durpel_daness_2009}. The second design
+category is the fidelity with which the physical and chemical processes involved
+in the nuclear fuel cycle are modeled. Broadly, physical fidelity includes two
+processes, isotopic decay and isotopic transmutation due to fuel's residency in
+a reactor. To date, there is still disagreement as to the physical fidelity
+required to accurately capture all system detail \cite{guerin_impact_2009}. The
+third category concerns the communication of supply and demand between
+facilities, in other words, how facilities are connected in the simulation. In
+general, connections between facilities can either be static or dynamic and can
+either be fleet-based or facility-based. A static connection implies that
+material will always flow between two types of facilities, whereas a dynamic
+connection implies that a facility's input or output connection may
+change. Simulator design is dependent on the underlying modeling approach. For
+example, using System Dynamics \cite{forrester1971counterintuitive} naturally
+leads to a static, fleet-based approach \cite{busquim_e_silva_system_2008,
+  durpel_daness_2003, yacout_vision_2006}, whereas developing a stand-alone,
+discrete event or time simulation \cite{Law:1999:SMA:554952} can lead to higher
+levels of modeling fidelity in areas of concern \cite{schneider_nfcsim:_2005,
+  mouginot2012class, boucher_cosi:_2006}.
 
 % what were goals of cyclus-style
 % simulation of the NFC can be done with a variety of methods
 % why decisions were made
-The Cyclus NFC simulator was designed to support different levels of model
-fidelity at different portions of the fuel cycle \cite{huff_cyclus_2015}. Its
-design seeks to separate the concerns of the three categories described above,
-supporting, for example, both fleet and individual facility models and to allow
-for either exogenous or endogenous facility deployment. However, there must be a
-basic infrastructure to define the method of connection and allow communication
-between entities in the simulation. This infrastructure must be flexible in that
-it must support each of the categories of simulation design. It must allow for
-dynamic entities that enter and exit the simulation and for relationships
-between those entities to change based on simulation state. Finally, it must
-allow for communication of complex resource types, e.g., isotopic fuel vectors
-that change with time. 
+\Cyclus, NFC simulator developed by the CNERG team at the University of
+Wisconsin, was designed to support different levels of model fidelity at
+different portions of the fuel cycle \cite{huff_cyclus_2015}. By Law's
+definition \cite{Law:1999:SMA:554952}, \Cyclus is a dynamic, discrete-event
+simulation that uses a fixed-increment time advance mechanism. Its design seeks
+to separate the design concerns of the three categories described above,
+supporting, for example, both fleet and individual facility models and allowing
+for either exogenous or endogenous facility deployment. However, a common
+infrastructure defining the method of facility connection and allowing
+communication between entities in the simulation is required. This
+infrastructure must be flexible in order to support different approaches to each
+of the categories of simulation design. To do so, it must allow for static
+simulation entities (e.g., facilities) as well as dynamic entities that enter
+and exit the simulation. Further, it must support the changing of relationships
+between those entities based on simulation state. Finally, it must allow for
+communication of complex resource types, e.g., isotopic fuel vectors that change
+with time.
 
 This work describes a novel approach to addressing this complicated series of
-design problems. It combines methods of both discrete-event simulation and
-agent-based modeling to enable communication between simulation entities with an
-optimization approach to determine the constrained transfer of resources. By
-Law's definition \cite{Law:1999:SMA:554952}, Cyclus is a dynamic, discrete-event
-simulation that uses a fixed-increment time advance mechanism. Inspiration for
-the entity communication framework was taken from the existing agent-based
-supply-chain modeling literature
+design problems associated with the exchange of resources in a dynamic,
+physics-dependent, supply-chain simulation. It combines methods of both
+discrete-event simulation and agent-based modeling with an optimization approach
+to determine the constrained transfer of resources. Inspiration for the entity
+communication framework was taken from the existing agent-based supply-chain
+modeling literature
 \cite{swaminathan_modeling_1998,julka_agent-based_2002,van_der_zee_modeling_2005,chatfield_multi-formalism_2007,holmgren_agent_2007}
-which provides a natural methodological fit to the present use case. Finally, a
-version of the constrained, multi-commodity transportation problem is solved.
+which provides a natural methodological fit to the present use case. Given
+time-dependent supply and demand of nuclear fuel, a version of the constrained,
+multi-commodity transportation problem is solved to determine resource transfers
+within a simulation time-step.
 
 % what did I do
 % how is paper set up
@@ -90,5 +101,5 @@ describes a new archetype in the Cyclus ecosystem that utilizes this framework
 to enable entity relationships to drive material routing
 decisions. \secref{sec:results} then describes a series of scenarios that
 display the enhanced modeling capabilities enabled by this new simulation
-framework. Finally, \secref{sec:concl} provides some concluding remarks and
+framework. Finally, \secref{sec:concl} provides concluding remarks and
 observations, reflecting on potential future work and use cases.
