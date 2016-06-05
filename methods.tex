@@ -6,15 +6,16 @@
 %%%% - flexibility
 %%%% - repo accepting multiple waste forms
 
-\section{Methods \& Strategies}\label{sec:methods}
+\section{Methodology \& Implementation}\label{sec:methods}
 
 Dynamic Resource Exchange (DRE) is a inter-simulation, optimization-based
-methodology for determining transactions between suppliers and consumers. The core
-solution strategy is agnostic to resource types. The DRE supports fuel cycle
-simulation, which is highly dependent on specific resource properties (material
-isotopic vectors), through its agent communication framework. Because the
-communication framework can be specialized to any abstract resource type, the
-methodology and framework can be adapted to other complex supply chains.
+methodology for determining transactions between suppliers and consumers. The
+core solution strategy is agnostic to resource types. The DRE is designed to
+support fuel cycle simulation, which is highly dependent on specific resource
+properties (material isotopic vectors), through its agent communication
+framework. Because the communication framework can be specialized to any
+abstract resource type, the methodology and framework can be adapted to other
+complex supply chains.
 
 The DRE enables the constrained transaction of complex resources between
 entities in a simulation given a measure of cardinal preference for each
@@ -30,11 +31,11 @@ normally find in a fuel-cycle simulation context.
 
 This section begins by detailing the methodology for querying supply and demand
 during the information gathering phase of the DRE in \secref{abm:dre:info}. The
-solution phase, in which the defined DRE is translated into a variant of the
-Multicommodity Transportation Problem (MCTP) and solved, is then described in
-\secref{abm:dre:fctp}. A description of the DRE's implementation is provided in
+solution phase is described in \secref{abm:dre:fctp} in which the defined DRE is
+translated into a variant of the Multicommodity Transportation Problem (MCTP)
+and solved. A description of the DRE's implementation is provided in
 \secref{abm:dre:impl}. Finally, \secref{meth:tariff} describes a new
-\texttt{Region} archetype in the Cyclus ecosystem that utilizes the DRE to
+\texttt{Region} archetype in the \Cyclus ecosystem that utilizes the DRE to
 enable the \textit{in situ} modeling of inter-state trade instruments, such as
 tariffs.
 
@@ -44,7 +45,7 @@ This section represents the culmination of significant previous effort
 previous descriptions of the DRE methodology with lessons learned from initial
 implementation and usage.
 
-\subsection{Information Gathering}\label{abm:dre:info}
+\subsection{Agent Communication}\label{abm:dre:info}
 
 The DRE begins with three \textit{phases}, the terminology of which is
 influenced from previous supply chain agent-based modeling work
@@ -74,7 +75,7 @@ or not at all. Exclusive requests allow the modeling of quantized, packaged
 transfers, e.g., fuel assemblies. 
 
 Consumers are allowed to post demand for multiple commodities that may serve to
-meet the same combine capacity. For example, consider an LWR that can be filled
+meet the same capacity. For example, consider an LWR that can be filled
 with MOX or UOX. It can post a demand for both, but must define a preference
 over the set of possible commodities that can be consumed. Such requests are
 termed \textit{mutual requests}. Another example is that of an advanced fuel
@@ -90,7 +91,7 @@ is termed \textit{mutually exclusive}.
 At the completion of the RFB phase, the market exchange will have a set of
 request \textit{portfolios}. Each each portfolio consists of a set
 requests. Arbitrary constraints over the set of requests can be provided that
-are functions of quantity or quality.  Each request may have an associated
+are functions of quantity or quality.  Each request has an associated
 preference. For requests that mutually satisfy a given demand, a preference
 distribution over those requests informs the solver as to which should be
 satisfied first, given the constraints. Finally, each request portfolio has a
@@ -132,42 +133,45 @@ resources. For example, a region can detect a trans-regional trade between one o
 its facilities and a facility in another region. If a tariff model is employed,
 the trade preference and be diminished or even removed.
 
-For facilities, preference adjustments occurs in response to the set of
-responses provided by producer facilities. Consider the example of a reactor
-facility that requests two fuel types, MOX and UOX. It may get two responses to
-its request for MOX, each with different isotopic profiles of the MOX that can
-be provided. It can then assign preference values over this set of potential MOX
-providers. Another prime example is in the case of repositories. A repository
-may have a defined preference of material to accept based upon its heat load or
-radiotoxicity, both of which are functions of the quality, or isotopics, of a
-material. In certain simulators, limits on fuel entering a repository are
-imposed based upon the amount of time that has elapsed since the fuel has exited
-a reactor, which can be assessed during this phase. The time constraint is, in
-actuality, a constraint on heat load or radiotoxicity (one must let enough of
-the fission products decay). A repository could analyze possible input fuel
-isotopics and set the arc preference of any that violate a given rule to 0,
-effectively eliminating that arc.
+For facilities, preference adjustment provides a mechanism to act in response to
+offers provided by producer facilities. Consider the example of a reactor
+facility that requests two fuel types, MOX and UOX, and receives two responses
+to its request for MOX, each with different isotopic profiles. It can then
+assign preference values over the set of potential MOX providers. Repositories
+provide another prime example where preference adjustment can be naturally
+employed. A repository may have a defined preference of material to accept based
+upon its heat load or radiotoxicity, both of which are functions of the quality,
+or isotopics, of a material. In certain simulators, limits on fuel entering a
+repository are imposed based upon the amount of time that has elapsed since the
+fuel has exited a reactor, which can be assessed during this phase. The time
+constraint is, in actuality, a constraint on heat load or radiotoxicity (one
+must let enough of the fission products decay). A repository could analyze
+possible input fuel isotopics and set the arc preference of any that violate a
+given rule to 0, thereby eliminating that arc.
 
-\subsection{Preferences}
+\subsubsection{Preferences}
 
 The game theoretic notion of preferences can be quite useful in fuel cycle
-simulation, however. Specifically, cardinal utility, or cardinal preferences
+simulation. Specifically, cardinal utility, or cardinal preferences
 \cite{strotz_cardinal_1953} provides a relative measure of preference such that
 any two preferences can be directly compared, provided an arbitrary scaling,
 similar to the comparison of costs in a system. The notion of preference also
 nicely extends the work of Oliver's affinity metric
-\cite{oliver_geniusv2:_2009}. Costs in a nuclear fuel cycle simulation have
-reasonably large uncertainty \cite{shropshire_advanced_2009} and are generally
-applied to the output of a simulator as a post-processing step. Furthermore, for
-many fuel cycle simulation cases, a cost proxy is directly applicable, because
-actual cost values may be very hard to compute or determine \textit{within} a
-simulation.
+\cite{oliver_geniusv2:_2009}.
 
-There also exists a body of literature that examine Nash Equilibria in the
-context of optimal flow models
+Costs in a nuclear fuel cycle simulation have reasonably large uncertainty
+\cite{shropshire_advanced_2009} and are generally applied to the output of a
+simulator as a post-processing step. Furthermore, for many fuel cycle simulation
+cases, a cost proxy is directly applicable, because actual cost values may be
+very hard to compute or determine \textit{within} a simulation. Therefore,
+preferences, a proxy of cost, can be used to drive consistent decision-making
+within a simulation.
+
+There exists a body of literature that examine Nash Equilibria in the context of
+optimal flow models
 \cite{mazumdar_fairness_1991,nagurney_supply_2002,song_nash_2002}. However, the
-complexity of such models quickly brings them out of the scope of our needs,
-i.e., dynamic modeling of multi-lateral scenarios ranging 100+ years in a
+complexity of such models quickly brings them out of the scope of the needs for
+dynamic modeling of multi-lateral scenarios ranging 100+ years in a
 ``reasonable'' amount of computation time.
 
 
@@ -817,7 +821,7 @@ The second layer, called the \textit{exchange layer}, is a
 graph. Supply/demand constructs in the first layer are translated into stateful
 objects representing nodes, arcs, constructs that carry constraint information,
 \textit{et cetera}. The collection of objects and structures combine to create
-an \code{ExchangeGraph}. Any custom, Cyclus-aware solver can be applied to an
+an \code{ExchangeGraph}. Any custom, \Cyclus-aware solver can be applied to an
 \code{ExchangeGraph} to determine a feasible solution to the DRE.
 
 In order to use sophisticated, 3\textsuperscript{rd} party LP and MILP solving
@@ -939,7 +943,7 @@ by the \code{ProgTranslator}.
 \subsection{Inter-region Policy Instruments}\label{meth:tariff}
 
 Supporting economic and social models is rare among simulators. Only one
-simulator purports to have any \textit{in situ} economic decision making
+simulator purports to have any endogenous economic decision making
 \cite{van_den_durpel_daness_2009}. Modeling international fuel cycles requires a
 simulator to support a notion of regional boundaries. To date, DESAE is the only
 simulator to advertise such a feature, providing static models of regional
