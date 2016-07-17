@@ -35,7 +35,7 @@ context.
 
 \Secref{meth:mtp} begins by providing a short overview of the
 classic optimization tools on which this work is built. An outline of the DRE
-methodolgy's progression with respect to the simulation architecture is
+methodology's progression with respect to the simulation architecture is
 described in \secref{meth:comm}. \Secref{abm:dre:info} then details the
 interface that agents within the simulation have with the DRE in order to
 communicate supply and demand information. A description of the DRE's
@@ -238,7 +238,7 @@ requests, in which case the set is termed \textit{mutually exclusive}.
 At the completion of the RFB phase, the market exchange will have a set of
 request portfolios. Each each portfolio consists of a set requests. Arbitrary
 constraints over the set of requests can be provided that are functions of
-quantity, $x$, or quality, $q$.  When communicaiting constraining information,
+quantity, $x$, or quality, $q$.  When communicating constraining information,
 agents must provide a total constraining quantity, $b$, and a \textit{constraint
   coefficient conversion function}, $\beta (q_{i, j})$. This corresponds to a
 general constraint of the form for all possible trades $A_j$ for requester $j$,
@@ -363,16 +363,16 @@ information onto a \textit{bipartite} graph. This mapping allows for the
 translation from the resource to exchange layers shown in Figure
 \ref{fig:dre_impl}. Information is mapped to properties of arcs, which represent
 proposed trades, and portfolio-based node groupings. The components of an
-Exchage Graph have a one-to-one mapping with simulation entities. For example,
-nodes in the graph represent distinct bids and requsts provided by agents.
+Exchange Graph have a one-to-one mapping with simulation entities. For example,
+nodes in the graph represent distinct bids and requests provided by agents.
 
 Each supply and request portfolio can be considered separately, i.e., there is
 no information shared between two portfolios of a given agent. The set of supply
 portfolios is denoted as $S$ and the set of request portfolios is denoted as
 $R$; each agent may have multiple portfolios in a given exchange. Each
 supply portfolio is comprised of $s_M$ supply nodes, and each request portfolio
-is comprised of $r_N$ nodes. For notational simplicity, nodes within portfolios
-are referred to with single indicies (e.g., $i$ or $j$), and collections of arcs
+is comprised of $r_N$ nodes. For notation simplicity, nodes within portfolios
+are referred to with single indices (e.g., $i$ or $j$), and collections of arcs
 (connections between supply and request nodes) associated with a given portfolio
 are referred to as $(i, j) \in A_s$ and $(i, j) \in A_r$, for supply and request
 portfolios respectively.
