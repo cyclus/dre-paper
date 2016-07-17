@@ -45,6 +45,80 @@ This section represents the culmination of significant previous effort
 previous descriptions of the DRE methodology with lessons learned from initial
 implementation and usage.
 
+\subsection{Multicommodity Transportation Problems}\label{meth:mtp}
+
+The DRE translates agent supply and demand into a version of the Multi-commodity
+Transportation Problem (MTP) \cite{even1975complexity} which belongs to the
+network flow family of optimization problems. A network flow problem is
+represented by a graph, $G(N, A)$, comprised of nodes $N$ and arcs $A$. If flow
+can occur between some node $i$ and some other node $j$, then it flows along arc
+$(i, j)$. Given a graph instance, optimal flow between nodes can be found
+provided \textit{objective coefficients} and
+\textit{constraints}. \textit{Decision variables} for this optimization problem
+comprise the optimal \textit{flow assignment}. If all decision variables are
+linear, then the resulting formulation is termed a Linear Program (LP). If some
+decision variables are integer (e.g., binary), the formulation is termed a
+Mixed-Integer Linear Program (MILP).
+
+Transportation problems model the flow of a commodity between source nodes and
+sink nodes which can have supply and demand constraints as well as \textit{unit
+  costs} specific to each supply-demand node pair. A more complex
+transportation-problem formulation can support systems in which supply or demand
+can be met by multiple commodities.  There is a unit cost $c_{i,j}^{h}$ for
+commodity $h$ to traverse arc $(i,j)$. A supplier of commodity $h$ has a certain
+supply capacity $s_i^h$ which cannot be surpassed and consumers of commodity $h$
+have a certain demand level which must be met, $d_i^h$. 
+
+In the simplest extension from the single-commodity to multi-commodity
+transportation problem, arc constraints for all commodities are combined, i.e.,
+there is a single capacity $u_{i,j}$ for a given arc $(i, j)$. A classic
+application of this enhanced complexity deals with data networks. Multiple
+classifications of data exist, but they all must traverse the same network
+infrastructure. Accordingly, the infrastructure can only accommodate a certain
+quantity of total flow among all communication types. The formulation of the
+multi-commodity flow problem is shown in Equation \ref{eqs:MCTP}. Note the
+commodity coupling in Equation \ref{eqs:MCTP_cap}.
+
+%%% 
+\begin{subequations}\label{eqs:MCTP}
+  \begin{align}
+    %%
+    \min_{x} \:\: & 
+    \sum_{i \in I}\sum_{j \in J}\sum_{h \in H} c_{i,j}^{h} x_{i,j}^{h}
+    & \label{eqs:MCTP_obj} \\
+    %%
+    \text{s.t.} \:\: &
+    \sum_{j \in J} x_{i,j}^{h} \leq s_{i}^{h}
+    &
+    \forall \: i \in I, \forall \: h \in H \label{eqs:MCTP_sup} \\
+    %%
+    &
+    \sum_{i \in I} x_{i,j}^{h} \geq d_{j}^{h}
+    & 
+    \forall \: j \in J, \forall \: h \in H \label{eqs:MCTP_dem} \\
+    %%
+    &
+    \sum_{h \in H} x_{i,j}^{h} \leq u_{i,j}
+    & 
+    \forall \: (i, j) \in A \label{eqs:MCTP_cap} \\
+    %%
+    &
+    x_{i,j}^{k} \geq 0
+    &
+    \forall \: (i, j) \in A, \forall \: h \in H \label{eqs:MCTP_x}
+    %%
+  \end{align}
+\end{subequations}
+%%% 
+
+The proceeding sections describe how agent state at a given point in time in a
+simulation is translated into constraint and cost parameters (e.g., $s$, $d$,
+and $c$ in Equation \ref{eqs:MCTP})). While the DRE-based formulation is not a
+direct mirror of Equation \ref{eqs:MCTP}, it is a useful basis of
+comparison. Arcs in the DRE-based formulation are identified by their commodity
+and grouped into appropriate constraints, whereas the multicommodity nature
+arises in Equation \ref{eqs:MCTP_cap} as a constraint on individual arcs.
+
 \subsection{Agent Communication}\label{abm:dre:info}
 
 The DRE begins with three \textit{phases}, the terminology of which is
@@ -778,20 +852,6 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
  }
  \caption{Greedy Exchange Heuristic}\label{alg::greedy}
 \end{algorithm}
-
-\subsubsection{Departure from the Multicommodity Transportation Problem}
-
-The classic MCTP\cite{even1975complexity} includes the \textit{coloring} of flows
-based on commodity type. For example, for a commodity, $h$, the unit cost of
-flow would be $c^h_{i,j}$ rather than $c_{i, j}$. This is included because
-multiple commodities can flow along the same arc in the MCTP. In other words,
-the node-arc incidence matrix includes an extra commodity dimension.
-
-The multicommodity nature of the NFCTP is included in constraints, rather than
-arcs. Because each node pairing, $(i, j)$, corresponds to a specific, proposed
-resource transfer, it can only have one commodity associated with it. Instead,
-the constraint set, $K$, is applied over multiple arcs, where each arc is
-assigned its own commodity. 
 
 \subsection{Implementation}\label{abm:dre:impl}
 
