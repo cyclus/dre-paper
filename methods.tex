@@ -384,11 +384,13 @@ constraints, there may not be sufficient supply in the simulated exchange. To
 ensure a feasible solution, an unconstrained false supply node is added to the
 Exchange Graph. Additionally, false nodes are added to each request portfolio
 and are connected to the false supply source. These arcs are denoted as
-\textit{false arcs}. 
+\textit{false arcs}. Figure \ref{fig:ex_false} shows a fully defined Exchange
+Graph. As an example, $A_s$ in this example is defined as 
+$\left \{ (i, j), (i', j') \right \}$.
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=0.75\textwidth]{exchange_false.pdf}
+    \includegraphics[width=0.75\textwidth]{exchange_false_notated.pdf}
     \caption{An example exchange with supply nodes colored orange on left
       and request nodes colored blue on right. As shown, there can be multiple
       supply nodes connected to a request node, but each supply node corresponds
@@ -499,8 +501,7 @@ lowest preference in the system, $P$.
 Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
 arc will only be engaged if no other possible arc can be engage, due to capacity
 constraints. If any flow is assigned to false arcs after the Exchange Graph is
-solved, that flow is ignored when initiating transactions. Figure
-\ref{fig:ex_false} shows a fully defined Exchange Graph.
+solved, that flow is ignored when initiating transactions.
 
 If cost data and a valid cost assignment methodology is developed in the future,
 costs may be used directly, and the preference-to-cost translation may be
