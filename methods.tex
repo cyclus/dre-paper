@@ -33,12 +33,14 @@ discussion, all descriptions of the DRE and its mechanisms assume an
 material-based exchange, as one would normally find in a fuel-cycle simulation
 context.
 
-This section begins by detailing the methodology for querying supply and demand
-during the information gathering phase of the DRE in \secref{abm:dre:info}. The
-solution phase is described in \secref{abm:dre:fctp} in which the defined DRE is
-translated into a variant of the Multicommodity Transportation Problem (MCTP)
-and solved. A description of the DRE's implementation is provided in
-\secref{abm:dre:impl}. Finally, \secref{meth:tariff} describes a new
+This section begins in \secref{meth:mtp} by providing a short overview of the
+classic optimization tools on which this work is built. An outline of the DRE
+methodolgy's progression with respect to the simulation architecture is
+described in \secref{meth:comm}. \Secref{abm:dre:info} then details the
+interface that agents within the simulation have with the DRE in order to
+communicate supply and demand information. A description of the DRE's
+graph-based and formulation based definitions and solution techniques is
+provided in \secref{abm:dre:fctp}. Finally, \secref{meth:tariff} describes a new
 \texttt{Region} archetype in the \Cyclus ecosystem that utilizes the DRE to
 enable the \textit{in situ} modeling of inter-state trade instruments, such as
 tariffs.
@@ -131,7 +133,7 @@ comparison. Arcs in the DRE-based formulation are identified by their commodity
 and grouped into appropriate constraints, whereas the multicommodity nature
 arises in Equation \ref{eqs:MCTP_cap} as a constraint on individual arcs.
 
-\subsection{Communication between Simulation and Formulation}
+\subsection{Communication between Simulation and Formulation}\label{meth:comm}
 
 Defining a robust interface for the communication between simulation and
 optimization components is one of the most difficult aspects in constructing a
@@ -370,9 +372,11 @@ no information shared between two portfolios of a given agent. The set of supply
 portfolios is denoted as $S$ and the set of request portfolios is denoted as
 $R$, and each agent may have multiple portfolios in a given exchange. Each
 supply portfolio is comprised of $s_M$ supply nodes, and each request portfolio
-is comprised of $r_N$ nodes.
-
-**TODO** replace $j$'s with $r_n$
+is comprised of $r_N$ nodes. For notational simplicity, nodes within portfolios
+are referred to with single indicies ($i$ and $j$), and collections of arcs
+(connections between supply and request nodes) associated with a given portfolio
+are referred to as $(i, j) \in A_s$ and $(i, j) \in A_r$, for supply and request
+portfolios respectively.
 
 For each request node, $j$, there may be many bid nodes; however, there is a
 one-to-one mapping between bid nodes and request nodes. In other words, a given
@@ -397,7 +401,7 @@ solved, that flow is ignored when initiating transactions. Figure
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.75\textwidth]{exchange_false.pdf}
-    \caption{A bare example exchange with supply nodes colored orange on left
+    \caption{An example exchange with supply nodes colored orange on left
       and request nodes colored blue on right. As shown, there can be multiple
       supply nodes connected to a request node, but each supply node corresponds
       uniquely to one request node. It is a specific response to that request,
@@ -430,7 +434,7 @@ $b^{x}_{r}$. For a set of \textit{mutual requests}, $M$, where each request has
 a request quantity, $x_m$, the coefficient is defined by the ratio between the
 the average request quantity over all mutual requests and $x_m$
 
-\begin{equation}\ref{meth:mutual-coeff}
+\begin{equation}\label{meth:mutual-coeff}
   \beta_{r, m} = \frac{\overline{x_M}}{x_m}.
 \end{equation}
 
@@ -501,7 +505,7 @@ If cost data and a valid cost assignment methodology is developed in the future,
 costs may be used directly, and the preference-to-cost translation may be
 ignored.
 
-\subsubsection{An Example}
+\subsubsection{An Example Exchange Graph}
 
 During the information gathering step in \secref{abm:dre:info}, consumers and
 suppliers are queried based on \textit{commodities}. A consumer is allowed to
@@ -510,7 +514,7 @@ commodities. However, each possible resource transfer, i.e., each arc, is based
 on a single commodity. Accordingly, it is possible to color each arc, given a
 commodity-to-color mapping.
 
-For example, consider the Exchange Graph shown in Figure \ref{fig:ex_groups}
+For example, consider the Exchange Graph shown in Figure \ref{fig:ex_groups_color}
 with two fuel commodities ($A$, $B$), two requesters ($R_1$, $R_2$), and three
 suppliers ($S_1$, $S_2$, $S_3$) in the configuration described by Tables
 \ref{tbl:ex_sup} and \ref{tbl:ex_req}. The resulting Exchange Graph can be
@@ -542,7 +546,7 @@ $R_2$             & $B$
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.75\textwidth]{exchange_groups_color.pdf}
-    \caption{The same exchange shown in Figure \ref{fig:ex_groups} arcs colored
+    \caption{The same exchange shown in Figure \ref{fig:ex_false} arcs colored
       by commodity based on Tables \ref{tbl:ex_sup} and \ref{tbl:ex_req}. A green
       arc corresponds to commodity $A$; a brown arc corresponds to commodity
       $B$.}
@@ -756,13 +760,14 @@ arcs, or arcs that allow partial flow, for each supplier and requester.
 
 %\paragraph{Mutually Exclusive Constraints}
 
-\textit{Mutual} requests and responses, described in \secref{abm:dre:info}, are
-defined as a set of requests or responses, of which only one may be
-satisfied. This is represented in the formulation as a constraint on the
-associated $y_{i,j}$ variables: only one arc in a mutual set may have a value of
-1. The set of mutually satisfying arcs is denoted $M_s$ and $M_r$ for suppliers
-and requesters, respectively. The associated constraints are then defined by
-Equations \ref{eqs:mutual_sup} and \ref{eqs:mutual_req}.
+\textit{Mutually exclusive} requests and responses, described in
+\secref{abm:dre:info}, are defined as a set of requests or responses, of which
+only one may be satisfied. This is represented in the formulation as a
+constraint on the associated $y_{i,j}$ variables: only one arc in a mutually
+exclusive set may have a value of 1. The set of mutually exclusive arcs is
+denoted $M_s$ and $M_r$ for suppliers and requesters, respectively. The
+associated constraints are then defined by Equations \ref{eqs:mutual_sup} and
+\ref{eqs:mutual_req}.
 
 \begin{equation}\label{eqs:mutual_sup}
   \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 \: \forall \: s \in S 
