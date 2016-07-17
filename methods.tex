@@ -19,15 +19,19 @@ complex supply chains.
 
 The DRE enables the constrained transaction of complex resources between
 entities in a simulation given a measure of cardinal preference for each
-potential transactions. Suppliers and consumers provide information about their
-supply and demand during an initial information gathering phase. Complex
-constraints can be supplied during this phase. Supply and demand is then
-translated into a resource-agnostic \textit{Exchange Graph}. The graph can be
-solved feasibly with a heuristic or optimally by translating it into a mixed
-integer-linear program. Given a solution, final trades are constructed and
-executed. In order to provide a more concrete discussion, all descriptions of
-the DRE and its mechanisms assume an material-based exchange, as one would
-normally find in a fuel-cycle simulation context.
+potential transactions. The full formulation of the description of supply and
+demand in the fuel-cycle context is denoted the Nuclear Fuel Cycle
+Transportation Problem (NFCTP), a variant of the classic family of
+transportation problems in optimization. Suppliers and consumers provide
+information about their supply and demand during an initial information
+gathering phase. Complex constraints can be supplied during this phase. Supply
+and demand is then translated into a resource-agnostic \textit{Exchange
+  Graph}. The graph can be solved feasibly with a heuristic or optimally by
+translating it into a mixed integer-linear program. Given a solution, final
+trades are constructed and executed. In order to provide a more concrete
+discussion, all descriptions of the DRE and its mechanisms assume an
+material-based exchange, as one would normally find in a fuel-cycle simulation
+context.
 
 This section begins by detailing the methodology for querying supply and demand
 during the information gathering phase of the DRE in \secref{abm:dre:info}. The
@@ -233,9 +237,18 @@ requests, in which case the set is termed \textit{mutually exclusive}.
 At the completion of the RFB phase, the market exchange will have a set of
 request portfolios. Each each portfolio consists of a set requests. Arbitrary
 constraints over the set of requests can be provided that are functions of
-quantity or quality.  Each request has an associated preference. For requests
-that mutually satisfy a given demand, a preference distribution over those
-requests informs the solver as to which should be satisfied first, given the
+quantity, $x$, or quality, $q$.  When communicaiting constraining information,
+agents must provide a total constraining quantity, $b$, and a \textit{constraint
+  coefficient conversion function}, $\beta (q_{i, j})$. This corresponds to a
+general constraint of the form for all possible trades $A_j$ for requester $j$,
+
+\begin{equation}\label{meth:constr}
+  \sum_{(i, j) \in A_j} \beta (q_{i,j}) x_{i, j} \leq b.
+\end{equation}
+
+Each request additionally has an associated preference. For requests that
+mutually satisfy a given demand, a preference distribution over those requests
+informs the solver as to which should be satisfied first, given the
 constraints. Finally, each request portfolio has a specific quantity associated
 with it.
 
@@ -253,18 +266,19 @@ exclusive. This functionality again supports the notion of quantized orders,
 e.g., in the case of fuel assemblies. The full collection of responses for a
 given supplier is denoted as its \textit{bid portfolio}.
 
-A supplier may have its production constrained by more than one parameter. For
-example, a processing facility may have both a throughput constraint (i.e., it
-can only process material at a certain rate) and an inventory constraint (i.e.,
-it can only hold some total material). Further, the facility could have a
-constraint on the quality of material to be processed, e.g., it may be able to
-handle a maximum radiotoxicity for any given time step which is a function of
-both the quantity of material in processes and the isotopic content of that
-material. Multiple of such constraints are allowed. At the completion of the
-RRFB phase the possible connections between supplier and producer facilities,
-i.e., the arcs in the graph of the transportation problem, have been established
-with specific capacity constraints defined both by the quantity and quality of
-commodities that will traverse the arcs.
+A supplier may have its production constrained in the same manner as consumers,
+as shown in Equation \ref{meth:constr}, and can provide one or more
+constraints. For example, a processing facility may have both a throughput
+constraint (i.e., it can only process material at a certain rate) and an
+inventory constraint (i.e., it can only hold some total material). Further, the
+facility could have a constraint on the quality of material to be processed,
+e.g., it may be able to handle a maximum radiotoxicity for any given time step
+which is a function of both the quantity of material in processes and the
+isotopic content of that material. Multiple of such constraints are allowed. At
+the completion of the RRFB phase the possible connections between supplier and
+producer facilities, i.e., the arcs in the graph of the transportation problem,
+have been established with specific capacity constraints defined both by the
+quantity and quality of commodities that will traverse the arcs.
 
 The final phase of the information gathering procedure allows consumer
 facilities to adjust their set of preferences and for managers of consumer
@@ -339,44 +353,84 @@ a MILP, the system can be solved with any available
 solver. \cbc\cite{forrestcbc}, a popular open-source branch-and-bound solver, is
 used in this work.
 
-\subsubsection{Terminology}
+\subsubsection{Exchange Graph}
 
 Objects and data structures generated in the information gathering procedure are
-used in the formal definition of the NFCTP. Collections of supply and demand are
-collected in \textit{portfolios}. Each portfolio can be considered
-separately. The set of supply portfolios is denoted as $S$ and the set of
-request portfolios is denoted as $R$, and each agent may have multiple
-portfolios in a given exchange. Each supply portfolio is comprised of $s_M$
-supply nodes, and each request portfolio is comprised of $r_N$ nodes. The set of
-supply nodes is denoted $I$, and the set of request nodes is denoted $J$. The
-total number of supply and request nodes is then
+used in the formal definition of the NFCTP by mapping the agent-supplied
+information onto a \textit{bipartite} graph. This mapping allows for the
+translation from the resource to exchange layers shown in Figure
+\ref{fig:dre_impl}. Information is mapped to properties of arcs, which represent
+proposed trades, and portfolio-based node groupings. A given Exchage Graph has
+components that are the result of a one-to-one mapping with simulation
+entities. For example, nodes in the graph represent distinct bids and requsts
+provided by agents.
 
-\begin{equation}
-  \left|{I}\right| = \sum_{s \in S} s_M
+Each supply and request portfolio can be considered separately, i.e., there is
+no information shared between two portfolios of a given agent. The set of supply
+portfolios is denoted as $S$ and the set of request portfolios is denoted as
+$R$, and each agent may have multiple portfolios in a given exchange. Each
+supply portfolio is comprised of $s_M$ supply nodes, and each request portfolio
+is comprised of $r_N$ nodes.
+
+**TODO** replace $j$'s with $r_n$
+
+For each request node, $j$, there may be many bid nodes; however, there is a
+one-to-one mapping between bid nodes and request nodes. In other words, a given
+bid node, $i$, is a unique response to a request node, $j$. Because of defined
+constraints, there may not be sufficient supply in the simulated exchange. To
+ensure a feasible solution, an unconstrained false supply node is added to the
+Exchange Graph. Additionally, false nodes are added to each request portfolio
+and are connected to the false supply source. These arcs are denoted as
+\textit{false arcs}. The preferences given to each false arc, $p_f$, is defined
+to be lower than the lowest preference in the system, $P$.
+
+\begin{equation}\label{eqn:falsepref}
+  p_{f} < \min P
 \end{equation}
 
-and
+Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
+arc will only be engaged if no other possible arc can be engage, due to capacity
+constraints. If any flow is assigned to false arcs after the Exchange Graph is
+solved, that flow is ignored when initiating transactions. Figure
+\ref{fig:ex_false} shows a fully defined Exchange Graph.
 
-\begin{equation}
-  \left|{J}\right| = \sum_{r \in R} r_N.
-\end{equation}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.75\textwidth]{exchange_false.pdf}
+    \caption{A bare example exchange with supply nodes colored orange on left
+      and request nodes colored blue on right. As shown, there can be multiple
+      supply nodes connected to a request node, but each supply node corresponds
+      uniquely to one request node. It is a specific response to that request,
+      as outlined in the RRFB phase. In this example, there are three
+      supplier agents and two consumer agents. The second consumer has two
+      requests (for different commodities) which may satisfy its demand. The
+      second supplier can supply the commodities requested by both consumers and
+      has provided two bids accordingly. The false supplier and consumer nodes are
+      shown with a dashed outline. Similarly, false arcs are dashed. Note that
+      the false nodes have no associated portfolio structure -- there are no
+      constraints associated with false nodes and arcs. The inclusion of a false
+      supplier and consumer guarantees a feasible solution.}
+    \label{fig:ex_false}
+  \end{center}
+\end{figure}
 
+In the bipartite graph, portfolios act as partitions that group nodes together.
 Each portfolio has a set of commodities, $H$, associated with it. These are
-denoted $H_s$ for supply portfolios and $H_r$ for request
-portfolios. Furthermore, each portfolio has a set of constraints, $K$. Each
-constraint has a constraining value, $b_s^k$ and $b_r^k$,
-respectively. Additionally, each unique combination of portfolio and constraint
-has an associated \textit{constraint coefficient conversion function}, denoted
-$\beta_s^k$ for supply portfolios and $\beta_r^k$ for request portfolios. Each
-constraint coefficient conversion function takes as an argument a proposed
-resource quality $q_{i,j}$. Request portfolios are provided a quantity
-constraint by default for which coefficients are unity and whose constraining
-value is is $b^{x}_{r}$. For a set of \textit{mutual requests}, $M$,
-where each request has a request quantity, $x_m$, the coefficient is defined by
-the ratio between the the average request quantity over all mutual requests and
-$x_m$
+denoted $H_s$ for supply portfolios and $H_r$ for request portfolios. Node
+groups share a set of common constraints, $K$, and request node groups share a
+common notion of satisfiable quantity, i.e., a default mass-based
+constraint. Each constraint has a constraining value, $b_s^k$ and $b_r^k$,
+respectively.
 
-\begin{equation}
+Additionally, each portfolio and constraint has a defined constraint coefficient
+conversion function, denoted $\beta_s^k$ for supply portfolios and $\beta_r^k$
+for request portfolios. Request portfolios are provided a quantity constraint by
+default for which coefficients are unity and whose constraining value is is
+$b^{x}_{r}$. For a set of \textit{mutual requests}, $M$, where each request has
+a request quantity, $x_m$, the coefficient is defined by the ratio between the
+the average request quantity over all mutual requests and $x_m$
+
+\begin{equation}\ref{meth:mutual-coeff}
   \beta_{r, m} = \frac{\overline{x_M}}{x_m}.
 \end{equation}
 
@@ -401,91 +455,53 @@ node pair is denoted $x_{i, j}$, and the set of all flows is denoted $X$. The
 possible flow on an arc is provided an upper bound by the request node quantity,
 $\widetilde{x_j}$.
 
-\subsubsection{Exchange Graph}
+%\paragraph{Preferences \& Costs}
 
-Upon completion of the information gathering phase, a \textit{bipartite} network
-is formed which is called an Exchange Graph. The network consists of sending
-(bid) nodes, $I$, and receiving (request) nodes, $J$. For each request node,
-$j$, there may be many bid nodes; however, there is a one-to-one mapping between
-bid nodes and request nodes. In other words, a given bid node, $i$, is a unique
-response to a request node, $j$. An example of a bare Exchange Graph is shown in
-Figure \ref{fig:ex_bare}.
+In any network flow problem, the objective coefficients associated with
+transporting commodities drive the solution. Given the nature of supply and
+demand constraints, the transportation problem naturally lends itself to a
+minimum cost formulation. A preference-based formulation has been presented thus
+far due to the difficulties of employing reasonable cost coefficients. While
+directly using costs should be available to users, in practice using a more
+abstract notion of preferences is simpler.
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.75\textwidth]{exchange_bare_words.pdf}
-    \caption{A bare example exchange with supply nodes colored orange on left
-      and request nodes colored blue on right. As shown, there can be multiple
-      supply nodes connected to a request node, but each supply node corresponds
-      uniquely to one request node. It is a specific response to that request,
-      as outlined in the RRFB phase.}
-    \label{fig:ex_bare}
-  \end{center}
-\end{figure}
-
-In the bipartite graph, portfolios act as partitions that group nodes
-together. Node groups share common constraints, and request node groups share a
-common notion of satisfiable quantity, i.e., a default mass-based constraint. An
-example of a partitioned Exchange Graph is shown in Figure \ref{fig:ex_groups}.
-
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.75\textwidth]{exchange_groups.pdf}
-    \caption{The same exchange shown in Figure \ref{fig:ex_bare} with the
-      inclusion of portfolio partitions. In this example, there are three
-      supplier agents and two consumer agents. The second consumer has two
-      requests (for different commodities) which may satisfy its demand. The
-      second supplier can supply the commodities requested by both consumers and
-      has provided two bids accordingly.}
-    \label{fig:ex_groups}
-  \end{center}
-\end{figure}
-
-Because of defined constraints, there may not be sufficient supply in the
-simulated exchange. To ensure a feasible solution, an unconstrained false supply
-node is added to the Exchange Graph. Additionally, false nodes are added to each
-request portfolio and are connected to the false supply source. These arcs are
-denoted as \textit{false arcs}. The preferences given to each false arc, $p_f$,
-is defined to be lower than the lowest preference in the system, $P$.
-
-\begin{equation}\label{eqn:falsepref}
-  p_{f} < \min P
+Formally, a preference function, $p_{i, j}(h)$, is defined which is a cardinal
+preference ordering over a consumer's satisfying commodity set.
+ 
+\begin{equation}
+p_{i, j}(h) \:\: \forall i \in I  \:\: \forall h \in H_{r} 
 \end{equation}
 
 \noindent
-The total number of arcs in the system, $\left|{A_t}\right|$, is then increased
-by the number of request portfolios, i.e.,
+A preference is assigned to each arc in the NFCTP and is a function both of the
+consumer, $j$, and producer, $i$, and the quality, $q_{i, j}$, of the proposed
+resource transfer from consumer to producer. The dependence on producer
+encapsulates the relationship effects due to managerial preferences. The
+preference set used in the NFCTP formulation follows directly from the
+Preference Adjustment phase described in \secref{abm:dre:info}. A cost
+translation function, $f$, is defined that operates on the commodity preference
+function to produce an appropriate cost for the NFCTP.
 
 \begin{equation}
-  \left|{A_t}\right| = \left|{A}\right| + \left|{R}\right|
+f : p_{i,j}(h) \to c_{i,j}
 \end{equation}
 
-Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
-arc will only be engaged if no other possible arc can be engage, due to capacity
-constraints. If any flow is assigned to false arcs after the Exchange Graph is
-solved, that flow is ignored when initiating transactions. Figure
-\ref{fig:ex_false} shows a fully defined Exchange Graph.
+\noindent
+For the purposes of this work, any operator that preserves preference
+monotonicity and cardinal ordering is suitable.  The inversion operator has been
+chosen because it preserves required features and also allows for easy
+translation from preference to cost as well as translation from cost to
+preference.
 
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.75\textwidth]{exchange_false.pdf}
-    \caption{The same exchange shown in Figure \ref{fig:ex_groups} with the
-      inclusion of false arcs. The false supplier and consumer nodes are shown
-      with a dashed outline. Similarly, false arcs are dashed. Note that the
-      false nodes have no associated portfolio structure -- there are no
-      constraints associated with false nodes and arcs. The inclusion of a false
-      supplier and consumer guarantees a feasible solution.}
-    \label{fig:ex_false}
-  \end{center}
-\end{figure}
+\begin{equation}
+f(x) = \frac{1}{x}
+\end{equation}
 
-\subsubsection{Arc Properties}\label{abm:dre:fctp:arcs}
+If cost data and a valid cost assignment methodology is developed in the future,
+costs may be used directly, and the preference-to-cost translation may be
+ignored.
 
-The result of the DRE is flow determined along arcs, from supply
-nodes to request nodes. A number of properties are defined on arcs, namely
-commodities, constraint coefficients, and preferences.
-
-%\paragraph{Commodities}
+\subsubsection{An Example}
 
 During the information gathering step in \secref{abm:dre:info}, consumers and
 suppliers are queried based on \textit{commodities}. A consumer is allowed to
@@ -635,63 +651,87 @@ equations for the enrichment facility by combining Equations
 \sum_{j \in J}\beta_{s}^{\text{SWU}}(\varepsilon_{j}) \: x_{s,j} & \leq b_{s}^{\text{SWU}}
 \end{align}
 
-%\paragraph{Preferences \& Costs}
+\subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
 
-In any network flow problem, the objective coefficients associated with
-transporting commodities drive the solution. Given the nature of supply and
-demand constraints, the transportation problem naturally lends itself to a
-minimum cost formulation. A preference-based formulation has been presented thus
-far due to the difficulties of employing reasonable cost coefficients. While
-directly using costs should be available to users, in practice using a more
-abstract notion of preferences is simpler.
+Given an Exchange Graph, including false arcs, a feasible solution can be
+found. By definition a feasible solution is a \textit{solution} to the possible
+flow of resources, but not necessarily an \textit{optimal} solution. Many
+heuristics may be applied to bipartite graphs with constrained flows. A simple
+\textit{greedy} heuristic is presented here and implemented.
 
-Formally, a preference function, $p_{i, j}(h)$, is defined which is a cardinal
-preference ordering over a consumer's satisfying commodity set.
- 
-\begin{equation}
-p_{i, j}(h) \:\: \forall i \in I  \:\: \forall h \in H_{r} 
-\end{equation}
-
-\noindent
-A preference is assigned to each arc in the NFCTP and is a function both of the
-consumer, $j$, and producer, $i$, and the quality, $q_{i, j}$, of the proposed
-resource transfer from consumer to producer. The dependence on producer
-encapsulates the relationship effects due to managerial preferences. The
-preference set used in the NFCTP formulation follows directly from the
-Preference Adjustment phase described in \secref{abm:dre:info}. A cost
-translation function, $f$, is defined that operates on the commodity preference
-function to produce an appropriate cost for the NFCTP.
+The maximum flow along an arc, $x_{max}$, depends on the constraints associated
+with each node on the arc. For nodes $i$ and $j$ belonging to portfolios $s$ and
+$r$, respectively, the maximum allowable flow is defined as
 
 \begin{equation}
-f : p_{i,j}(h) \to c_{i,j}
+  x_{max} = \min 
+        \lbrace 
+        \min \lbrace \frac{b^k_s}{a^k_{i, j}} 
+        \: \forall k \in K_s \rbrace, 
+        \: \min \lbrace \frac{b^k_r}{a^k_{i, j}} 
+        \: \forall k \in K_r \rbrace
+        \rbrace.
 \end{equation}
 
-\noindent
-For the purposes of this work, any operator that preserves preference
-monotonicity and cardinal ordering is suitable.  The inversion operator has been
-chosen because it preserves required features and also allows for easy
-translation from preference to cost as well as translation from cost to
-preference.
+The Greedy Exchange Heuristic, described in Algorithm \ref{alg::greedy} ,
+matches maximum flow along arcs, up to the requested amount defined by each
+request portfolio, $b^x_r$, after having sorted all arcs. The constraining values
+of each arc, $b_k$, are updated upon declaration of a match (via an
+\code{AddMatch} function) .
 
-\begin{equation}
-f(x) = \frac{1}{x}
-\end{equation}
+\begin{algorithm}[!h]
+ \SetAlgoLined
+ \KwData{A resource Exchange Graph with constraints and preferences.}
+ \KwResult{A valid set of resource flows.}
+ sort request partitions by average preference\;
+ \ForAll{$r \in R$} {
+   sort requests by average preference\;
+   matched $\leftarrow$ 0\;        
+   \While{matched $\leq b^x_r$ and $\exists$ a request} {
+     get next request\;
+     sort incoming arcs by preference\;
+     \While{matched $\leq b^x_r$ and $\exists$ an arc} {
+       get next arc\;
+       remaining $\leftarrow b^x_r$ - matched\;
+       to\_match $\leftarrow \min \lbrace$remaining, $x_{max} \rbrace$\;
+       \code{AddMatch}(arc, to\_match)\;
+       matched $\leftarrow$ matched + to\_match\;
+     }
+   }
+ }
+ \caption{Greedy Exchange Heuristic}\label{alg::greedy}
+\end{algorithm}
 
-If cost data and a valid cost assignment methodology is developed in the future,
-costs may be used directly, and the preference-to-cost translation may be
-ignored.
+%% The heuristic naturally accounts for mutual requests and exclusive trades,
+%% the two unique properties associated with the formulation. Mutual requests
+%% are accounted for by removing a portfolio from the exchange after a mutual
+%% bid or request is utilized. Exclusivity is accounted for through initial
+%% screening -- supply-request pairs that will not match are removed from the
+%% exchange \textit{a priori} -- and the use of the maximum value function.
 
 \subsubsection{Mixed Integer Linear Programming Formulation}\label{abm:dre:milp}
 
-The full NFCTP can be constructed by combining the components of the previous
-sections. The NFCTP is formulated as a mixed integer-linear program (MILP),
-rather than a linear program (LP) in order to allow for the critical case of
-reactor fuel orders, which comprise a large amount of material orders within the
-simulation context. By introducing binary decision variables, fuel orders can be
-guaranteed to be met by a single supplier, rather than allowing mixing of orders
-between potential suppliers. Similarly, it also guarantees that used fuel is
-sent to a single back-end facility, rather than being split between multiple
-facilities. 
+The mathematical formulation NFCTP can be constructed by combining the
+components of an Exchange Graph and adding appropriate parameters and variables,
+translating from the exchange layer to the formulation layer as shown in Figure
+\ref{fig:dre_impl}. The NFCTP is formulated as a mixed integer-linear program
+(MILP), rather than a linear program (LP) in order to allow for the critical
+case of reactor fuel orders, which comprise a large amount of material orders
+within the simulation context. By introducing binary decision variables, fuel
+orders can be guaranteed to be met by a single supplier, rather than allowing
+mixing of orders between potential suppliers. Similarly, it also guarantees that
+used fuel is sent to a single back-end facility, rather than being split between
+multiple facilities.
+
+% note, you can't actually collapse all nodes in portfolios into a single node
+% at this step. There is the possibility that a request-supply portfolio
+% connection is made twice. Think of an example where a supplier could offer
+% two qualities of MOX to the same requester.
+
+In order to simplify the formulation, variables and parameters are referred to
+by their arc index, $(i, j)$. Sets of arcs are associated with suppliers $A_s$
+are all arcs leaving a given supply portfolio, and sets of arcs are associated
+with requesters $A_r$ are all arcs leaving a given request portfolio.
 
 %\paragraph{Binary Variables}
 
@@ -870,57 +910,6 @@ $\tilde{x_j}$ & the requested quantity associated with request node $j$ \\
 %%% 
 % this could probably be realigned 
 %%% 
-
-\subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
-
-Given an Exchange Graph, including false arcs, a feasible solution can be
-found. By definition a feasible solution is a \textit{solution} to the possible
-flow of resources, but not necessarily an \textit{optimal} solution. Many
-heuristics may be applied to bipartite graphs with constrained flows. A simple
-\textit{greedy} heuristic is presented here and implemented.
-
-The maximum flow along an arc, $x_{max}$, depends on the constraints associated
-with each node on the arc. For nodes $i$ and $j$ belonging to portfolios $s$ and
-$r$, respectively, the maximum allowable flow is defined as
-
-\begin{equation}
-  x_{max} = \min 
-        \lbrace 
-        \min \lbrace \frac{b^k_s}{a^k_{i, j}} 
-        \: \forall k \in K_s \rbrace, 
-        \: \min \lbrace \frac{b^k_r}{a^k_{i, j}} 
-        \: \forall k \in K_r \rbrace
-        \rbrace.
-\end{equation}
-
-The Greedy Exchange Heuristic, described in Algorithm \ref{alg::greedy} ,
-matches maximum flow along arcs, up to the requested amount defined by each
-request portfolio, $b^x_r$, after having sorted all arcs. The constraining values
-of each arc, $b_k$, are updated upon declaration of a match (via an
-\code{AddMatch} function) .
-
-\begin{algorithm}[!h]
- \SetAlgoLined
- \KwData{A resource Exchange Graph with constraints and preferences.}
- \KwResult{A valid set of resource flows.}
- sort request partitions by average preference\;
- \ForAll{$r \in R$} {
-   sort requests by average preference\;
-   matched $\leftarrow$ 0\;        
-   \While{matched $\leq b^x_r$ and $\exists$ a request} {
-     get next request\;
-     sort incoming arcs by preference\;
-     \While{matched $\leq b^x_r$ and $\exists$ an arc} {
-       get next arc\;
-       remaining $\leftarrow b^x_r$ - matched\;
-       to\_match $\leftarrow \min \lbrace$remaining, $x_{max} \rbrace$\;
-       \code{AddMatch}(arc, to\_match)\;
-       matched $\leftarrow$ matched + to\_match\;
-     }
-   }
- }
- \caption{Greedy Exchange Heuristic}\label{alg::greedy}
-\end{algorithm}
 
 \subsection{Inter-region Policy Instruments}\label{meth:tariff}
 
