@@ -33,7 +33,7 @@ discussion, all descriptions of the DRE and its mechanisms assume an
 material-based exchange, as one would normally find in a fuel-cycle simulation
 context.
 
-This section begins in \secref{meth:mtp} by providing a short overview of the
+\Secref{meth:mtp} begins by providing a short overview of the
 classic optimization tools on which this work is built. An outline of the DRE
 methodolgy's progression with respect to the simulation architecture is
 described in \secref{meth:comm}. \Secref{abm:dre:info} then details the
@@ -75,13 +75,12 @@ decision variables are integer (e.g., binary), the formulation is termed a
 Mixed-Integer Linear Program (MILP).
 
 Transportation problems model the flow of a commodity between source nodes and
-sink nodes which can have supply and demand constraints as well as \textit{unit
-  costs} specific to each supply-demand node pair. A more complex
+sink nodes which can have supply and demand constraints. A more complex
 transportation-problem formulation can support systems in which supply or demand
 can be met by multiple commodities.  There is a unit cost $c_{i,j}^{h}$ for
 commodity $h$ to traverse arc $(i,j)$. A supplier of commodity $h$ has a certain
 supply capacity $s_i^h$ which cannot be surpassed and consumers of commodity $h$
-have a certain demand level which must be met, $d_i^h$. 
+have a certain demand level which must be met, $d_i^h$.
 
 In the simplest extension from the single-commodity to multi-commodity
 transportation problem, arc constraints for all commodities are combined, i.e.,
@@ -127,7 +126,7 @@ commodity coupling in Equation \ref{eqs:MCTP_cap}.
 
 The proceeding sections describe how agent state at a given point in time in a
 simulation is translated into constraint and cost parameters (e.g., $s$, $d$,
-and $c$ in Equation \ref{eqs:MCTP})). While the DRE-based formulation is not a
+and $c$ in Equation \ref{eqs:MCTP}). While the DRE-based formulation is not a
 direct mirror of Equation \ref{eqs:MCTP}, it is a useful basis of
 comparison. Arcs in the DRE-based formulation are identified by their commodity
 and grouped into appropriate constraints, whereas the multicommodity nature
@@ -248,6 +247,7 @@ general constraint of the form for all possible trades $A_j$ for requester $j$,
   \sum_{(i, j) \in A_j} \beta (q_{i,j}) x_{i, j} \leq b.
 \end{equation}
 
+\noindent
 Each request additionally has an associated preference. For requests that
 mutually satisfy a given demand, a preference distribution over those requests
 informs the solver as to which should be satisfied first, given the
@@ -266,10 +266,10 @@ to denote responses as exclusive, as is done in the RFB phase. Supply responses
 can also be grouped into mutual responses, and sets of responses may be mutually
 exclusive. This functionality again supports the notion of quantized orders,
 e.g., in the case of fuel assemblies. The full collection of responses for a
-given supplier is denoted as its \textit{bid portfolio}.
+given supplier is denoted as its \textit{supply portfolio}.
 
 A supplier may have its production constrained in the same manner as consumers,
-as shown in Equation \ref{meth:constr}, and can provide one or more
+as shown in Equation \ref{meth:constr} and can provide one or more
 constraints. For example, a processing facility may have both a throughput
 constraint (i.e., it can only process material at a certain rate) and an
 inventory constraint (i.e., it can only hold some total material). Further, the
@@ -348,10 +348,10 @@ An instance of supply and demand defined by the DRE's information gathering step
 is cast to a constrained, bipartite network which represents a variant of the
 MTP, entitled the \textit{Nuclear Fuel Cycle Transportation Problem} (NFCTP). It
 can be solved by any heuristic that provides a feasible solution to such
-networks are valid.  A greedy heuristic is also designed and implemented. The
-system can be solved optimally, however, by formulating the system as a
-mathematical program, and a MILP formulation is provided provided. Formulated as
-a MILP, the system can be solved with any available
+networks are valid.  For this work, a greedy heuristic is designed and
+implemented. The system can be solved optimally, however, by formulating the
+system as a mathematical program, and a MILP formulation is provided
+provided. Formulated as a MILP, the system can be solved with any available
 solver. \cbc\cite{forrestcbc}, a popular open-source branch-and-bound solver, is
 used in this work.
 
@@ -362,18 +362,17 @@ used in the formal definition of the NFCTP by mapping the agent-supplied
 information onto a \textit{bipartite} graph. This mapping allows for the
 translation from the resource to exchange layers shown in Figure
 \ref{fig:dre_impl}. Information is mapped to properties of arcs, which represent
-proposed trades, and portfolio-based node groupings. A given Exchage Graph has
-components that are the result of a one-to-one mapping with simulation
-entities. For example, nodes in the graph represent distinct bids and requsts
-provided by agents.
+proposed trades, and portfolio-based node groupings. The components of an
+Exchage Graph have a one-to-one mapping with simulation entities. For example,
+nodes in the graph represent distinct bids and requsts provided by agents.
 
 Each supply and request portfolio can be considered separately, i.e., there is
 no information shared between two portfolios of a given agent. The set of supply
 portfolios is denoted as $S$ and the set of request portfolios is denoted as
-$R$, and each agent may have multiple portfolios in a given exchange. Each
+$R$; each agent may have multiple portfolios in a given exchange. Each
 supply portfolio is comprised of $s_M$ supply nodes, and each request portfolio
 is comprised of $r_N$ nodes. For notational simplicity, nodes within portfolios
-are referred to with single indicies ($i$ and $j$), and collections of arcs
+are referred to with single indicies (e.g., $i$ or $j$), and collections of arcs
 (connections between supply and request nodes) associated with a given portfolio
 are referred to as $(i, j) \in A_s$ and $(i, j) \in A_r$, for supply and request
 portfolios respectively.
@@ -385,18 +384,7 @@ constraints, there may not be sufficient supply in the simulated exchange. To
 ensure a feasible solution, an unconstrained false supply node is added to the
 Exchange Graph. Additionally, false nodes are added to each request portfolio
 and are connected to the false supply source. These arcs are denoted as
-\textit{false arcs}. The preferences given to each false arc, $p_f$, is defined
-to be lower than the lowest preference in the system, $P$.
-
-\begin{equation}\label{eqn:falsepref}
-  p_{f} < \min P
-\end{equation}
-
-Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
-arc will only be engaged if no other possible arc can be engage, due to capacity
-constraints. If any flow is assigned to false arcs after the Exchange Graph is
-solved, that flow is ignored when initiating transactions. Figure
-\ref{fig:ex_false} shows a fully defined Exchange Graph.
+\textit{false arcs}. 
 
 \begin{figure}
   \begin{center}
@@ -500,6 +488,19 @@ preference.
 \begin{equation}
 f(x) = \frac{1}{x}
 \end{equation}
+
+The preferences given to each false arc, $p_f$, is defined to be lower than the
+lowest preference in the system, $P$.
+
+\begin{equation}\label{eqn:falsepref}
+  p_{f} < \min P
+\end{equation}
+
+Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
+arc will only be engaged if no other possible arc can be engage, due to capacity
+constraints. If any flow is assigned to false arcs after the Exchange Graph is
+solved, that flow is ignored when initiating transactions. Figure
+\ref{fig:ex_false} shows a fully defined Exchange Graph.
 
 If cost data and a valid cost assignment methodology is developed in the future,
 costs may be used directly, and the preference-to-cost translation may be
@@ -732,10 +733,11 @@ multiple facilities.
 % connection is made twice. Think of an example where a supplier could offer
 % two qualities of MOX to the same requester.
 
-In order to simplify the formulation, variables and parameters are referred to
-by their arc index, $(i, j)$. Sets of arcs are associated with suppliers $A_s$
-are all arcs leaving a given supply portfolio, and sets of arcs are associated
-with requesters $A_r$ are all arcs leaving a given request portfolio.
+In order to simplify the formulation and maintain consistency with the exchange
+layer description, variables and parameters are referred to by their arc index,
+$(i, j)$. Sets of arcs are associated with suppliers $A_s$ are all arcs leaving
+a given supply portfolio, and sets of arcs are associated with requesters $A_r$
+are all arcs entering a given request portfolio.
 
 %\paragraph{Binary Variables}
 
@@ -870,8 +872,8 @@ c^{\prime}_{i,j} = c_{i,j} \tilde{x_j}
 \hline
 Set         & Description \\
 \hline
-$S$     & suppliers \\
-$R$     & requesters \\
+$S$     & suppliers (i.e., supply portfolios) \\
+$R$     & requesters (i.e., request portfolios) \\
 $A_{p_s}$     & arcs that allow \textit{partial} flows for supplier $s$ \\
 $A_{e_s}$     & \textit{exclusive} flow arcs for supplier $s$ \\
 $A_{p_p}$     & arcs that allow \textit{partial} flows for requester $r$ \\
