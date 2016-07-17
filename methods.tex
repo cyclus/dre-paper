@@ -47,6 +47,14 @@ implementation and usage.
 
 \subsection{Multicommodity Transportation Problems}\label{meth:mtp}
 
+Supply and demand in a nuclear fuel cycle context is inherently a multicommodity
+problem: a light water reactor can be fueled by both UOX and MOX fuel, for
+instance. How it is fueled is a result both of fuel availability and associated
+preferences. In order to allow for complex physical and chemical constraints on
+both processes and inventories, an optimization-based approach is used which
+employs economics-based proxies to arrive at a solution of resource transfers
+within a simulation time-step.
+
 The DRE translates agent supply and demand into a version of the Multi-commodity
 Transportation Problem (MTP) \cite{even1975complexity} which belongs to the
 network flow family of optimization problems. A network flow problem is
@@ -119,7 +127,66 @@ comparison. Arcs in the DRE-based formulation are identified by their commodity
 and grouped into appropriate constraints, whereas the multicommodity nature
 arises in Equation \ref{eqs:MCTP_cap} as a constraint on individual arcs.
 
-\subsection{Agent Communication}\label{abm:dre:info}
+\subsection{Communication between Simulation and Formulation}
+
+Defining a robust interface for the communication between simulation and
+optimization components is one of the most difficult aspects in constructing a
+single, combined framework. A clear mapping of simulation and agent concepts to
+formulation coefficients, constraints, and parameters is required. Conceptually,
+the DRE implements this interface in three layers as shown in Figure
+\ref{fig:dre_impl}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth]{exchange_xlation.pdf}
+    \caption[]{
+      \label{fig:dre_impl}
+      The full DRE workflow is shown. The information gathering phase, described
+      in \secref{abm:dre:info}, results in the resource layer. The resource
+      layer is translated to the exchange layer; marked by the number $1$, a
+      decision is made whether to continue translation or to directly solve the
+      instance, as described in \secref{abm:dre:nfctp:heur}. If the exchange is
+      not solved, it is translated into an instance of the NFCTP resulting in
+      the formulation layer as shown in \secref{abm:dre:milp}. A choice of
+      solver is made, marked by the number $2$, and the instance is solved.  The
+      solution is back-translated through the exchange and resource layers. The
+      result is a series of resource trades to be executed in the simulation.}
+  \end{center}
+\end{figure}
+
+The first layer includes information for specific
+\code{Resource} \footnote{Terms that directly map to names of C++ classes in the
+  \Cyclus code base are formatted as shown for clarity.} types. For example, a
+\code{Material}-based exchange is used for agents to communicate supply and
+demand information regarding \code{Material} objects. The \textit{resource
+  layer} is the point of entry and exit of the DRE framework. It is the
+agent-facing interface of the DRE: supply and demand is provided to the DRE as
+input during the information gathering step, and trades to be executed are
+provided to agents as output.
+
+The second layer, called the \textit{exchange layer}, is a
+\code{Resource}-agnostic representation of supply and demand. Supply/demand
+constructs in the first layer are translated into stateful objects representing
+nodes, arcs, constructs that carry constraint information, \textit{et
+  cetera}. The collection of objects and structures combine to create an
+\code{ExchangeGraph}. Any custom, \Cyclus-aware solver can be applied to an
+\code{ExchangeGraph} to determine a feasible solution to the DRE.
+
+In order to use sophisticated, 3\textsuperscript{rd} party LP and MILP solving
+libraries, the \code{ExchangeGraph} must be translated into an appropriate data
+structure representing an instance of the NFCTP, resulting in the
+\textit{formulation layer}. The Open Solver Interface (OSI) \cite{coinosi} is
+used to create the necessary formulation structures, including a constraint
+matrix and objective coefficient vector. The NFCTP instance is then solved.
+
+After a feasible, perhaps optimal, solution to the NFCTP is found, whether in
+the exchange or formulation layer, the solution is back-translated to the
+resource layer. The agents associated with successful supply-demand connections
+are informed, and trades of resources between agents are executed.
+
+\subsection{Agent Interaction with the DRE}\label{abm:dre:info}
+
+\subsubsection{Supply and Demand}
 
 The DRE begins with three \textit{phases}, the terminology of which is
 influenced from previous supply chain agent-based modeling work
@@ -131,7 +198,7 @@ collective information gathering procedure is shown in Figure
 
 \begin{figure}
   \centering
-  \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{procedure.pdf}}
+  \makebox[\textwidth][c]{\includegraphics[width=0.8\textwidth]{info_gathering_phases.pdf}}
   \caption[]{Schematic illustrating the DRE's information
     gathering phases: Request for Bids (RFB), Response to Request for Bids
     (RRFB), and Preference Adjustment (PA).\label{fig:procedure}}
@@ -149,27 +216,28 @@ or not at all. Exclusive requests allow the modeling of quantized, packaged
 transfers, e.g., fuel assemblies. 
 
 Consumers are allowed to post demand for multiple commodities that may serve to
-meet the same capacity. For example, consider an LWR that can be filled
-with MOX or UOX. It can post a demand for both, but must define a preference
-over the set of possible commodities that can be consumed. Such requests are
-termed \textit{mutual requests}. Another example is that of an advanced fuel
-fabrication facility, i.e., one that fabricates fuel partially from separated
-material that has already passed through a reactor. Such a facility can choose
-to fill the remaining space in a certain assembly with various types of fertile
-material, including depleted uranium from enrichment or reprocessed uranium from
-separations. Accordingly, it could demand both commodities as long as it
-provides a corresponding constraint with respect to total consumption. A set of
-exclusive requests may also be grouped as mutual requests, in which case the set
-is termed \textit{mutually exclusive}.
+meet the same capacity, and the collection of all commodities requested is
+termed its \textit{request portfolio}. For example, consider an LWR that can be
+filled with MOX or UOX. It can post a demand for both, but must define a
+preference over the set of possible commodities that can be consumed. Such
+requests are termed \textit{mutual requests}. Another example is that of an
+advanced fuel fabrication facility, i.e., one that fabricates fuel partially
+from separated material that has already passed through a reactor. Such a
+facility can choose to fill the remaining space in a certain assembly with
+various types of fertile material, including depleted uranium from enrichment or
+reprocessed uranium from separations. Accordingly, it could demand both
+commodities as long as it provides a corresponding constraint with respect to
+total consumption. A set of exclusive requests may also be grouped as mutual
+requests, in which case the set is termed \textit{mutually exclusive}.
 
 At the completion of the RFB phase, the market exchange will have a set of
-request \textit{portfolios}. Each each portfolio consists of a set
-requests. Arbitrary constraints over the set of requests can be provided that
-are functions of quantity or quality.  Each request has an associated
-preference. For requests that mutually satisfy a given demand, a preference
-distribution over those requests informs the solver as to which should be
-satisfied first, given the constraints. Finally, each request portfolio has a
-specific quantity associated with it.
+request portfolios. Each each portfolio consists of a set requests. Arbitrary
+constraints over the set of requests can be provided that are functions of
+quantity or quality.  Each request has an associated preference. For requests
+that mutually satisfy a given demand, a preference distribution over those
+requests informs the solver as to which should be satisfied first, given the
+constraints. Finally, each request portfolio has a specific quantity associated
+with it.
 
 The second phase allows suppliers to \textit{respond} to the set of request
 portfolios, and is termed the \textit{Response to Request for Bids} (RRFB) phase
@@ -182,7 +250,8 @@ their profile, effectively providing no information. Suppliers are also allowed
 to denote responses as exclusive, as is done in the RFB phase. Supply responses
 can also be grouped into mutual responses, and sets of responses may be mutually
 exclusive. This functionality again supports the notion of quantized orders,
-e.g., in the case of fuel assemblies. 
+e.g., in the case of fuel assemblies. The full collection of responses for a
+given supplier is denoted as its \textit{bid portfolio}.
 
 A supplier may have its production constrained by more than one parameter. For
 example, a processing facility may have both a throughput constraint (i.e., it
@@ -233,6 +302,7 @@ similar to the comparison of costs in a system. The notion of preference also
 nicely extends the work of Oliver's affinity metric
 \cite{oliver_geniusv2:_2009}.
 
+
 Costs in a nuclear fuel cycle simulation have reasonably large uncertainty
 \cite{shropshire_advanced_2009} and are generally applied to the output of a
 simulator as a post-processing step. Furthermore, for many fuel cycle simulation
@@ -248,27 +318,26 @@ complexity of such models quickly brings them out of the scope of the needs for
 dynamic modeling of multi-lateral scenarios ranging 100+ years in a
 ``reasonable'' amount of computation time.
 
+\subsubsection{Trades}
+
+The information gathering phase defines the population of \textit{potential}
+trades. The system is then solved by either a heuristic or optimization solver,
+resulting in a feasible set of \textit{finalized} trades. The DRE is completed
+at a given time step when trades are \textit{executed} by instructing all
+supplier agents to send their finalized trades to consumer agents.
 
 \subsection{The Nuclear Fuel Cycle Transportation Problem}\label{abm:dre:fctp}
 
-Supply and demand in a nuclear fuel cycle context is inherently a multicommodity
-problem. A light water reactor can be fueled by both UOX and MOX fuel, for
-instance. How it is fueled is a result both of fuel availability and associated
-preferences. In order to allow for complex physical and chemical constraints on
-both processes and inventories, an optimization-based approach is used which
-employs economics-based proxies to arrive at a solution of resource transfers
-within a simulation time-step. 
-
 An instance of supply and demand defined by the DRE's information gathering step
 is cast to a constrained, bipartite network which represents a variant of the
-Multicommodity Transportation Problem, entitled the \textit{Nuclear Fuel Cycle
-  Transportation Problem} (NFCTP). It can be solved by any heuristic that
-provides a feasible solution to such networks are valid.  A greedy heuristic is
-also designed and implemented. The system can be solved optimally, however, by
-formulating the system as a mathematical program, and a mixed-integer linear
-program (MILP) formulation is provided provided. Formulated as a MILP, the
-system can be solved with any available solver. \cbc\cite{forrestcbc}, a popular
-open-source branch-and-bound solver, is used in this work.
+MTP, entitled the \textit{Nuclear Fuel Cycle Transportation Problem} (NFCTP). It
+can be solved by any heuristic that provides a feasible solution to such
+networks are valid.  A greedy heuristic is also designed and implemented. The
+system can be solved optimally, however, by formulating the system as a
+mathematical program, and a MILP formulation is provided provided. Formulated as
+a MILP, the system can be solved with any available
+solver. \cbc\cite{forrestcbc}, a popular open-source branch-and-bound solver, is
+used in this work.
 
 \subsubsection{Terminology}
 
@@ -852,141 +921,6 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
  }
  \caption{Greedy Exchange Heuristic}\label{alg::greedy}
 \end{algorithm}
-
-\subsection{Implementation}\label{abm:dre:impl}
-
-The DRE and its solution framework are implemented in three layers. The first
-layer includes information for specific \code{Resource} types. For example, a
-\code{Material}-based exchange is used for agents to communicate supply and
-demand information regarding \code{Material} objects. The \textit{resource
-  layer} is the point of entry and exit of the DRE framework. It is the
-agent-facing interface of the DRE: supply and demand is provided to the DRE as
-input during the information gathering step, and trades to be executed are
-provided to agents as output.
-
-The second layer, called the \textit{exchange layer}, is a
-\code{Resource}-agnostic implementation of a specialized bipartite
-graph. Supply/demand constructs in the first layer are translated into stateful
-objects representing nodes, arcs, constructs that carry constraint information,
-\textit{et cetera}. The collection of objects and structures combine to create
-an \code{ExchangeGraph}. Any custom, \Cyclus-aware solver can be applied to an
-\code{ExchangeGraph} to determine a feasible solution to the DRE.
-
-In order to use sophisticated, 3\textsuperscript{rd} party LP and MILP solving
-libraries, the \code{ExchangeGraph} must be translated into an appropriate data
-structure representing an instance of the NFCTP, resulting in the
-\textit{formulation layer}. The Open Solver Interface (OSI) \cite{coinosi} is
-used to create the necessary formulation structures, including a constraint
-matrix and objective coefficient vector. The NFCTP instance is then solved.
-
-After a feasible, perhaps optimal, solution to the NFCTP is found, whether in
-the exchange or formulation layer, the solution is back-translated to the
-resource layer. The agents associated with successful supply-demand connections
-are informed, and trades of resources between agents are executed. A graphic of
-the entire workflow is shown in Figure \ref{fig:dre_impl}.
-
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=\textwidth]{exchange_xlation.pdf}
-    \caption[]{
-      \label{fig:dre_impl}
-      The full DRE workflow is shown. The information gathering phase results in
-      the resource layer. The resource layer is translated to the exchange
-      layer; a decision is made whether to continue translation or to directly
-      solve, marked by the number $1$. If the exchange is not solved, it is
-      translated into an instance of the NFCTP resulting in the formulation
-      layer. A choice of solver is made, marked by the number $2$, and the
-      instance is solved.  The solution is back-translated through the exchange
-      and resource layers. The result is a series of resource trades to be
-      executed in the simulation.}
-  \end{center}
-\end{figure}
-
-\subsubsection{Resource Layer}
-
-The resource layer utilizes \textit{templated} classes in order to reduce the
-amount of code required for implementation. Each object is templated on the
-concrete \code{Resource} type, e.g., the \code{Material} and \code{Product}
-classes. The fundamental data structures in the resource layer reflect the
-constructs of the information gathering procedure described in 
-\secref{abm:dre:info}.
-
-In the RFB phase of the DRE, agents populate \codeb{Request\-Portfolio}s with
-\code{Request}s and \codeb{Capacity\-Constraint}s. A \code{Request}
-defines a desired \code{Resource}, communicating quantity, quality, and
-preference. Any number of \codeb{Capacity\-Constraint}s may be added to a
-\codeb{Request\-Portfolio}. A \codeb{Capacity\-Constraint} defines a
-capacitating value and a conversion function that takes as an argument a
-\code{Resource} and returns a value in units of the conversion function. For
-\codeb{Request\-Portfolio}s, constraints are assumed to be demand
-constraints, i.e., take the form of a greater-than constraint. In the RRFB phase
-of the DRE, agents populate \codeb{Bid\-Portfolio}s with \code{Bid}s and
-\codeb{Capacity\-Constraint}s. Agents can inspect the population of
-\code{Request}s and associated \code{Resource}s. A \code{Bid} targets a
-specific \code{Request}, responding with a proposed \code{Resource} to
-transfer to the requester. \codeb {Capacity\-Constraint}s are applied to all
-\code{Bid}s in a portfolio. For bidders, constraints are assumed to be
-less-than constraints. Before continuing, requesting agents and their managers
-are allowed to alter the preference associated with each
-\code{Request}-\code{Bid} pair in the PA phase of the DRE. When a solution
-to the DRE is found, bidders associated with successful
-\code{Request}-\code{Bid} pairs are informed, and a trade of the bidder's
-\code{Resource} is initiated.
-
-Future work can be focused on providing more features to the DRE
-implementation. A natural extension of the present work is to support both kinds
-of constraints, greater and less-than, in \code{Portfolio} data
-structures. Additionally, the PA procedure could use a negotiation model that
-involves both suppliers and requesters in order to define a final preference for
-an arc. Such an extension would allow for more seamless and natural usage of arc
-costs in addition to preferences.
-
-\subsubsection{Exchange Layer} 
-
-The exchange layer is constructed by an \code{ExchangeTranslator} object that
-translates the resource layer objects into an instance of an
-\code{ExchangeGraph}. Request and bid objects are translated to
-\code{ExchangeNode}s, and portfolio objects are translated to
-\code{ExchangeGroup}s. Constraint coefficient and preference information is
-recorded on \code{ExchangeArc}s, which store a reference to a supply
-\code{ExchangeNode} and a demand \code{ExchangeNode}. Finally, constraint values
-are stored on the appropriate \code{ExchangeGroup} object.
-
-An \code{ExchangeContext} object is tasked with storing a mapping from
-\code{Request} and \code{Bid} objects to their associated
-\code{ExchangeNode}. Importantly, the exchange layer does \textit{not} depend on
-resource type, i.e., the resource type is abstracted away during
-translation. Finally, a general solver can be implemented that operates on the
-\code{ExchangeGraph}. A solution to the \code{ExchangeGraph} instance is a
-mapping from \code{ExchangeArc}s to flow quantities that does not violate the
-provided constraints. After a solution is found, it is back-translated to the
-resource layer.
-
-\subsubsection{Formulation Layer}
-
-While a solver may operate on the exchange layer, an instance of an
-\code{ExchangeGraph} can be translated fully into the NFCTP. Once in an LP or
-MILP form, the DRE instance can be solved by sophisticated 3\textsuperscript{rd}
-party libraries. In order to interface with a large number of the possible
-solvers, including \cbc and CPLEX, the COIN-OR OSI API \cite{coinosi} is
-utilized.
-
-The translation from the exchange layer to formulation layer is managed by the
-\code{ProgTranslator} class. A variable in the NFCTP is associated with each
-\code{ExchangeArc}, with variable bounds set by request values on
-\code{ExchangeNode}s; a binary variable is used if the arc is exclusive,
-otherwise a linear variable is used. Capacity coefficients and preference values
-defined for \code{ExchangeArc}s are translated into an objective coefficient
-vector and constraint matrix. The right-hand-side $b$ constraint vector is
-determined by \code{ExchangeGroup} constraining values.
-
-A solution to the NFCTP instance is determined by the identified solver,
-assigning values to linear and integer variables. Linear variable values map
-directly to assigned resource flow quantity. If a binary variable is set to
-unity in a solution, the maximum possible flow value is assigned, analogous to
-$\tilde{x_j}$ in the NFCTP formulation. The variable-flow value assignment is
-then back-translated into an equivalent \code{ExchangeArc}-flow value assignment
-by the \code{ProgTranslator}.
 
 \subsection{Inter-region Policy Instruments}\label{meth:tariff}
 
