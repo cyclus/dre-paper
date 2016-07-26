@@ -82,9 +82,9 @@ $t_f = 300$. During the outage, the remaining facilities in the supply chain
 operate normally, and the flow of fuel into and out of reactors adapts according
 to the state of available fresh fuel.
 
-A comparison of the inventories of Plutonium-239 in each facility type of
+A comparison of the inventories of plutonium-239 in each facility type of
 interest among the \basecase and \outage scenarios is shown in Figure
-\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv}, the quantity of
+\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv-outage}, the quantity of
 MOX in \reactors is under a dynamic equilibrium, oscillating between the
 maximum quantity allowable in the system and one refueling quantity less than the
 maximum, based on refueling schedules. The equilibrium value increases in a
@@ -104,7 +104,7 @@ inventory in each timestep.
     \centering 
     \subfloat[Pu-239 inventories in the \basecase scenario.]{
       \includegraphics[height=0.3\textheight]{outage_invs_a.pdf}
-      \label{fig:baseinv}}
+      \label{fig:baseinv-outage}}
     \vfill 
     \subfloat[Pu-239 inventories in the \outage scenario.]{
       \includegraphics[height=0.3\textheight]{outage_invs_b.pdf}
@@ -164,7 +164,7 @@ of the commodities, and thus the first 10 reactors to refuel after the new
 source enters the simulation when no original MOX is available will be provided
 with MOX from the new facility. Reactors will continue to request fuel from the
 new facility for the remainder of the simulation, but will not receive any due
-to the supply constraints. This injection of a new fuel source also serves to
+to the limited total inventory. This injection of a new fuel source also serves to
 perturb the supply chain by delaying the amount of spent UOX available for
 recycling.
 
@@ -201,7 +201,7 @@ quickly recovered from, however.
     \centering 
     \subfloat[Pu-239 inventories in the \basecase scenario.]{
       \includegraphics[height=0.3\textheight]{military_invs_a.pdf}
-      \label{fig:baseinv}}
+      \label{fig:baseinv-military}}
     \vfill 
     \subfloat[Pu-239 inventories in the \external scenario.]{
       \includegraphics[height=0.3\textheight]{military_invs_b.pdf}
