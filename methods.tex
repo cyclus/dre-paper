@@ -236,15 +236,16 @@ total consumption. A set of exclusive requests may also be grouped as mutual
 requests, in which case the set is termed \textit{mutually exclusive}.
 
 At the completion of the RFB phase, the market exchange will have a set of
-request portfolios. Each each portfolio consists of a set requests. Arbitrary
+request portfolios. Each portfolio consists of a set requests. Arbitrary
 constraints over the set of requests can be provided that are functions of
 quantity, $x$, or quality, $q$.  When communicating constraining information,
 agents must provide a total constraining quantity, $b$, and a \textit{constraint
-  coefficient conversion function}, $\beta (q_{i, j})$. This corresponds to a
-general constraint of the form for all possible trades $A_j$ for requester $j$,
+  coefficient conversion function}, $\beta (q_{i, j})$. Utilizing this
+information, constraints similar to Equation \ref{eqs:MCTP_dem} can be
+constructed for all possible trades $A_j$ for requester $j$,
 
 \begin{equation}\label{meth:constr}
-  \sum_{(i, j) \in A_j} \beta (q_{i,j}) x_{i, j} \leq b.
+  \sum_{(i, j) \in A_j} \beta (q_{i,j}) x_{i, j} \geq b.
 \end{equation}
 
 \noindent
@@ -257,7 +258,7 @@ with it.
 The second phase allows suppliers to \textit{respond} to the set of request
 portfolios, and is termed the \textit{Response to Request for Bids} (RRFB) phase
 (analogous to Julka's Reply to Request for Quote phase
-\cite{julka_agent-based_2002}). Each request portfolio is comprised of requests
+\cite{julka_agent-based_2002}). Each request portfolio comprises requests
 for some set of commodities. Accordingly, for each request, suppliers of that
 commodity denote production capacities and an isotopic profile of the commodity
 they can provide. Suppliers are allowed to offer the null set of isotopics as
@@ -268,19 +269,23 @@ exclusive. This functionality again supports the notion of quantized orders,
 e.g., in the case of fuel assemblies. The full collection of responses for a
 given supplier is denoted as its \textit{supply portfolio}.
 
-A supplier may have its production constrained in the same manner as consumers,
-as shown in Equation \ref{meth:constr} and can provide one or more
-constraints. For example, a processing facility may have both a throughput
-constraint (i.e., it can only process material at a certain rate) and an
-inventory constraint (i.e., it can only hold some total material). Further, the
-facility could have a constraint on the quality of material to be processed,
-e.g., it may be able to handle a maximum radiotoxicity for any given time step
-which is a function of both the quantity of material in processes and the
-isotopic content of that material. Multiple of such constraints are allowed. At
-the completion of the RRFB phase the possible connections between supplier and
-producer facilities, i.e., the arcs in the graph of the transportation problem,
-have been established with specific capacity constraints defined both by the
-quantity and quality of commodities that will traverse the arcs.
+A supplier may have its production constrained by communicating the same
+information as consumers. Constraints corresponding to Equation
+\ref{eqs:MCTP_sup} are constructed in the same manner as Equation
+\ref{meth:constr}. Suppliers can provide one or more constraints. For example, a
+processing facility may have both a throughput constraint (i.e., it can only
+process material at a certain rate) and an inventory constraint (i.e., it can
+only hold some total material). Further, the facility could have a constraint on
+the quality of material to be processed, e.g., it may be able to handle a
+maximum radiotoxicity for any given time step which is a function of both the
+quantity of material in processes and the isotopic content of that
+material. Multiple of such constraints are allowed. At the completion of the
+RRFB phase the possible connections between supplier and producer facilities,
+i.e., the arcs in the graph of the transportation problem, have been established
+with specific capacity constraints defined both by the quantity and quality of
+commodities that will traverse the arcs.
+
+\subsubsection{Preferences}
 
 The final phase of the information gathering procedure allows consumer
 facilities to adjust their set of preferences and for managers of consumer
@@ -292,23 +297,22 @@ resources. For example, a region can detect a trans-regional trade between one o
 its facilities and a facility in another region. If a tariff model is employed,
 the trade preference and be diminished or even removed.
 
-For facilities, preference adjustment provides a mechanism to act in response to
-offers provided by producer facilities. Consider the example of a reactor
-facility that requests two fuel types, MOX and UOX, and receives two responses
-to its request for MOX, each with different isotopic profiles. It can then
-assign preference values over the set of potential MOX providers. Repositories
-provide another prime example where preference adjustment can be naturally
-employed. A repository may have a defined preference of material to accept based
-upon its heat load or radiotoxicity, both of which are functions of the quality,
-or isotopics, of a material. In certain simulators, limits on fuel entering a
-repository are imposed based upon the amount of time that has elapsed since the
-fuel has exited a reactor, which can be assessed during this phase. The time
-constraint is, in actuality, a constraint on heat load or radiotoxicity (one
-must let enough of the fission products decay). A repository could analyze
-possible input fuel isotopics and set the arc preference of any that violate a
-given rule to 0, thereby eliminating that arc.
-
-\subsubsection{Preferences}
+For facilities, preference adjustment provides a mechanism to act with arbitrary
+complexity in response to offers provided by producer facilities. Consider the
+example of a reactor facility that requests two fuel types, MOX and UOX, and
+receives two responses to its request for MOX, each with different isotopic
+profiles. It can then assign preference values over the set of potential MOX
+providers. Repositories provide another prime example where preference
+adjustment can be naturally employed. A repository may have a defined preference
+of material to accept based upon its heat load or radiotoxicity, both of which
+are functions of the quality, or isotopics, of a material. In certain
+simulators, limits on fuel entering a repository are imposed based upon the
+amount of time that has elapsed since the fuel has exited a reactor, which can
+be assessed during this phase. The time constraint is, in actuality, a
+constraint on heat load or radiotoxicity (one must let enough of the fission
+products decay). A repository could analyze possible input fuel isotopics and
+set the arc preference of any that violate a given rule to 0, thereby
+eliminating that arc.
 
 The game theoretic notion of preferences can be quite useful in fuel cycle
 simulation. Specifically, cardinal utility, or cardinal preferences
@@ -316,16 +320,11 @@ simulation. Specifically, cardinal utility, or cardinal preferences
 any two preferences can be directly compared, provided an arbitrary scaling,
 similar to the comparison of costs in a system. The notion of preference also
 nicely extends the work of Oliver's affinity metric
-\cite{oliver_geniusv2:_2009}.
-
-
-Costs in a nuclear fuel cycle simulation have reasonably large uncertainty
-\cite{shropshire_advanced_2009} and are generally applied to the output of a
-simulator as a post-processing step. Furthermore, for many fuel cycle simulation
-cases, a cost proxy is directly applicable, because actual cost values may be
-very hard to compute or determine \textit{within} a simulation. Therefore,
-preferences, a proxy of cost, can be used to drive consistent decision-making
-within a simulation.
+\cite{oliver_geniusv2:_2009}. Additionally, costs in a nuclear fuel cycle
+simulation have reasonably large uncertainty \cite{shropshire_advanced_2009} and
+are generally applied to the output of a simulator as a post-processing
+step. Therefore, preferences, a proxy of cost, can be used to drive consistent
+decision-making within a simulation.
 
 There exists a body of literature that examine Nash Equilibria in the context of
 optimal flow models
@@ -418,14 +417,16 @@ respectively.
 
 Additionally, each portfolio and constraint has a defined constraint coefficient
 conversion function, denoted $\beta_s^k$ for supply portfolios and $\beta_r^k$
-for request portfolios. Request portfolios are provided a quantity constraint by
+for request portfolios. Request portfolios are provided a mass constraint by
 default for which coefficients are unity and whose constraining value is is
-$b^{x}_{r}$. For a set of \textit{mutual requests}, $M$, where each request has
-a request quantity, $x_m$, the coefficient is defined by the ratio between the
-the average request quantity over all mutual requests and $x_m$
+$b^{x}_{r}$. If requested commodities are labeled as \textit{mutual}, then a
+weighting coefficient is generated for each request in the mutual set, $M$, in
+order to support cases where different commodities are requested with different
+quantities. The coefficient is defined by the ratio between the the average
+request quantity over all mutual requests and $x_m$
 
 \begin{equation}\label{meth:mutual-coeff}
-  \beta_{r, m} = \frac{\overline{x_M}}{x_m}.
+  \beta_{r, m} = \frac{\overline{x_M}}{x_m},
 \end{equation}
 
 The constraint conversion functions are utilized in the NFCTP by applying them
@@ -548,10 +549,9 @@ $R_2$             & $B$
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.75\textwidth]{exchange_groups_color.pdf}
-    \caption{The same exchange shown in Figure \ref{fig:ex_false} arcs colored
-      by commodity based on Tables \ref{tbl:ex_sup} and \ref{tbl:ex_req}. A green
-      arc corresponds to commodity $A$; a brown arc corresponds to commodity
-      $B$.}
+    \caption{The same exchange shown in Figure \ref{fig:ex_false} with arcs and
+      portfolios labeled based on Tables \ref{tbl:ex_sup} and
+      \ref{tbl:ex_req}. }
     \label{fig:ex_groups_color}
   \end{center}
 \end{figure}
@@ -563,7 +563,7 @@ be partitioned by collections of commodities. However, once minimally connected
 Exchange Graphs are established, solution mechanisms do not employ the notion of
 commodities. Rather, quantities, constraints, and preferences are used.
 
-%\paragraph{Constraint Coefficients}
+\subsubsection{Communicating Constraints}
 
 Constraint coefficients are determined for an arc based on the proposed resource
 to be transferred along that arc, the requester's constraint conversion
@@ -665,12 +665,13 @@ flow of resources, but not necessarily an \textit{optimal} solution. Many
 heuristics may be applied to bipartite graphs with constrained flows. A simple
 \textit{greedy} heuristic is presented here and implemented.
 
-The maximum flow along an arc, $x_{max}$, depends on the constraints associated
-with each node on the arc. For nodes $i$ and $j$ belonging to portfolios $s$ and
-$r$, respectively, the maximum allowable flow is defined as
+The maximum flow along an arc, $x^{\widehat{}}_{i, j}$, depends on the
+constraints associated with each node on the arc. For nodes $i$ and $j$
+belonging to portfolios $s$ and $r$, respectively, the maximum allowable flow is
+defined as
 
 \begin{equation}
-  x_{max} = \min 
+  x^{\widehat{}}_{i, j} = \min 
         \lbrace 
         \min \lbrace \frac{b^k_s}{a^k_{i, j}} 
         \: \forall k \in K_s \rbrace, 
@@ -699,7 +700,7 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
      \While{matched $\leq b^x_r$ and $\exists$ an arc} {
        get next arc\;
        remaining $\leftarrow b^x_r$ - matched\;
-       to\_match $\leftarrow \min \lbrace$remaining, $x_{max} \rbrace$\;
+       to\_match $\leftarrow \min \lbrace$remaining, $x^{\widehat{}}_{i, j} \rbrace$\;
        \code{AddMatch}(arc, to\_match)\;
        matched $\leftarrow$ matched + to\_match\;
      }
@@ -708,12 +709,12 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
  \caption{Greedy Exchange Heuristic}\label{alg::greedy}
 \end{algorithm}
 
-%% The heuristic naturally accounts for mutual requests and exclusive trades,
-%% the two unique properties associated with the formulation. Mutual requests
-%% are accounted for by removing a portfolio from the exchange after a mutual
-%% bid or request is utilized. Exclusivity is accounted for through initial
-%% screening -- supply-request pairs that will not match are removed from the
-%% exchange \textit{a priori} -- and the use of the maximum value function.
+The heuristic naturally accounts for mutual requests and exclusive trades, the
+two unique properties associated with the formulation. Mutual requests are
+accounted for by the weighted mass-balance constraint. Exclusivity is accounted
+for through initial screening (supply-request pairs that will not match are
+removed from the exchange in a pre-screening step) and the use of the maximum
+value function.
 
 \subsubsection{Mixed Integer Linear Programming Formulation}\label{abm:dre:milp}
 
@@ -721,7 +722,8 @@ The mathematical formulation NFCTP can be constructed by combining the
 components of an Exchange Graph and adding appropriate parameters and variables,
 translating from the exchange layer to the formulation layer as shown in Figure
 \ref{fig:dre_impl}. The NFCTP is formulated as a mixed integer-linear program
-(MILP), rather than a linear program (LP) in order to allow for the critical
+(MILP), rather than a linear program (LP) in order to allow for quantized
+commodity transfers that commonly arise in the fuel cycle context, such as the
 case of reactor fuel orders, which comprise a large amount of material orders
 within the simulation context. By introducing binary decision variables, fuel
 orders can be guaranteed to be met by a single supplier, rather than allowing
