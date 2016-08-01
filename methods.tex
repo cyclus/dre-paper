@@ -100,15 +100,16 @@ commodity coupling in Equation \ref{eqs:MCTP_cap}.
     \sum_{i \in I}\sum_{j \in J}\sum_{h \in H} c_{i,j}^{h} x_{i,j}^{h}
     & \label{eqs:MCTP_obj} \\
     %%
-    \text{s.t.} \:\: &
-    \sum_{j \in J} x_{i,j}^{h} \leq s_{i}^{h}
-    &
-    \forall \: i \in I, \forall \: h \in H \label{eqs:MCTP_sup} \\
-    %%
+    \text{s.t.} \:\: 
     &
     \sum_{i \in I} x_{i,j}^{h} \geq d_{j}^{h}
     & 
     \forall \: j \in J, \forall \: h \in H \label{eqs:MCTP_dem} \\
+    %%
+    &
+    \sum_{j \in J} x_{i,j}^{h} \leq s_{i}^{h}
+    &
+    \forall \: i \in I, \forall \: h \in H \label{eqs:MCTP_sup} \\
     %%
     &
     \sum_{h \in H} x_{i,j}^{h} \leq u_{i,j}
@@ -804,24 +805,7 @@ are described in Tables \ref{tbl:NFCTP-sets} and \ref{tbl:NFCTP-vars}.
     & 
     \label{eqs:NFCTP_obj} \\
     %%
-    \text{s.t.} \:\: 
-    &
-    \sum_{(i, j) \in A_{p_s}} a^k_{i,j} x_{i,j}
-    \: + 
-    \sum_{(i, j) \in A_{e_s}} a^{k\prime}_{i,j} y_{i,j}
-    \leq b^k_s 
-    &
-    \: 
-    \forall \: k \in K_s, 
-    \forall \: s \in S 
-    \label{eqs:NFCTP_sup} \\
-    %%
-    &
-    \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 
-    &
-    \forall \: s \in S 
-    \label{eqs:NFCTP_mut_sup} \\
-    %%
+    \text{s.t.} \:\:
     &
     \sum_{(i, j) \in A_{p_r}} a^k_{i,j} x_{i,j}
     \: + 
@@ -838,6 +822,23 @@ are described in Tables \ref{tbl:NFCTP-sets} and \ref{tbl:NFCTP-vars}.
     &
     \forall \: r \in R 
     \label{eqs:NFCTP_mut_req} \\
+    %% 
+    &
+    \sum_{(i, j) \in A_{p_s}} a^k_{i,j} x_{i,j}
+    \: + 
+    \sum_{(i, j) \in A_{e_s}} a^{k\prime}_{i,j} y_{i,j}
+    \leq b^k_s 
+    &
+    \: 
+    \forall \: k \in K_s, 
+    \forall \: s \in S 
+    \label{eqs:NFCTP_sup} \\
+    %%
+    &
+    \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 
+    &
+    \forall \: s \in S 
+    \label{eqs:NFCTP_mut_sup} \\
     %%
     &
     x_{i,j} \in [0, \tilde{x_j}]
