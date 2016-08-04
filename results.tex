@@ -336,11 +336,15 @@ non-UOX is provided.  The \outage scenario initially deviates from the \basecase
 scenario, but eventually returns to match its cumulative UOX usage. This is due
 to the fact that in the defined system, outages simply serve to store fuel. When
 sufficient time has past after the outage, the system returns to its dynamic
-equilibrium. Finally, the \tariff scenario utilizes the most UOX fuel of
-all. This is expected due to the fact that there is a population of reactors
-that prefers UOX fuel (i.e., the UOX fuel in its own Region) over all other
-sources in the simulation. Therefore more UOX fuel is consumed than would be
-otherwise.
+equilibrium. Finally, the \tariff scenario utilizes the most UOX fuel of all,
+providing an interesting case study of the effects of dynamic equilibrium. In
+the \tariff scenario, there is a population of reactors that prefers UOX fuel
+that is not sent to \separations (i.e., the UOX fuel in its own Region) over all
+other sources in the simulation. Therefore, the population of Pu is reduced,
+which reduces both the quantity and frequency of MOX availability. This, in
+turn, increases overall UOX consumption. In short, MOX availability decreases
+due to upstream supply chain effects, causing an increase in overall UOX
+consumption.
 
 Figure \ref{fig:moxflow} showcases the cumulative flow of MOX fuel into all
 reactors as a function of simulation time step. Because reactors can be fueled
