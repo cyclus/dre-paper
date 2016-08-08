@@ -64,7 +64,7 @@ within a simulation time-step.
 The DRE translates agent supply and demand into a version of the Multi-commodity
 Transportation Problem (MTP) \cite{even1975complexity} which belongs to the
 network flow family of optimization problems. A network flow problem is
-represented by a graph, $G(N, A)$, comprised of nodes $N$ and arcs $A$. If flow
+represented by a graph, $G(N, A)$, comprises nodes $N$ and arcs $A$. If flow
 can occur between some node $i$ and some other node $j$, then it flows along arc
 $(i, j)$. Given a graph instance, optimal flow between nodes can be found
 provided \textit{objective coefficients} and
@@ -370,8 +370,8 @@ Each supply and request portfolio can be considered separately, i.e., there is
 no information shared between two portfolios of a given agent. The set of supply
 portfolios is denoted as $S$ and the set of request portfolios is denoted as
 $R$; each agent may have multiple portfolios in a given exchange. Each
-supply portfolio is comprised of $s_M$ supply nodes, and each request portfolio
-is comprised of $r_N$ nodes. For notation simplicity, nodes within portfolios
+supply portfolio comprises $s_M$ supply nodes, and each request portfolio
+comprises $r_N$ nodes. For notation simplicity, nodes within portfolios
 are referred to with single indices (e.g., $i$ or $j$), and collections of arcs
 (connections between supply and request nodes) associated with a given portfolio
 are referred to as $(i, j) \in A_s$ and $(i, j) \in A_r$, for supply and request
@@ -951,7 +951,7 @@ may be applied, updated, and removed as a function of time, thereby supporting
 dynamic instrument models. Static models are trivially supported by applying a
 rule at the initial time step and not removing it.
 
-Rules are comprised of \textit{conditions} and \textit{tariffs}. Given a
+Rules comprise \textit{conditions} and \textit{tariffs}. Given a
 condition and tariff, preferences are adjusted as shown in Algorithm
 \ref{alg::tariff}. A rule's condition may depend on any factor that is
 query-able during the preference adjustment phase of the DRE. During PA, each
