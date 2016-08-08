@@ -779,20 +779,12 @@ denoted $M_s$ and $M_r$ for suppliers and requesters, respectively. The
 associated constraints are then defined by Equations \ref{eqs:mutual_sup} and
 \ref{eqs:mutual_req}.
 
-%% \begin{equation}\label{eqs:mutual_sup}
-%%   \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 \: \forall \: s \in S 
-%% \end{equation}
-
 \begin{equation}\label{eqs:mutual_sup}
-  \sum_{(i, j) \in M_{s}} y_{i,j} \in {0,1} \: \forall \: s \in S 
+  \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 \: \forall \: s \in S 
 \end{equation}
 
-%% \begin{equation}\label{eqs:mutual_req}
-%%   \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 \: \forall \: r \in R 
-%% \end{equation}
-
 \begin{equation}\label{eqs:mutual_req}
-  \sum_{(i, j) \in M_{r}} y_{i,j} \in {0,1} \: \forall \: r \in R 
+  \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 \: \forall \: r \in R 
 \end{equation}
 
 %\paragraph{Formulation}
