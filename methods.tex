@@ -25,8 +25,8 @@ Transportation Problem (NFCTP), a variant of the classic family of
 transportation problems in optimization. Suppliers and consumers provide
 information about their supply and demand during an initial information
 gathering phase. Complex constraints can be supplied during this phase. Supply
-and demand is then translated into a resource-agnostic \textit{Exchange
-  Graph}. The graph can be solved feasibly with a heuristic or optimally by
+and demand is then translated into a resource-agnostic \textit{exchange
+  graph}. The graph can be solved feasibly with a heuristic or optimally by
 translating it into a mixed integer-linear program. Given a solution, final
 trades are constructed and executed. In order to provide a more concrete
 discussion, all descriptions of the DRE and its mechanisms assume an
@@ -365,7 +365,7 @@ information onto a \textit{bipartite} graph. This mapping allows for the
 translation from the resource to exchange layers shown in Figure
 \ref{fig:dre_impl}. Information is mapped to properties of arcs, which represent
 proposed trades, and portfolio-based node groupings. The components of an
-Exchange Graph have a one-to-one mapping with simulation entities. For example,
+exchange graph have a one-to-one mapping with simulation entities. For example,
 nodes in the graph represent distinct bids and requests provided by agents.
 
 Each supply and request portfolio can be considered separately, i.e., there is
@@ -384,10 +384,10 @@ one-to-one mapping between bid nodes and request nodes. In other words, a given
 bid node, $i$, is a unique response to a request node, $j$. Because of defined
 constraints, there may not be sufficient supply in the simulated exchange. To
 ensure a feasible solution, an unconstrained false supply node is added to the
-Exchange Graph. Additionally, false nodes are added to each request portfolio
+exchange graph. Additionally, false nodes are added to each request portfolio
 and are connected to the false supply source. These arcs are denoted as
-\textit{false arcs}. Figure \ref{fig:ex_false} shows a fully defined Exchange
-Graph. As an example, $A_s$ in this example is defined as 
+\textit{false arcs}. Figure \ref{fig:ex_false} shows a fully defined exchange
+graph. As an example, $A_s$ in this example is defined as 
 $\left \{ (i, j), (i', j') \right \}$.
 
 \begin{figure}
@@ -504,7 +504,7 @@ lowest preference in the system, $P$.
 
 Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
 arc will only be engaged if no other possible arc can be engage, due to capacity
-constraints. If any flow is assigned to false arcs after the Exchange Graph is
+constraints. If any flow is assigned to false arcs after the exchange graph is
 solved, that flow is ignored when initiating transactions.
 
 If cost data and a valid cost assignment methodology is developed in the future,
@@ -520,10 +520,10 @@ commodities. However, each possible resource transfer, i.e., each arc, is based
 on a single commodity. Accordingly, it is possible to color each arc, given a
 commodity-to-color mapping.
 
-For example, consider the Exchange Graph shown in Figure \ref{fig:ex_groups_color}
+For example, consider the exchange graph shown in Figure \ref{fig:ex_groups_color}
 with two fuel commodities ($A$, $B$), two requesters ($R_1$, $R_2$), and three
 suppliers ($S_1$, $S_2$, $S_3$) in the configuration described by Tables
-\ref{tbl:ex_sup} and \ref{tbl:ex_req}. The resulting Exchange Graph can be
+\ref{tbl:ex_sup} and \ref{tbl:ex_req}. The resulting exchange graph can be
 colored as shown in Figure \ref{fig:ex_groups_color}.
 
 \begin{table}[h]
@@ -561,9 +561,9 @@ $R_2$             & $B$
 
 The notion of commodities is critical during the information gathering step as
 it is the basic classification used in communicating supply and demand. It is
-also useful when an Exchange Graph is formed, because the graph may be able to
+also useful when an exchange graph is formed, because the graph may be able to
 be partitioned by collections of commodities. However, once minimally connected
-Exchange Graphs are established, solution mechanisms do not employ the notion of
+exchange graphs are established, solution mechanisms do not employ the notion of
 commodities. Rather, quantities, constraints, and preferences are used.
 
 \subsubsection{Communicating Constraints}
@@ -662,7 +662,7 @@ equations for the enrichment facility by combining Equations
 
 \subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
 
-Given an Exchange Graph, including false arcs, a feasible solution can be
+Given an exchange graph, including false arcs, a feasible solution can be
 found. By definition a feasible solution is a \textit{solution} to the possible
 flow of resources, but not necessarily an \textit{optimal} solution. Many
 heuristics may be applied to bipartite graphs with constrained flows. A simple
@@ -691,7 +691,7 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
 
 \begin{algorithm}[!h]
  \SetAlgoLined
- \KwData{A resource Exchange Graph with constraints and preferences.}
+ \KwData{A resource exchange graph with constraints and preferences.}
  \KwResult{A valid set of resource flows.}
  sort request partitions by average preference\;
  \ForAll{$r \in R$} {
@@ -722,7 +722,7 @@ value function.
 \subsubsection{Mixed Integer Linear Programming Formulation}\label{abm:dre:milp}
 
 The mathematical formulation NFCTP can be constructed by combining the
-components of an Exchange Graph and adding appropriate parameters and variables,
+components of an exchange graph and adding appropriate parameters and variables,
 translating from the exchange layer to the formulation layer as shown in Figure
 \ref{fig:dre_impl}. The NFCTP is formulated as a mixed integer-linear program
 (MILP), rather than a linear program (LP) in order to allow for quantized
