@@ -25,13 +25,13 @@ Transportation Problem (NFCTP), a variant of the classic family of
 transportation problems in optimization. Suppliers and consumers provide
 information about their supply and demand during an initial information
 gathering phase. Complex constraints can be supplied during this phase. Supply
-and demand is then translated into a resource-agnostic \textit{Exchange
-  Graph}. The graph can be solved feasibly with a heuristic or optimally by
+and demand is then translated into a resource-agnostic \textit{exchange
+  graph}. The graph can be solved feasibly with a heuristic or optimally by
 translating it into a mixed integer-linear program. Given a solution, final
 trades are constructed and executed. In order to provide a more concrete
 discussion, all descriptions of the DRE and its mechanisms assume an
-material-based exchange, as one would normally find in a fuel-cycle simulation
-context.
+exchange based nuclear materials, the particular type of resource most important 
+to a fuel-cycle simulation context.
 
 \Secref{meth:mtp} begins by providing a short overview of the
 classic optimization tools on which this work is built. An outline of the DRE
@@ -54,7 +54,8 @@ implementation and usage.
 \subsection{Multicommodity Transportation Problems}\label{meth:mtp}
 
 Supply and demand in a nuclear fuel cycle context is inherently a multicommodity
-problem: a light water reactor can be fueled by both UOX and MOX fuel, for
+problem: a light water reactor can be fueled by both uranium oxide (UOX) 
+and mixed oxide (MOX) fuel, for
 instance. How it is fueled is a result both of fuel availability and associated
 preferences. In order to allow for complex physical and chemical constraints on
 both processes and inventories, an optimization-based approach is used which
@@ -64,7 +65,7 @@ within a simulation time-step.
 The DRE translates agent supply and demand into a version of the Multi-commodity
 Transportation Problem (MTP) \cite{even1975complexity} which belongs to the
 network flow family of optimization problems. A network flow problem is
-represented by a graph, $G(N, A)$, comprised of nodes $N$ and arcs $A$. If flow
+represented by a graph, $G(N, A)$, comprises nodes $N$ and arcs $A$. If flow
 can occur between some node $i$ and some other node $j$, then it flows along arc
 $(i, j)$. Given a graph instance, optimal flow between nodes can be found
 provided \textit{objective coefficients} and
@@ -223,7 +224,8 @@ transfers, e.g., fuel assemblies.
 
 Consumers are allowed to post demand for multiple commodities that may serve to
 meet the same capacity, and the collection of all commodities requested is
-termed its \textit{request portfolio}. For example, consider an LWR that can be
+termed its \textit{request portfolio}. For example, consider a light
+water reactor (LWR) that can be
 filled with MOX or UOX. It can post a demand for both, but must define a
 preference over the set of possible commodities that can be consumed. Such
 requests are termed \textit{mutual requests}. Another example is that of an
@@ -263,11 +265,13 @@ portfolios, and is termed the \textit{Response to Request for Bids} (RRFB) phase
 for some set of commodities. Accordingly, for each request, suppliers of that
 commodity denote production capacities and an isotopic profile of the commodity
 they can provide. Suppliers are allowed to offer the null set of isotopics as
-their profile, effectively providing no information. Suppliers are also allowed
+their profile, effectively providing no information. 
+This functionality again supports the notion of quantized orders,
+e.g., in the case of fuel assemblies. 
+Suppliers are also allowed
 to denote responses as exclusive, as is done in the RFB phase. Supply responses
 can also be grouped into mutual responses, and sets of responses may be mutually
-exclusive. This functionality again supports the notion of quantized orders,
-e.g., in the case of fuel assemblies. The full collection of responses for a
+exclusive. The full collection of responses for a
 given supplier is denoted as its \textit{supply portfolio}.
 
 A supplier may have its production constrained by communicating the same
@@ -292,7 +296,7 @@ The final phase of the information gathering procedure allows consumer
 facilities to adjust their set of preferences and for managers of consumer
 facilities to affect the consumer's set of preferences. Accordingly, the last
 phase is termed the \textit{Preference Adjustment} (PA) phase. By allowing
-facility managers, i.e., a facility's institution and region, to also adjust
+facility managers, i.e., a facility's institution and region, to also adjust  %% the RIF hierarchy has not been introduced yet - not sure where to do so
 preferences, socio-economic models are allowed to inform the exchange of
 resources. For example, a region can detect a trans-regional trade between one of
 its facilities and a facility in another region. If a tariff model is employed,
@@ -363,15 +367,15 @@ information onto a \textit{bipartite} graph. This mapping allows for the
 translation from the resource to exchange layers shown in Figure
 \ref{fig:dre_impl}. Information is mapped to properties of arcs, which represent
 proposed trades, and portfolio-based node groupings. The components of an
-Exchange Graph have a one-to-one mapping with simulation entities. For example,
+exchange graph have a one-to-one mapping with simulation entities. For example,
 nodes in the graph represent distinct bids and requests provided by agents.
 
 Each supply and request portfolio can be considered separately, i.e., there is
 no information shared between two portfolios of a given agent. The set of supply
 portfolios is denoted as $S$ and the set of request portfolios is denoted as
 $R$; each agent may have multiple portfolios in a given exchange. Each
-supply portfolio is comprised of $s_M$ supply nodes, and each request portfolio
-is comprised of $r_N$ nodes. For notation simplicity, nodes within portfolios
+supply portfolio comprises $s_M$ supply nodes, and each request portfolio
+comprises $r_N$ nodes. For notation simplicity, nodes within portfolios
 are referred to with single indices (e.g., $i$ or $j$), and collections of arcs
 (connections between supply and request nodes) associated with a given portfolio
 are referred to as $(i, j) \in A_s$ and $(i, j) \in A_r$, for supply and request
@@ -382,10 +386,10 @@ one-to-one mapping between bid nodes and request nodes. In other words, a given
 bid node, $i$, is a unique response to a request node, $j$. Because of defined
 constraints, there may not be sufficient supply in the simulated exchange. To
 ensure a feasible solution, an unconstrained false supply node is added to the
-Exchange Graph. Additionally, false nodes are added to each request portfolio
+exchange graph. Additionally, false nodes are added to each request portfolio
 and are connected to the false supply source. These arcs are denoted as
-\textit{false arcs}. Figure \ref{fig:ex_false} shows a fully defined Exchange
-Graph. As an example, $A_s$ in this example is defined as 
+\textit{false arcs}. Figure \ref{fig:ex_false} shows a fully defined exchange
+graph. As an example, $A_s$ in this example is defined as 
 $\left \{ (i, j), (i', j') \right \}$.
 
 \begin{figure}
@@ -502,7 +506,7 @@ lowest preference in the system, $P$.
 
 Because preferences are defined as in Equation \ref{eqn:falsepref}, any false
 arc will only be engaged if no other possible arc can be engage, due to capacity
-constraints. If any flow is assigned to false arcs after the Exchange Graph is
+constraints. If any flow is assigned to false arcs after the exchange graph is
 solved, that flow is ignored when initiating transactions.
 
 If cost data and a valid cost assignment methodology is developed in the future,
@@ -518,10 +522,10 @@ commodities. However, each possible resource transfer, i.e., each arc, is based
 on a single commodity. Accordingly, it is possible to color each arc, given a
 commodity-to-color mapping.
 
-For example, consider the Exchange Graph shown in Figure \ref{fig:ex_groups_color}
+For example, consider the exchange graph shown in Figure \ref{fig:ex_groups_color}
 with two fuel commodities ($A$, $B$), two requesters ($R_1$, $R_2$), and three
 suppliers ($S_1$, $S_2$, $S_3$) in the configuration described by Tables
-\ref{tbl:ex_sup} and \ref{tbl:ex_req}. The resulting Exchange Graph can be
+\ref{tbl:ex_sup} and \ref{tbl:ex_req}. The resulting exchange graph can be
 colored as shown in Figure \ref{fig:ex_groups_color}.
 
 \begin{table}[h]
@@ -559,9 +563,9 @@ $R_2$             & $B$
 
 The notion of commodities is critical during the information gathering step as
 it is the basic classification used in communicating supply and demand. It is
-also useful when an Exchange Graph is formed, because the graph may be able to
+also useful when an exchange graph is formed, because the graph may be able to
 be partitioned by collections of commodities. However, once minimally connected
-Exchange Graphs are established, solution mechanisms do not employ the notion of
+exchange graphs are established, solution mechanisms do not employ the notion of
 commodities. Rather, quantities, constraints, and preferences are used.
 
 \subsubsection{Communicating Constraints}
@@ -660,7 +664,7 @@ equations for the enrichment facility by combining Equations
 
 \subsubsection{A Heuristic Solution}\label{abm:dre:nfctp:heur}
 
-Given an Exchange Graph, including false arcs, a feasible solution can be
+Given an exchange graph, including false arcs, a feasible solution can be
 found. By definition a feasible solution is a \textit{solution} to the possible
 flow of resources, but not necessarily an \textit{optimal} solution. Many
 heuristics may be applied to bipartite graphs with constrained flows. A simple
@@ -689,7 +693,7 @@ of each arc, $b_k$, are updated upon declaration of a match (via an
 
 \begin{algorithm}[!h]
  \SetAlgoLined
- \KwData{A resource Exchange Graph with constraints and preferences.}
+ \KwData{A resource exchange graph with constraints and preferences.}
  \KwResult{A valid set of resource flows.}
  sort request partitions by average preference\;
  \ForAll{$r \in R$} {
@@ -720,7 +724,7 @@ value function.
 \subsubsection{Mixed Integer Linear Programming Formulation}\label{abm:dre:milp}
 
 The mathematical formulation NFCTP can be constructed by combining the
-components of an Exchange Graph and adding appropriate parameters and variables,
+components of an exchange graph and adding appropriate parameters and variables,
 translating from the exchange layer to the formulation layer as shown in Figure
 \ref{fig:dre_impl}. The NFCTP is formulated as a mixed integer-linear program
 (MILP), rather than a linear program (LP) in order to allow for quantized
@@ -775,12 +779,20 @@ denoted $M_s$ and $M_r$ for suppliers and requesters, respectively. The
 associated constraints are then defined by Equations \ref{eqs:mutual_sup} and
 \ref{eqs:mutual_req}.
 
+%% \begin{equation}\label{eqs:mutual_sup}
+%%   \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 \: \forall \: s \in S 
+%% \end{equation}
+
 \begin{equation}\label{eqs:mutual_sup}
-  \sum_{(i, j) \in M_{s}} y_{i,j} \leq 1 \: \forall \: s \in S 
+  \sum_{(i, j) \in M_{s}} y_{i,j} \in {0,1} \: \forall \: s \in S 
 \end{equation}
 
+%% \begin{equation}\label{eqs:mutual_req}
+%%   \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 \: \forall \: r \in R 
+%% \end{equation}
+
 \begin{equation}\label{eqs:mutual_req}
-  \sum_{(i, j) \in M_{r}} y_{i,j} \leq 1 \: \forall \: r \in R 
+  \sum_{(i, j) \in M_{r}} y_{i,j} \in {0,1} \: \forall \: r \in R 
 \end{equation}
 
 %\paragraph{Formulation}
@@ -951,7 +963,7 @@ may be applied, updated, and removed as a function of time, thereby supporting
 dynamic instrument models. Static models are trivially supported by applying a
 rule at the initial time step and not removing it.
 
-Rules are comprised of \textit{conditions} and \textit{tariffs}. Given a
+Rules comprise \textit{conditions} and \textit{tariffs}. Given a
 condition and tariff, preferences are adjusted as shown in Algorithm
 \ref{alg::tariff}. A rule's condition may depend on any factor that is
 query-able during the preference adjustment phase of the DRE. During PA, each

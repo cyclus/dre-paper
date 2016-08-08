@@ -9,7 +9,7 @@ either being interred indefinitely or being utilized in a advanced fuel cycle by
 recycling its fissile and fertile isotopes. The ability to model such a system
 while maintaining physical consistency due to transmutation and isotopic decay
 is a challenging simulation problem. Through simulation, nuclear systems can be
-designed in order to support decision-making processes addressing a variety of
+analyzed in order to support decision-making processes addressing a variety of
 goals, e.g., reducing system cost, future planning of storage facilities,
 studying the dynamics governing system transitions, and estimating long-term
 system sustainability.
@@ -35,7 +35,7 @@ simulator. The first is facility deployment, i.e., how, why, and when certain
 facilities are instantiated in the simulation. The most common reactor
 deployment mechanism allows a user to define an energy growth curve and, for
 each type of reactor in the simulation, a percentage of that total energy demand
-to be met by the reactor type. It is also common for simulators to adjust
+to be met by that reactor type. It is also common for simulators to adjust
 deployments based on look-ahead heuristics of future material availability
 \cite{schweitzer_improved_2008, van_den_durpel_daness_2009}. The second design
 category is the fidelity with which the physical and chemical processes involved
@@ -66,7 +66,7 @@ different portions of the fuel cycle \cite{huff_cyclus_2015}. By Law's
 definition \cite{Law:1999:SMA:554952}, \Cyclus is a dynamic, discrete-event
 simulation that uses a fixed-increment time advance mechanism. Its design seeks
 to separate the design concerns of the three categories described above,
-supporting, for example, both fleet and individual facility models and allowing
+supporting, for example, both fleet and individual facility models and allowing %% RWC has iminent journal pub on this topic - should we reference it
 for either exogenous or endogenous facility deployment. However, a common
 infrastructure defining the method of facility connection and allowing
 communication between entities in the simulation is required. This
