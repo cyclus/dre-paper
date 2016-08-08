@@ -48,7 +48,7 @@ clustering effect. A diagram of the full \basecase fuel cycle is shown in Figure
   \end{center}
 \end{figure}
 
-Four perturbations from the \basecase scenario are used to provide examples of
+Three perturbations from the \basecase scenario are used to provide examples of
 modeling capability enabled through the use of the DRE. The scenarios are
 summarized in Table \ref{scenarios} below and described in more detail in the
 following sections.
@@ -153,17 +153,17 @@ occurring in the real world includes the down-blending of military-grade fuel
 sources, such as the Megatons to Megawatts program and the MOX Fuel Fabrication
 Facility.
 
-In the \external scenario, a new source of MOX fuel enters halfway
+In the \external scenario, a external source of MOX fuel enters halfway
 through the simulation at $t = 250$, creating the fuel cycle shown in Figure
-\ref{fig:military}. The total quantity of fuel the new source can provide is
+\ref{fig:military}. The total quantity of fuel the external source can provide is
 limited to 10 refueling quantities (where reactors refuel one third of their
 total core mass in each cycle). Preferences are assigned such that reactors
-prefer MOX from its normal cycle over MOX from the new source, i.e.,
-$p_{\text{MOX}} > p_{\text{MOX, new}} > p_{\text{UOX}}$. Reactors request each
-of the commodities, and thus the first 10 reactors to refuel after the new
+prefer MOX from its normal cycle over MOX from the external source, i.e.,
+$p_{\text{MOX}} > p_{\text{MOX, external}} > p_{\text{UOX}}$. Reactors request each
+of the commodities, and thus the first 10 reactors to refuel after the external
 source enters the simulation when no original MOX is available will be provided
-with MOX from the new facility. Reactors will continue to request fuel from the
-new facility for the remainder of the simulation, but will not receive any due
+with MOX from the external facility. Reactors will continue to request fuel from the
+external facility for the remainder of the simulation, but will not receive any due
 to the limited total inventory. This injection of a new fuel source also serves to
 perturb the supply chain by delaying the amount of spent UOX available for
 recycling.
