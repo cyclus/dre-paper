@@ -22,12 +22,15 @@ specific fuel cycles or reactor technologies. The \Cyclus fuel cycle simulator
 seeks to separate the design of the simulation from the fuel cycle or
 technologies of interest. In order to support this separation, a robust
 supply-demand communication and solution framework is required. Accordingly
-agent-based supply-chain framework, the Dynamic Resource Exchange (DRE), has
+an agent-based supply-chain framework, the Dynamic Resource Exchange (DRE), has
 been designed implemented in \Cyclus. It supports the communication of complex
 resources, namely isotopic compositions of nuclear fuel, between fuel cycle
 facilities and their managers (e.g., institutions and regions). Instances of
 supply and demand are defined as an optimization problem and solved for each
-timestep. To display the variety of possible simulations that the DRE enables,
+timestep. Importantly, the DRE allows each agent in the simulation to independently
+indicate preference for specific trading options in order to meet both physics 
+requirements and satisfy constraints imposed by potential socio-political models.
+To display the variety of possible simulations that the DRE enables,
 example scenarios are formulated and described. Important features include key
 fuel-cycle facility outages, introduction of external recycled fuel sources
 (similar to the current MOX Fuel Fabrication Facility in the United States), and
