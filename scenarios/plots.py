@@ -401,6 +401,24 @@ def puinvs(kind):
         if name != 'c':
             plt.xlabel('Timesteps (month)')
             plt.ylabel('Mass of $Pu$ (kg)')
+        if name == 'c':
+            # add t_i and t_f arrows
+            ax = plt.gca()
+            xi, xf = 250, 300
+            if kind == 'outage':
+                head = 2.4e4
+                text = 3.1e4
+                t = '$t_i$'
+            else:  # military
+                head = 1.8e4
+                text = 0.8e4
+                t = '$t$'
+            ax.annotate(t, xy=(xi, head), xytext=(xi, text),
+                        arrowprops=dict(width=2.5, headwidth=8))
+            if kind == 'outage':
+                ax.annotate('$t_f$', xy=(xf, head), xytext=(xf, text),
+                            arrowprops=dict(width=2.5, headwidth=8))
+
         if name == 'a':
             plt.legend(legend_replace(protos), loc='best')
         plt.tight_layout()
