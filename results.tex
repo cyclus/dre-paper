@@ -423,6 +423,21 @@ Scenario & Solver & Time (s)           \\
 \end{tabular}
 \end{table}
 
+Each of the results in Table \ref{tbl:timing} is with respect to the simple
+scenarios presented in this paper. In order to ascertain a sense of how each
+solver will work with larger scenarios, the \basecase scenario was run an
+additional time after modifying the reactor deployment schedule as follows: in
+each instance when a single reactor would be deployed, five reactors are
+deployed instead, increasing the total reactor population by a factor for five
+to approximately 150. The greedy and cbc \basecase scenarios solved in 10.7 and
+20.8 seconds, respectively. This implies that there is not a clear linear
+relationship between solution time of a full simulation run and the number of
+entities in the simulation for either solver -- there are likely additional
+simulation dynamics occurring outside of the DRE that affect solution
+times. Additionally, this simple exercise shows that simulations of reactor
+populations approximately the size of the United States reactor fleet can be
+solved in very reasonable times.
+
 Interestingly, slight differences in simulation results was also observed
 between the two solvers. This is due to time-steps in which there is problem
 degeneracy, i.e., where multiple optimal solutions exist. Consider a timestep,
