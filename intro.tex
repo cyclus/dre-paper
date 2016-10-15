@@ -1,32 +1,35 @@
 \section{Introduction}
 
 The nuclear fuel cycle (NFC) is a complex, physics-dependent supply chain of
-uranium and thorium-based fuels, including recycling of fuel and final disposal
-of some subset of isotopes of transmuted material. Uranium is mined, milled, and
-enriched to some level based on the type and vintage of the reactor
-which is being fueled. Used fuel can then be stored for a period of time before
-either being disposed of via interment or being utilized in a advanced fuel cycle by
-recycling its fissile and fertile isotopes. The ability to model such a system
-while maintaining physical consistency due to transmutation and isotopic decay
-is a challenging simulation problem. Through simulation, nuclear systems can be
-analyzed in order to support decision-making processes addressing a variety of
-goals, e.g., reducing system cost, future planning of storage facilities,
-studying the dynamics governing system transitions, and estimating long-term
-system sustainability.
+uranium and thorium ore based fuels, recycled materials (such as reprocessed
+uranium, plutonium, and other minor actinides), and final disposal of some
+subset of isotopes of transmuted material. Uranium is mined, milled, and
+enriched to some level based on the type and fuel management scheme (e.g., a 12
+or 18-month refueling schedule) of the reactor which is being fueled. Used fuel
+can then be stored for a period of time before either being disposed of via
+interment or being utilized in a advanced fuel cycle by recycling its fissile
+and fertile isotopes. The ability to model such a system while maintaining
+physical consistency due to transmutation and isotopic decay is a challenging
+simulation problem. Through simulation, nuclear systems can be analyzed in order
+to support decision-making processes addressing a variety of goals, e.g.,
+reducing system cost, future planning of storage facilities, studying the
+dynamics governing system transitions, and estimating long-term system
+sustainability.
 
 NFC simulation is performed by a variety of actors, including governments,
-universities, international governance organizations, and consulting
-agencies. Accordingly, many modeling strategies have been applied, spanning a
-wide range of modeling detail for both nuclear facilities and fuel. For
-instance, some simulators describe reactors by fleet (or type) and solve
-material balances for the entire fleet in aggregate
-\cite{busquim_e_silva_system_2008, durpel_daness_2003, yacout_vision_2006} while
-others instantiate individual (or discrete) facilities
-\cite{schneider_nfcsim:_2005}. Similarly, some simulators make detailed
-calculations of fuel depletion due to reactor fluence \cite{boucher_cosi:_2006,
-  mouginot2012class} whereas others use pre-tabulated values that depend
-(generally) on burnup values for thermal reactors and conversion ratios for fast
-reactors \cite{yacout_vision_2006}.
+national laboratories, universities, international governance organizations, and
+consulting agencies. Accordingly, many modeling strategies have been applied,
+spanning a wide range of modeling detail for both nuclear facilities and fuel in
+order to obtain sufficient simulation functionality
+\cite{brown2016identification}. For instance, some simulators describe reactors
+by fleet (or type) and solve material balances for the entire fleet in aggregate
+\cite{busquim_e_silva_system_2008, durpel_daness_2003, yacout_vision_2006,
+  worrall_scenario_2007} while others instantiate individual (or discrete)
+facilities \cite{schneider_nfcsim:_2005}. Similarly, some simulators make
+detailed calculations of fuel depletion due to reactor fluence
+\cite{boucher_cosi:_2006, mouginot2012class} whereas others use pre-tabulated
+values that depend (generally) on burnup values for thermal reactors and
+conversion ratios for fast reactors \cite{yacout_vision_2006}.
 
 % what are the primary design choices
 % what have other people done
