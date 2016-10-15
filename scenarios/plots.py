@@ -33,6 +33,18 @@ LEFT JOIN (
 ) AS sub ON sub.time=tl.time
 WHERE tl.simid=?"""
 
+query_pu = """SELECT tl.Time AS Time,IFNULL(sub.qty, 0) AS Quantity FROM timelist as tl
+LEFT JOIN (
+        SELECT tl.Time as time,SUM(inv.Quantity*c.MassFrac) AS qty
+        FROM inventories as inv
+        JOIN timelist as tl ON UNLIKELY(inv.starttime <= tl.time) AND inv.endtime > tl.time AND tl.simid=inv.simid
+        JOIN agents as a on a.agentid=inv.agentid AND a.simid=inv.simid
+        JOIN compositions as c on c.qualid=inv.qualid AND c.simid=inv.simid
+        WHERE a.simid=? AND a.prototype=?  AND c.nucid LIKE '942%'
+        GROUP BY tl.Time
+) AS sub ON sub.time=tl.time
+WHERE tl.simid=?"""
+
 query_built = """SELECT tl.time AS Time,ifnull(sub.n, 0) AS N_Built
 FROM timelist AS tl
 LEFT JOIN (
@@ -124,7 +136,7 @@ def plot_pu_in_rxtrs(protos, args):
     plt.clf()
     plt.plot(*args)
     # plt.title('Inventory in All Reactors')
-    plt.ylabel('Mass of $^{239}Pu$ (kg)')
+    plt.ylabel('Mass of $Pu$ (kg)')
     plt.xlabel('Timesteps (months)')
     plt.legend(legend_replace(list(protos.keys())))
     plt.tight_layout()
@@ -136,7 +148,7 @@ def plot_pu_in_fabs(protos, args, zoom=False):
     plt.clf()
     plt.plot(*args)
     # plt.title(
-    #     'Inventory of $^{239}Pu$ in Recycled-Fuel Fabrication Facilities')
+    #     'Inventory of $Pu$ in Recycled-Fuel Fabrication Facilities')
     plt.ylabel('Mass (kg)')
     plt.xlabel('Timesteps (months)')
     plt.legend(legend_replace(list(protos.keys())))
@@ -162,7 +174,7 @@ def plot_mass_in_repos(protos, args):
 def plot_pu_in_repos(protos, args):
     plt.clf()
     plt.plot(*args)
-    plt.ylabel('Mass of $^{239}Pu$ (kg)')
+    plt.ylabel('Mass of $Pu$ (kg)')
     plt.xlabel('Timesteps (months)')
     plt.legend(legend_replace(list(protos.keys())), loc='upper left')
     plt.tight_layout()
@@ -187,7 +199,7 @@ def invs():
         'tariff': ['reactor', 'b_reactor'],
         'outage': ['reactor'],
     }
-    args = time_series(rxtrs, query_239)
+    args = time_series(rxtrs, query_pu)
     plot_pu_in_rxtrs(rxtrs, args)
 
     print("Repos")
@@ -197,7 +209,7 @@ def invs():
         'outage': ['repo'],
         'tariff': ['repo', 'b_repo'],
     }
-    args = time_series(repos, query_239)
+    args = time_series(repos, query_pu)
     plot_pu_in_repos(repos, args)
 
 
@@ -209,7 +221,7 @@ def explore():
         'tariff': ['reactor', 'b_reactor'],
         'outage': ['reactor'],
     }
-    args = time_series(rxtrs, query_239)
+    args = time_series(rxtrs, query_pu)
     plot_pu_in_rxtrs(rxtrs, args)
 
     print("Fabs")
@@ -219,7 +231,7 @@ def explore():
         'tariff': ['fuelfab'],
         'outage': ['fuelfab'],
     }
-    args = time_series(fabs, query_239)
+    args = time_series(fabs, query_pu)
     plot_pu_in_fabs(fabs, args, zoom=False)
     plot_pu_in_fabs(fabs, args, zoom=True)
 
@@ -232,7 +244,7 @@ def explore():
     }
     args = time_series(repos, query_mass)
     plot_mass_in_repos(repos, args)
-    args = time_series(repos, query_239)
+    args = time_series(repos, query_pu)
     plot_pu_in_repos(repos, args)
 
 
@@ -344,8 +356,8 @@ def puinvs(kind):
     args1, args2, args3 = [], [], []
     zoomx, zoomy = 200, 400
     for proto in protos:
-        args1 += time_series({'base_case': [proto]}, query_239)
-        x, y = time_series({kind: [proto]}, query_239)
+        args1 += time_series({'base_case': [proto]}, query_pu)
+        x, y = time_series({kind: [proto]}, query_pu)
         args2 += [x, y]
         args3 += [x[zoomx:zoomy], y[zoomx:zoomy]]
 
@@ -373,7 +385,7 @@ def puinvs(kind):
 
     # words and layout
     ax1.legend(legend_replace(protos), loc='upper left')
-    fig.text(0.015, 0.65, 'Mass of $^{239}Pu$ (kg)', rotation='vertical')
+    fig.text(0.015, 0.65, 'Mass of $Pu$ (kg)', rotation='vertical')
     fig.text(0.45, 0.015, 'Timesteps (month)')
     fig.tight_layout()
     fig.subplots_adjust(left=0.13, bottom=0.09)
@@ -388,7 +400,7 @@ def puinvs(kind):
         plt.plot(*args)
         if name != 'c':
             plt.xlabel('Timesteps (month)')
-            plt.ylabel('Mass of $^{239}Pu$ (kg)')
+            plt.ylabel('Mass of $Pu$ (kg)')
         if name == 'a':
             plt.legend(legend_replace(protos), loc='best')
         plt.tight_layout()

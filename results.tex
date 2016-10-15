@@ -13,7 +13,7 @@ relevant effects. The nominal parameters of all common facilities in the
 simulation are shown in \cite{gidden_dre_2016}.
 
 The \basecase scenario is not process constrained (i.e., it is constrained only
-by the dynamics of plutonium availability in the recycling stream). Reactors are
+by the dynamics of Pu availability in the recycling stream). Reactors are
 allowed to be fueled by either UOX or MOX, with a preference for MOX over UOX,
 and refuel one-third of their total core mass every 18 months. Spent UOX fuel is
 allowed to be recycled, whereas spent MOX fuel is sent directly to a
@@ -82,31 +82,31 @@ $t_f = 300$. During the outage, the remaining facilities in the supply chain
 operate normally, and the flow of fuel into and out of reactors adapts according
 to the state of available fresh fuel.
 
-A comparison of the inventories of plutonium-239 in each facility type of
+A comparison of the inventories of plutonium (Pu) in each facility type of
 interest among the \basecase and \outage scenarios is shown in Figure
-\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv-outage}, the quantity of
-MOX in \reactors is under a dynamic equilibrium, oscillating between the
-maximum quantity allowable in the system and one refueling quantity less than the
-maximum, based on refueling schedules. The equilibrium value increases in a
-stair-step-function manner as the number of reactors increases to being able to
-provide sufficient used UOX for the next marginal refueling quantity of MOX. The
-quantity of MOX in \fabrication oscillates between a minimal value and a maximum
-value which is sufficient for a single reactor's refueling quantity. As soon as
-there is sufficient MOX fuel for another refueling \textit{and} a reactor makes
-a request to be refueled, it is provided the quantity of MOX in of fresh
-fuel. Finally, \separations separates the various actinides of used fuel and
-passes on fissile isotopes to \fabrication, thus maintaining a small oscillating
-inventory in each timestep.
+\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv-outage}, the
+quantity of MOX in \reactors is under a dynamic equilibrium, oscillating between
+the maximum quantity allowable in the system and one refueling quantity less
+than the maximum, based on refueling schedules. The equilibrium value increases
+in a stair-step-function manner as the number of reactors increases to being
+able to provide sufficient used UOX for the next marginal refueling quantity of
+MOX. The quantity of MOX in \fabrication oscillates between a minimal value and
+a maximum value which is sufficient for a single reactor's refueling
+quantity. As soon as there is sufficient MOX fuel for another refueling
+\textit{and} a reactor makes a request to be refueled, it is provided the
+quantity of MOX in of fresh fuel. Finally, \separations separates the various
+actinides of used fuel and passes on fissile isotopes to \fabrication, thus
+maintaining a small oscillating inventory in each timestep.
 
 \begin{figure}
   \centering
   \begin{minipage}{0.67\textwidth}
     \centering 
-    \subfloat[Pu-239 inventories in the \basecase scenario.]{
+    \subfloat[Pu inventories in the \basecase scenario.]{
       \includegraphics[height=0.3\textheight]{outage_invs_a.pdf}
       \label{fig:baseinv-outage}}
     \vfill 
-    \subfloat[Pu-239 inventories in the \outage scenario.]{
+    \subfloat[Pu inventories in the \outage scenario.]{
       \includegraphics[height=0.3\textheight]{outage_invs_b.pdf}
     \label{fig:outageinv}}
   \end{minipage}%
@@ -118,7 +118,7 @@ inventory in each timestep.
   \end{minipage}%
   \caption[]{
     \label{fig:outage}
-    Facility inventories of Pu-239 in \basecase and \outage scenarios.}
+    Facility inventories of Pu in \basecase and \outage scenarios.}
 \end{figure}
 
 The dynamic equilibrium behavior changes in the \outage scenario after the
@@ -126,19 +126,19 @@ initial outage time, $t_i$, as is observable in Figures \ref{fig:outageinv} and
 \ref{fig:outagezoom}. Because the outage occurs in \separations, which takes
 input from the \reactors and provides output to \fabrication, the inventories of
 both \separations and \fabrication remain constant for the duration of the
-outage period. The inventory of Pu-239 in \reactors continues to oscillate
+outage period. The inventory of Pu in \reactors continues to oscillate
 because MOX assemblies are discharged and continue to be sent to \storage,
-whereas spent UOX assemblies (with significant Pu-239 inventories) are stored on
+whereas spent UOX assemblies (with significant Pu inventories) are stored on
 site. In the first timestep of renewed service of \separations, $t_f$, the
 entirety of the pent-up store of used fuel in \reactors is send to \separations,
 reducing the inventory to zero, causing the delta-function behavior in \reactor
 flows seen in Figure \ref{fig:outagezoom} at $t = t_f$. \separations then
-extracts all of Pu-239 in a single timestep, sending it to \fabrication and
+extracts all of Pu in a single timestep, sending it to \fabrication and
 causing the delta-function behavior in \separations flows seen in Figure
-\ref{fig:outagezoom} at $t = t_f + 1$. Finally, the stock of Pu-239 in \reactors
+\ref{fig:outagezoom} at $t = t_f + 1$. Finally, the stock of Pu in \reactors
 after the outage increases due to the higher availability of MOX fuel in
 \fabrication, until the dynamic equilibrium returns. The length of the
-perturbation is function of both the amount of Pu-239 required per refueling and
+perturbation is function of both the amount of Pu required per refueling and
 the number of refuelings that occurs during the outage. The more refuelings that
 happen during the outage, the more excess MOX assemblies can be made, thus
 continuing the dynamic equilibrium perturbation.
@@ -178,7 +178,7 @@ recycling.
   \end{center}
 \end{figure}
 
-The dynamic equilibrium of Pu-239 inventories again changes with the \external
+The dynamic equilibrium of Pu inventories again changes with the \external
 perturbation, as shown in Figure \ref{fig:military}. A number of new features
 arise, however. First, the equilibrium value during the initial transient
 increases by the total quantity of refueling quantities available from the
@@ -187,23 +187,23 @@ equilibrium value upon exiting the transient is lower than the value upon its
 entrance. This is due to the fact that the amount of spent UOX in the overall
 recycle system has decreased, due to the usage of external MOX, thus reducing
 the availability of MOX. The system has been shocked into a new dynamic
-equilibrium, with Pu-239 values slightly lower than the previous
+equilibrium, with Pu values slightly lower than the previous
 equilibrium. This suggests that the injection of external recycled fuel can
 reduce the level of which a system can sustain a recycling fuel cycle. Finally,
-a small lag can be seen in the inventory of Pu-239 in \fabrication, which is due
+a small lag can be seen in the inventory of Pu in \fabrication, which is due
 to a loss of available spent UOX due to the increased presence of spent MOX
-exiting reactors that were able to utilize external MOX. The Pu-239 inventories 
+exiting reactors that were able to utilize external MOX. The Pu inventories 
 recover quickly from this transient, however.
 
 \begin{figure}
   \centering
   \begin{minipage}{0.67\textwidth}
     \centering 
-    \subfloat[Pu-239 inventories in the \basecase scenario.]{
+    \subfloat[Pu inventories in the \basecase scenario.]{
       \includegraphics[height=0.3\textheight]{military_invs_a.pdf}
       \label{fig:baseinv-military}}
     \vfill 
-    \subfloat[Pu-239 inventories in the \external scenario.]{
+    \subfloat[Pu inventories in the \external scenario.]{
       \includegraphics[height=0.3\textheight]{military_invs_b.pdf}
     \label{fig:militaryinv}}
   \end{minipage}%
@@ -215,7 +215,7 @@ recover quickly from this transient, however.
   \end{minipage}%
   \caption[]{
     \label{fig:military}
-    Facility inventories of Pu-239 in \basecase and \external scenarios.}
+    Facility inventories of Pu in \basecase and \external scenarios.}
 \end{figure}
 
 \subsection{Regional Tariffs: Fuel Cycles with International Instruments}
