@@ -54,13 +54,13 @@ implementation and usage.
 \subsection{Multicommodity Transportation Problems}\label{meth:mtp}
 
 Supply and demand in a nuclear fuel cycle context is inherently a multicommodity
-problem: a light water reactor can be fueled by both uranium oxide (UOX) 
-and mixed oxide (MOX) fuel, for
-instance. How it is fueled is a result both of fuel availability and associated
-preferences. In order to allow for complex physical and chemical constraints on
-both processes and inventories, an optimization-based approach is used which
-employs economics-based proxies to arrive at a solution of resource transfers
-within a simulation time-step.
+problem: a light water reactor can be fueled by both uranium oxide (UOX) and
+mixed oxide (MOX) fuel, for instance. How it is fueled is a result of fuel
+availability, associated preferences, and its operating history and current fuel
+management strategy. In order to allow for complex physical and chemical
+constraints on both processes and inventories, an optimization-based approach is
+used which employs economics-based proxies to arrive at a solution of resource
+transfers within a simulation time-step.
 
 The DRE translates agent supply and demand into a version of the Multi-commodity
 Transportation Problem (MTP) \cite{even1975complexity} which belongs to the
@@ -354,8 +354,8 @@ MTP, entitled the \textit{Nuclear Fuel Cycle Transportation Problem} (NFCTP). It
 can be solved by any heuristic that provides a feasible solution to such
 networks are valid.  For this work, a greedy heuristic is designed and
 implemented. The system can be solved optimally, however, by formulating the
-system as a mathematical program, and a MILP formulation is provided
-provided. Formulated as a MILP, the system can be solved with any available
+system as a mathematical program, and a MILP formulation is provided. Formulated
+as a MILP, the system can be solved with any available
 solver. \cbc\cite{forrestcbc}, a popular open-source branch-and-bound solver, is
 used in this work.
 
