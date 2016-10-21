@@ -7,13 +7,15 @@ of the DRE using both the \greedy heuristic and to optimality with the
 branch-and-bound solver \cbc. A UOX-MOX one-pass recycle system with all
 required fuel cycle facilities is taken as the \basecase scenario in order to
 reduce the complexity of the fuel cycle and highlight departures from available
-simulators. A simulation time frame of 50 years is chosen with one-month
+simulators. For simplicity of demonstration, reactors are assumed to refuel
+completely with a single commodity rather than a combination of fuel types as is
+done in practice. A simulation time frame of 50 years is chosen with one-month
 time-steps (totaling 600 simulation time steps), sufficient to display all
 relevant effects. The nominal parameters of all common facilities in the
 simulation are shown in \cite{gidden_dre_2016}.
 
 The \basecase scenario is not process constrained (i.e., it is constrained only
-by the dynamics of plutonium availability in the recycling stream). Reactors are
+by the dynamics of Pu availability in the recycling stream). Reactors are
 allowed to be fueled by either UOX or MOX, with a preference for MOX over UOX,
 and refuel one-third of their total core mass every 18 months. Spent UOX fuel is
 allowed to be recycled, whereas spent MOX fuel is sent directly to a
@@ -51,7 +53,7 @@ clustering effect. A diagram of the full \basecase fuel cycle is shown in Figure
 Three perturbations from the \basecase scenario are used to provide examples of
 modeling capability enabled through the use of the DRE. The scenarios are
 summarized in Table \ref{scenarios} below and described in more detail in the
-following sections.
+following sections. 
 
 \begin{table}[]
 \centering
@@ -80,33 +82,35 @@ The chosen disruption is an outage of the separations facility shown in Figure
 \ref{fig:base}. The outage begins at $t_i = 250$, lasts 50 time steps, ending at
 $t_f = 300$. During the outage, the remaining facilities in the supply chain
 operate normally, and the flow of fuel into and out of reactors adapts according
-to the state of available fresh fuel.
+to the state of available fresh fuel. Importantly, neither the \separations or
+\fabrication facilities have throughput constraints, i.e., both facilities are
+immediately able to process any quantity of fuel. Such constraining values can (and should) be added by users in order to obtain more realistic behavior; however, they are excluded in this paper in order to simplify the underlying dynamics of the processes being investigated. 
 
-A comparison of the inventories of plutonium-239 in each facility type of
+A comparison of the inventories of plutonium (Pu) in each facility type of
 interest among the \basecase and \outage scenarios is shown in Figure
-\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv-outage}, the quantity of
-MOX in \reactors is under a dynamic equilibrium, oscillating between the
-maximum quantity allowable in the system and one refueling quantity less than the
-maximum, based on refueling schedules. The equilibrium value increases in a
-stair-step-function manner as the number of reactors increases to being able to
-provide sufficient used UOX for the next marginal refueling quantity of MOX. The
-quantity of MOX in \fabrication oscillates between a minimal value and a maximum
-value which is sufficient for a single reactor's refueling quantity. As soon as
-there is sufficient MOX fuel for another refueling \textit{and} a reactor makes
-a request to be refueled, it is provided the quantity of MOX in of fresh
-fuel. Finally, \separations separates the various actinides of used fuel and
-passes on fissile isotopes to \fabrication, thus maintaining a small oscillating
-inventory in each timestep.
+\ref{fig:outage}. As can be seen in Figure \ref{fig:baseinv-outage}, the
+quantity of MOX in \reactors is under a dynamic equilibrium, oscillating between
+the maximum quantity allowable in the system and one refueling quantity less
+than the maximum, based on refueling schedules. The equilibrium value increases
+in a stair-step-function manner as the number of reactors increases to being
+able to provide sufficient used UOX for the next marginal refueling quantity of
+MOX. The quantity of MOX in \fabrication oscillates between a minimal value and
+a maximum value which is sufficient for a single reactor's refueling
+quantity. As soon as there is sufficient MOX fuel for another refueling
+\textit{and} a reactor makes a request to be refueled, it is provided the
+quantity of MOX in of fresh fuel. Finally, \separations separates the various
+actinides of used fuel and passes on fissile isotopes to \fabrication, thus
+maintaining a small oscillating inventory in each timestep.
 
 \begin{figure}
   \centering
   \begin{minipage}{0.67\textwidth}
     \centering 
-    \subfloat[Pu-239 inventories in the \basecase scenario.]{
+    \subfloat[Pu inventories in the \basecase scenario.]{
       \includegraphics[height=0.3\textheight]{outage_invs_a.pdf}
       \label{fig:baseinv-outage}}
     \vfill 
-    \subfloat[Pu-239 inventories in the \outage scenario.]{
+    \subfloat[Pu inventories in the \outage scenario.]{
       \includegraphics[height=0.3\textheight]{outage_invs_b.pdf}
     \label{fig:outageinv}}
   \end{minipage}%
@@ -118,7 +122,7 @@ inventory in each timestep.
   \end{minipage}%
   \caption[]{
     \label{fig:outage}
-    Facility inventories of Pu-239 in \basecase and \outage scenarios.}
+    Facility inventories of Pu in \basecase and \outage scenarios.}
 \end{figure}
 
 The dynamic equilibrium behavior changes in the \outage scenario after the
@@ -126,19 +130,19 @@ initial outage time, $t_i$, as is observable in Figures \ref{fig:outageinv} and
 \ref{fig:outagezoom}. Because the outage occurs in \separations, which takes
 input from the \reactors and provides output to \fabrication, the inventories of
 both \separations and \fabrication remain constant for the duration of the
-outage period. The inventory of Pu-239 in \reactors continues to oscillate
+outage period. The inventory of Pu in \reactors continues to oscillate
 because MOX assemblies are discharged and continue to be sent to \storage,
-whereas spent UOX assemblies (with significant Pu-239 inventories) are stored on
+whereas spent UOX assemblies (with significant Pu inventories) are stored on
 site. In the first timestep of renewed service of \separations, $t_f$, the
 entirety of the pent-up store of used fuel in \reactors is send to \separations,
 reducing the inventory to zero, causing the delta-function behavior in \reactor
 flows seen in Figure \ref{fig:outagezoom} at $t = t_f$. \separations then
-extracts all of Pu-239 in a single timestep, sending it to \fabrication and
+extracts all of Pu in a single timestep, sending it to \fabrication and
 causing the delta-function behavior in \separations flows seen in Figure
-\ref{fig:outagezoom} at $t = t_f + 1$. Finally, the stock of Pu-239 in \reactors
+\ref{fig:outagezoom} at $t = t_f + 1$. Finally, the stock of Pu in \reactors
 after the outage increases due to the higher availability of MOX fuel in
 \fabrication, until the dynamic equilibrium returns. The length of the
-perturbation is function of both the amount of Pu-239 required per refueling and
+perturbation is function of both the amount of Pu required per refueling and
 the number of refuelings that occurs during the outage. The more refuelings that
 happen during the outage, the more excess MOX assemblies can be made, thus
 continuing the dynamic equilibrium perturbation.
@@ -147,15 +151,17 @@ continuing the dynamic equilibrium perturbation.
 
 The DRE allows for both positive and negative perturbations in fuel
 availability. While the \outage scenario models a case where there is a
-supply-chain disruption, the \external scenario models a case where
-there is an injection of a preferred fuel source. An example of such a scenario
+supply-chain disruption, the \external scenario models a case where there is an
+injection of a preferred commodity source. An example of such a scenario
 occurring in the real world includes the down-blending of military-grade fuel
-sources, such as the Megatons to Megawatts program and the MOX Fuel Fabrication
-Facility.
+sources, such as the MOX Fuel Fabrication Facility, in which a preferred fuel
+commodity is introduced, and the Megatons to Megawatts (MT2MW) program, where a
+preferred fuel fabrication commodity is introduced at the enrichment-fabrication
+facility interface.
 
 In the \external scenario, an external source of MOX fuel enters halfway
 through the simulation at $t = 250$, creating the fuel cycle shown in Figure
-\ref{fig:military}. The total quantity of fuel the external source can provide is
+\ref{fig:military_fc}. The total quantity of fuel the external source can provide is
 limited to 10 refueling quantities (where reactors refuel one third of their
 total core mass in each cycle). Preferences are assigned such that reactors
 prefer MOX from its normal cycle over MOX from the external source, i.e.,
@@ -172,13 +178,13 @@ recycling.
   \begin{center}
     \includegraphics[width=\columnwidth]{external_fc}
     \caption[]{
-      \label{fig:military}
+      \label{fig:military_fc}
       Material routing between in the \external scenario fuel
       cycle. Possible arc flows are labeled with commodity names.}
   \end{center}
 \end{figure}
 
-The dynamic equilibrium of Pu-239 inventories again changes with the \external
+The dynamic equilibrium of Pu inventories again changes with the \external
 perturbation, as shown in Figure \ref{fig:military}. A number of new features
 arise, however. First, the equilibrium value during the initial transient
 increases by the total quantity of refueling quantities available from the
@@ -187,23 +193,23 @@ equilibrium value upon exiting the transient is lower than the value upon its
 entrance. This is due to the fact that the amount of spent UOX in the overall
 recycle system has decreased, due to the usage of external MOX, thus reducing
 the availability of MOX. The system has been shocked into a new dynamic
-equilibrium, with Pu-239 values slightly lower than the previous
+equilibrium, with Pu values slightly lower than the previous
 equilibrium. This suggests that the injection of external recycled fuel can
 reduce the level of which a system can sustain a recycling fuel cycle. Finally,
-a small lag can be seen in the inventory of Pu-239 in \fabrication, which is due
+a small lag can be seen in the inventory of Pu in \fabrication, which is due
 to a loss of available spent UOX due to the increased presence of spent MOX
-exiting reactors that were able to utilize external MOX. The Pu-239 inventories 
+exiting reactors that were able to utilize external MOX. The Pu inventories 
 recover quickly from this transient, however.
 
 \begin{figure}
   \centering
   \begin{minipage}{0.67\textwidth}
     \centering 
-    \subfloat[Pu-239 inventories in the \basecase scenario.]{
+    \subfloat[Pu inventories in the \basecase scenario.]{
       \includegraphics[height=0.3\textheight]{military_invs_a.pdf}
       \label{fig:baseinv-military}}
     \vfill 
-    \subfloat[Pu-239 inventories in the \external scenario.]{
+    \subfloat[Pu inventories in the \external scenario.]{
       \includegraphics[height=0.3\textheight]{military_invs_b.pdf}
     \label{fig:militaryinv}}
   \end{minipage}%
@@ -215,7 +221,7 @@ recover quickly from this transient, however.
   \end{minipage}%
   \caption[]{
     \label{fig:military}
-    Facility inventories of Pu-239 in \basecase and \external scenarios.}
+    Facility inventories of Pu in \basecase and \external scenarios.}
 \end{figure}
 
 \subsection{Regional Tariffs: Fuel Cycles with International Instruments}
@@ -229,8 +235,8 @@ such situations.
 Two regions, Region A and Region B, are modeled. Region A houses a fuel cycle
 with both UOX and MOX-based fuel services, as in the \basecase scenario. The
 same total number of \reactors are modeled in the scenario. Region A begins with
-15 \reactors and Region B begins with 5 reactors. All reactor deployment occurs
-in Region A as shown in Figure \ref{fig:deploy}.
+15 \reactors and Region B begins with 5 reactors. All reactor deployment occurs in Region A as
+shown in Figure \ref{fig:deploy}.
 
 In this scenario, Region A can provide UOX and MOX fuel services to other
 regions using a fuel take-back model (all fuel provided as a service is returned
@@ -326,7 +332,9 @@ $t_1$, Region B's \reactors stop utilizing Region A's fuel cycle entirely.
 
 \subsection{Comparisons between Scenarios}
 
-Comparisons between all scenarios is most easily made by observing the total
+In each scenario, the total amount of electricity generated is identical in
+order to compare the mechanics and results of fuel supply and demand. Therefore,
+comparisons between all scenarios is most easily made by observing the total
 fuel usage by reactors for each commodity type. A summary of this metric is
 provided in Figure \ref{fig:flows}. Figure \ref{fig:uoxflow} displays the
 cumulative flow of UOX fuel into reactors over all scenarios which shows a
@@ -395,9 +403,9 @@ potential transfers between entities).
 
 \begin{table}[]
 \centering
-\caption{Solution times required of each solver type in each
-  scenario. Simulations were performed on a Macbook Air with a duel-core i5 2.6
-  GHz processor using a Ubuntu 14.04 virtual machine.}
+\caption{Solution times required for full simulation runs of each solver type in
+  each scenario. Simulations were performed on a Macbook Air with a duel-core i5
+  2.6 GHz processor using a Ubuntu 14.04 operating system.}
 \label{tbl:timing}
 \begin{tabular}{llr}
 \toprule
@@ -414,6 +422,21 @@ Scenario & Solver & Time (s)           \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+Each of the results in Table \ref{tbl:timing} is with respect to the simple
+scenarios presented in this paper. In order to ascertain a sense of how each
+solver will work with larger scenarios, the \basecase scenario was run an
+additional time after modifying the reactor deployment schedule as follows: in
+each instance when a single reactor would be deployed, five reactors are
+deployed instead, increasing the total reactor population by a factor for five
+to approximately 150. The greedy and cbc \basecase scenarios solved in 10.7 and
+20.8 seconds, respectively. This implies that there is not a clear linear
+relationship between solution time of a full simulation run and the number of
+entities in the simulation for either solver -- there are likely additional
+simulation dynamics occurring outside of the DRE that affect solution
+times. Additionally, this simple exercise shows that simulations of reactor
+populations approximately the size of the United States reactor fleet can be
+solved in very reasonable times.
 
 Interestingly, slight differences in simulation results was also observed
 between the two solvers. This is due to time-steps in which there is problem
